@@ -256,6 +256,7 @@ def research_daily(p, today, need_lines=()):
 - result is written W/L then HER team's sets first: "W 3-1", "L 0-3" — never "L 3-0".
 - results = the team's matches from {since} through {today.isoformat()} that have a final score, most recent first, with box_url = the box-score link from that game's block. player_line = her numbers from a BOX SCORE section below if one is present for that match ("7 kills, 3 blocks, 2 digs" / "24 assists, 6 digs" / "did not play"); otherwise null.
 - blurb = 2-3 sentences for her parents: what she and the team did lately, whether she is getting court time, what is next. Warm, plain, factual. Treat any position note above as fact and never mention where it came from (no "per the family", no "listed as").
+  The stats sheet decides court time: if she is not in it or has 0 sets played, say plainly that she has not appeared in a match yet and move on to the team. Never write about the data itself — no mention of pages, PDFs, box scores, tables, or what could or could not be found. Write only about her and the team.
 Return ONLY: {schema}"""
     text, docs, notes, rec = None, [], [], {}
     if not p.get("fetch_note"):
@@ -492,9 +493,13 @@ def process_player(c, cfg, prev, prev_players, today, now, flags):
         if d.get("_notes"): log("    " + "; ".join(d["_notes"]))
         prev_stats = old.get("stats")
         if isinstance(d.get("team_record"), dict): p["team_record"] = {**(p.get("team_record") or {}), **{k: as_text(v) for k, v in d["team_record"].items() if v}}
-        if isinstance(d.get("stats"), dict): p["stats"] = {k: (int(float(d["stats"][k])) if str(d["stats"].get(k, "")).replace(".", "").isdigit() else None) for k in STAT_KEYS}
+        if isinstance(d.get("stats"), dict):
+            new_stats = {k: (int(float(d["stats"][k])) if str(d["stats"].get(k, "")).replace(".", "").isdigit() else None) for k in STAT_KEYS}
+            if any(v is not None for v in new_stats.values()): p["stats"] = new_stats
+            elif old.get("stats"): log(f"  stats came back empty — keeping last good line for {p['name']}")
         p["recent_matches"] = merge_matches(old.get("recent_matches"), clean_matches(d.get("results")))
-        if d.get("blurb"): p["blurb"] = as_text(d["blurb"])
+        if d.get("blurb") and not (isinstance(d.get("stats"), dict) and not any(v is not None for v in new_stats.values()) and old.get("blurb")):
+            p["blurb"] = as_text(d["blurb"])
         played = {(m.get("date"), (m.get("opponent") or "").lower()) for m in p["recent_matches"] if m.get("result")}
         p["upcoming"] = [m for m in p["upcoming"] if m.get("date") and m["date"] >= today.isoformat() and (m["date"], (m.get("opponent") or "").lower()) not in played]
         has_firsts = any(m.get("player_id") == p["id"] and "First college" in m.get("text", "") for m in prev.get("milestones", []))
