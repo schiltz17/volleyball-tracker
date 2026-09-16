@@ -745,7 +745,7 @@
      "home_away": "away",
      "result": "W 3-2",
      "box_url": "https://gwusports.com/sports/womens-volleyball/stats/2026/mercer/boxscore/9182",
-     "player_line": "did not play"
+     "player_line": null
     },
     {
      "date": "2026-09-12",
@@ -753,7 +753,7 @@
      "home_away": "neutral",
      "result": "W 3-1",
      "box_url": "https://gwusports.com/boxscore.aspx?id=9178",
-     "player_line": "did not play"
+     "player_line": null
     },
     {
      "date": "2026-09-11",
@@ -860,37 +860,37 @@
    "season_stats": [
     {
      "label": "Kills",
-     "value": 0
+     "value": 10
     },
     {
      "label": "Kills/set",
-     "value": "–"
+     "value": "1.11"
     },
     {
      "label": "Hitting %",
-     "value": "–"
+     "value": ".333"
     },
     {
      "label": "Blocks",
-     "value": 0
+     "value": 3
     }
    ],
    "stats": {
-    "mp": 0,
-    "sp": 0,
-    "k": 0,
-    "e": 0,
-    "ta": 0,
-    "a": 0,
+    "mp": 5,
+    "sp": 9,
+    "k": 10,
+    "e": 3,
+    "ta": 21,
+    "a": 1,
     "bhe": 0,
     "sa": 0,
     "se": 0,
     "srv": null,
-    "dig": 0,
-    "re": null,
+    "dig": 1,
+    "re": 0,
     "bs": 0,
-    "ba": 0,
-    "be": 0
+    "ba": 3,
+    "be": 2
    },
    "team_record": {
     "overall": "6-4",
@@ -907,13 +907,13 @@
    "class_year": "Fr",
    "height": "6-1",
    "bio_url": "https://gwusports.com/sports/womens-volleyball/roster/gracyn-sanders/11699",
-   "blurb": "Gracyn hasn't gotten into a match yet this season, but the Runnin' Bulldogs have been on quite a roll. They took down Alabama State and UNC Wilmington at home, then split a tough road trip through the West Georgia tournament, beating Mercer and New Orleans after dropping matches to Western Carolina and West Georgia. The team keeps battling in close, multi-set matches, and we'll keep watching for Gracyn's first appearance as the season continues.",
+   "blurb": "Gracyn has appeared in five matches and nine sets for Gardner-Webb, hitting .333 with 10 kills on 21 swings and adding three block assists. The Runnin' Bulldogs are 6-4 heading into Big South play.",
    "_highs": {
     "_last": "2026-09-12"
    },
    "fetched_at": "2026-09-16T15:15-05:00",
-   "matches_played": 0,
-   "sets_played": 0
+   "matches_played": 5,
+   "sets_played": 9
   },
   {
    "id": "hard",
@@ -1573,21 +1573,21 @@
    ],
    "season_stats": [],
    "stats": {
-    "mp": null,
-    "sp": null,
-    "k": null,
-    "e": null,
-    "ta": null,
-    "a": null,
-    "bhe": null,
-    "sa": null,
-    "se": null,
+    "mp": 0,
+    "sp": 0,
+    "k": 0,
+    "e": 0,
+    "ta": 0,
+    "a": 0,
+    "bhe": 0,
+    "sa": 0,
+    "se": 0,
+    "dig": 0,
+    "bs": 0,
+    "ba": 0,
+    "be": 0,
     "srv": null,
-    "dig": null,
-    "re": null,
-    "bs": null,
-    "ba": null,
-    "be": null
+    "re": null
    },
    "team_record": {
     "overall": "2-6",
@@ -1606,13 +1606,13 @@
    "class_year": "Freshman",
    "height": "5-11",
    "bio_url": "https://winonastatewarriors.com/sports/womens-volleyball/roster/layla-merlin/15975",
-   "blurb": "We don't have Layla's individual stat line from the box scores available right now, so we can't say exactly how much she played in the recent matches against Southwest Minnesota State, Sioux Falls, or the San Diego tournament teams. The Warriors have stayed busy with a full slate of matches this September, including conference play against NSIC foes. We'll keep checking for her next box score so we can share how she's doing on the court!",
+   "blurb": "Layla hasn't appeared in a match yet for Winona State. The Warriors are 2-6 and into NSIC play; she's practicing with the team and we'll note it the moment she gets on the floor.",
    "_highs": {
     "_last": "2026-09-12"
    },
    "fetched_at": "2026-09-16T15:15-05:00",
-   "matches_played": null,
-   "sets_played": null
+   "matches_played": 0,
+   "sets_played": 0
   },
   {
    "id": "francl",

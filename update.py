@@ -120,6 +120,72 @@ def pages(p):
             f"{note}\nIf a page fails or has no data, fall back to web_search (\"{p['name']} {p['school_short']} volleyball\").")
 
 
+# ---------------------------------------------------------------- cumulative-stats PDF parsing (deterministic; the model never picks her row)
+# NCAA cumulative-stats sheet column order (after "# Player"):
+CUME_COLS = ["sp","k","ks","e","ta","pct","a","as_","sa","se","sas","re","dig","digs","bs","ba","blk","blks","be","bhe","pts"]
+
+def stats_from_cume(text, name, jersey=None):
+    """Find HER row in a cumulative-stats PDF text and return the 15 stat fields the app uses. Deterministic; None if not found."""
+    last, first = name.split()[-1], name.split()[0]
+    flat = re.sub(r"[ \t]+", " ", text) + "\n"
+    # row = optional jersey, "Last, First", then 21 numeric tokens (numbers, .333, -.250, 0)
+    pat = re.compile(rf"(?:^|\n)\s*(\d{{1,2}})?\s*{re.escape(last)},\s*{re.escape(first)}\b[^\n\d-]*((?:-?\.?\d+(?:\.\d+)?\s+){{20,22}})", re.I)
+    rows = [(m.group(1), m.group(2).split()) for m in pat.finditer(flat)]
+    if jersey: rows = [r for r in rows if not r[0] or str(r[0]) == str(jersey)] or rows
+    if not rows: return None
+    nums = rows[-1][1][:21]
+    if len(nums) < 21: return None
+    v = dict(zip(CUME_COLS, nums))
+    i = lambda k: int(float(v[k])) if re.fullmatch(r"-?\d+(\.0+)?", v[k]) else None
+    return {"mp": None, "sp": i("sp"), "k": i("k"), "e": i("e"), "ta": i("ta"), "a": i("a"), "bhe": i("bhe"),
+            "sa": i("sa"), "se": i("se"), "srv": None, "dig": i("dig"), "re": i("re"), "bs": i("bs"), "ba": i("ba"), "be": i("be")}
+
+def mp_from_html_rows(html_lines, stats):
+    """Matches played isn't on the PDF. Find the HTML stats row with the same SP/K/E/TA numbers (names there can be wrong, numbers aren't) and read MP."""
+    for ln in html_lines:
+        cells = [c.strip() for c in ln.split("\t")]
+        nums = [c for c in cells if re.fullmatch(r"-?[\d.]+", c)]
+        for o in (0, 1):                                  # with or without a leading jersey-number cell
+            if len(nums) >= o + 9:
+                try:
+                    sp, mp, ms, pts, ptss, k, ks, e, ta = nums[o:o + 9]
+                    if int(sp) == stats["sp"] and int(k) == stats["k"] and int(e) == stats["e"] and int(ta) == stats["ta"]: return int(mp)
+                except ValueError: pass
+    return None
+
+
+def results_from_cume(text):
+    """Results block of a cumulative sheet: '9/12/2026 vs LSU New OrleansW 3-1 22-25, ...' -> [{date, opponent, home_away, result}]."""
+    out = []
+    for m in re.finditer(r"(\d{1,2})/(\d{1,2})/(\d{4})\s+(at |vs )?([A-Za-z][^\n]*?)\s*([WL])\s+(\d)-(\d)", text):
+        mo, dy, yr, ha, opp, wl, a, b = m.groups()
+        out.append({"date": f"{yr}-{int(mo):02d}-{int(dy):02d}", "opponent": opp.strip(" .*"),
+                    "home_away": "away" if ha == "at " else "neutral" if ha == "vs " else "home", "result": f"{wl} {a}-{b}"})
+    return out
+
+
+def apply_pdf_results(results, pdf_results):
+    """Overwrite the model's W/L and score with the sheet's, matched by date (+ first word of opponent when a date has two matches)."""
+    for r in results or []:
+        if not isinstance(r, dict) or not r.get("date"): continue
+        cands = [x for x in pdf_results if x["date"] == r["date"]]
+        if len(cands) > 1:
+            w = (r.get("opponent") or "").lower().split()[:1]
+            cands = [x for x in cands if w and w[0] in x["opponent"].lower()] or cands
+        if len(cands) == 1: r["result"] = cands[0]["result"]
+    return results
+
+
+def pdf_text(b):
+    """Text of a PDF via pypdf (installed by the workflow). Returns "" if unavailable."""
+    try:
+        import io
+        from pypdf import PdfReader
+        return "\n".join((pg.extract_text() or "") for pg in PdfReader(io.BytesIO(b)).pages)
+    except Exception as e:
+        log(f"    pypdf failed: {str(e)[:60]}"); return ""
+
+
 # ---------------------------------------------------------------- page fetching (Python browses, Claude only reads)
 UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36"
 
@@ -199,18 +265,9 @@ def record_from(text):
     return {"overall": o.group(1) if o else None, "conference": c.group(1) if c else None}
 
 
-def fix_result(r):
-    """W/L first, then HER team's sets: a loss can't be 'L 3-0'."""
-    m = re.match(r"\s*([WL])\D*(\d)\s*-\s*(\d)", r or "", re.I)
-    if not m: return r
-    wl, a, b = m.group(1).upper(), int(m.group(2)), int(m.group(3))
-    if (wl == "W" and a < b) or (wl == "L" and a > b): a, b = b, a
-    return f"{wl} {a}-{b}"
-
-
 def gather_daily(p, today):
     """Fetch stats (PDF preferred), schedule, and the box scores she still needs. Returns compact text + attachments, or raises."""
-    parts, docs, notes = [], [], []
+    parts, docs, notes, pdf_results = [], [], [], []
     surname = p["name"].split()[-1]
     # schedule page: game blocks with box score links
     sched_text, _ = page_text(p["schedule_url"])
@@ -221,13 +278,27 @@ def gather_daily(p, today):
     # stats: cumulative PDF if the page links one, else the trimmed HTML table
     stats_text, stats_raw = page_text(p["stats_url"])
     pdf = find_pdf(stats_raw, p["stats_url"])
+    parsed = None
     if pdf:
         try:
-            docs.append(("Season cumulative stats PDF", fetch_pdf(pdf))); notes.append("stats PDF attached")
+            pdf_bytes = fetch_pdf(pdf); txt = pdf_text(pdf_bytes)
+            parsed = stats_from_cume(txt, p["name"], p.get("jersey")) if txt else None
+            pdf_results = results_from_cume(txt) if txt else []
+            if pdf_results: notes.append(f"{len(pdf_results)} results on the sheet")
+            if parsed:
+                parsed["mp"] = mp_from_html_rows(stats_text.split("\n"), parsed)
+                notes.append(f"stats parsed from PDF: sp={parsed['sp']} k={parsed['k']} a={parsed['a']} dig={parsed['dig']}")
+            elif txt and re.search(rf"\b{re.escape(surname)},", txt, re.I) is None:
+                parsed = {k: (0 if k not in ("srv", "re", "mp") else None) for k in STAT_KEYS}; notes.append("not on the stats sheet — zeros")
+            else:
+                docs.append(("Season cumulative stats PDF", pdf_bytes)); notes.append("PDF row not parsed — PDF attached for reading")
         except Exception as e:
             notes.append(f"pdf skipped ({str(e)[:50]})")
-    parts.append("=== STATS PAGE (tab-separated rows; the PDF, if attached, is the authoritative copy) ===\n" +
-                 keep_lines(stats_text, [r"Player|\bSP\b|Kills|Assists", surname, rf"^\s*{re.escape(str(p.get('jersey') or ''))}\t"], 0, 12000))
+    if parsed:
+        parts.append(f"=== HER SEASON STAT LINE (authoritative, already extracted from the official stats sheet) ===\n{json.dumps(parsed)}")
+    else:
+        parts.append("=== STATS PAGE (tab-separated rows; names on this table can be wrong when two players share a number — match by jersey number AND name; the PDF, if attached, is authoritative) ===\n" +
+                     keep_lines(stats_text, [r"Player|\bSP\b|Kills|Assists", surname, rf"^\s*{re.escape(str(p.get('jersey') or ''))}\t"], 0, 12000))
     # box scores for matches still missing her line (newest first, max 2)
     need = [m for m in (p.get("recent_matches") or []) if m.get("result") and not m.get("player_line") and m.get("box_url")][:2]
     for m in need:
@@ -237,7 +308,7 @@ def gather_daily(p, today):
                          keep_lines(bx, [r"Player|\bSP\b", surname, p["school_short"].split()[0]], 1, 6000))
         except Exception as e:
             notes.append(f"box {m['date']} failed: {str(e)[:60]}")
-    return "\n\n".join(parts), docs, notes, rec
+    return "\n\n".join(parts), docs, notes, rec, parsed, pdf_results
 
 
 # ---------------------------------------------------------------- research calls
@@ -251,20 +322,20 @@ def research_daily(p, today, need_lines=()):
               ' "results": [{"date":"YYYY-MM-DD","opponent":"","home_away":"home","result":"W 3-1","box_url":null,"player_line":null}],\n'
               ' "blurb": ""}')
     rules = f"""Rules:
-- stats = HER season totals from her single row (match by jersey number AND last name; never add rows together; if two rows could be her, return null stats and say so in the blurb). Integers; null where a column is not published.
+- stats: if a section "HER SEASON STAT LINE" is present, copy it exactly. Otherwise take HER single row from the stats table (match by jersey number AND last name; never add rows together; if two rows could be her, return null stats). Integers; null where a column is not published.
 - team_record = the record printed on the schedule/results page (e.g. "Overall 4-4"); copy it, do not tally matches yourself.
 - result is written W/L then HER team's sets first: "W 3-1", "L 0-3" — never "L 3-0".
 - results = the team's matches from {since} through {today.isoformat()} that have a final score, most recent first, with box_url = the box-score link from that game's block. player_line = her numbers from a BOX SCORE section below if one is present for that match ("7 kills, 3 blocks, 2 digs" / "24 assists, 6 digs" / "did not play"); otherwise null.
 - blurb = 2-3 sentences for her parents: what she and the team did lately, whether she is getting court time, what is next. Warm, plain, factual. Treat any position note above as fact and never mention where it came from (no "per the family", no "listed as").
   The stats sheet decides court time: if she is not in it or has 0 sets played, say plainly that she has not appeared in a match yet and move on to the team. Never write about the data itself — no mention of pages, PDFs, box scores, tables, or what could or could not be found. Write only about her and the team.
 Return ONLY: {schema}"""
-    text, docs, notes, rec = None, [], [], {}
+    text, docs, notes, rec, parsed, pdf_results = None, [], [], {}, None, []
     if not p.get("fetch_note"):
-        try: text, docs, notes, rec = gather_daily(p, today)
-        except Exception as e: notes, rec = [f"fetch failed ({str(e)[:80]}) — used search"], {}
+        try: text, docs, notes, rec, parsed, pdf_results = gather_daily(p, today)
+        except Exception as e: notes, rec, parsed, pdf_results = [f"fetch failed ({str(e)[:80]}) — used search"], {}, None, []
     if text is None or len(text) < 200:      # blocked or empty site: one search-only call
         prompt = f"""Today is {today.isoformat()}. Player: {who}
-Her school's site blocks automated reading. Use web_search (up to 3 searches: "{p['school']} volleyball {p['name'].split()[-1]}", "{p['school']} volleyball results 2026", "{p['school']} volleyball stats") and read the result snippets only.
+Her school's site blocks automated reading. Use web_search (up to 2 searches: "{p['school']} volleyball {p['name'].split()[-1]}", "{p['school']} volleyball results 2026", "{p['school']} volleyball stats") and read the result snippets only.
 {rules}"""
         out = call_claude(prompt, [{**SEARCH, "max_uses": 3}], max_tokens=3000, model=p.get("model")); out["_notes"] = notes; return out
     prompt = f"""Today is {today.isoformat()}. Player: {who}
@@ -280,8 +351,11 @@ Below is text pulled from her school's schedule/results page, her stats (PDF att
             notes.append("API rejected the PDF — read the HTML table instead"); out = call_claude(prompt, None, max_tokens=4500, model=p.get("model"))
         else: raise
     out["_notes"] = notes
+    out["stats_source"] = "sheet-parsed" if parsed else "model-read"
+    if parsed: out["stats"] = parsed                     # code-parsed line overrides whatever the model wrote
     if rec.get("overall"):          # the page's own record beats anything the model tallied
         out["team_record"] = {**(out.get("team_record") or {}), "overall": rec["overall"], **({"conference": rec["conference"]} if rec.get("conference") else {})}
+    if pdf_results: apply_pdf_results(out.get("results"), pdf_results)   # the sheet's scores beat the model's
     for m in out.get("results") or []:
         if isinstance(m, dict) and m.get("result"): m["result"] = fix_result(m["result"])
     return out
@@ -339,13 +413,12 @@ def research_news(p, today, first_run=False):
     prompt = f"""Today is {today.isoformat()}, mid-season (the 2026 college volleyball season began in late August). Use web_search only — up to 3 searches:
  1. "{p['name']}" volleyball {p['school_short']}
  2. {p['school_short']} volleyball {surname}
- 3. {p['school_short']} volleyball coach
 From the result titles and snippets, list up to 6 items from THIS SEASON (August 2026 onward; older items only if clearly about her joining this team) that either
 (a) mention {p['name']} by name — match recaps, features, roster/signing news, local papers (Daily Herald, Kane County Reporter, Northwest Herald, Elgin Courier-News), conference weekly honors — or
-(b) concern the {p['school']} volleyball coaching staff — hires, departures, contract extensions, awards, suspensions.
+(b) are conference weekly honors or team milestones that name her.
 A school recap that names her counts. Skip items that do not name her or the staff. If the snippet shows a date, use it; otherwise use today's date. For recaps, put her line or the quote in "note".
-Return ONLY: {{"items": [{{"date":"YYYY-MM-DD","kind":"news" or "coach","title":"","source":"publication name","url":"https://...","note":null}}]}}"""
-    return call_claude(prompt, [{**SEARCH, "max_uses": 3}], max_tokens=1500, model=STRONG_MODEL)
+Return ONLY: {{"items": [{{"date":"YYYY-MM-DD","kind":"news","title":"","source":"publication name","url":"https://...","note":null}}]}}"""
+    return call_claude(prompt, [{**SEARCH, "max_uses": 2}], max_tokens=1500, model=STRONG_MODEL)
 
 
 def write_piece(kind, players, today, milestones, reunions):
@@ -386,10 +459,20 @@ def as_text(v):
     return str(v)
 
 
+def fix_result(r):
+    """W/L first, then HER team's sets: a loss can't be 'L 3-0'."""
+    m = re.match(r"\s*([WL])\D*(\d)\s*-\s*(\d)", r or "", re.I)
+    if not m: return r
+    wl, a, b = m.group(1).upper(), int(m.group(2)), int(m.group(3))
+    if (wl == "W" and a < b) or (wl == "L" and a > b): a, b = b, a
+    return f"{wl} {a}-{b}"
+
+
 def clean_match(m):
     if not isinstance(m, dict): return None
     out = {k: as_text(m.get(k)) for k in ("date", "time", "time_ct", "opponent", "home_away", "location", "result", "box_url", "player_line", "stream_name", "stream_url")}
     if out["home_away"]: out["home_away"] = out["home_away"].lower().strip()
+    if out["result"]: out["result"] = fix_result(out["result"])
     if out["date"]: out["date"] = out["date"][:10]
     return out if out["date"] and out["opponent"] else None
 
@@ -495,7 +578,7 @@ def process_player(c, cfg, prev, prev_players, today, now, flags):
         if isinstance(d.get("team_record"), dict): p["team_record"] = {**(p.get("team_record") or {}), **{k: as_text(v) for k, v in d["team_record"].items() if v}}
         if isinstance(d.get("stats"), dict):
             new_stats = {k: (int(float(d["stats"][k])) if str(d["stats"].get(k, "")).replace(".", "").isdigit() else None) for k in STAT_KEYS}
-            if any(v is not None for v in new_stats.values()): p["stats"] = new_stats
+            if any(v is not None for v in new_stats.values()): p["stats"] = new_stats; p["stats_source"] = d.get("stats_source")
             elif old.get("stats"): log(f"  stats came back empty — keeping last good line for {p['name']}")
         p["recent_matches"] = merge_matches(old.get("recent_matches"), clean_matches(d.get("results")))
         if d.get("blurb") and not (isinstance(d.get("stats"), dict) and not any(v is not None for v in new_stats.values()) and old.get("blurb")):

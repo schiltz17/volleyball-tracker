@@ -286,9 +286,9 @@ function games(){
 let bfilter='all';
 function buzz(){
   const K={recap:'Recap',news:'In the news',coach:'Coaches',mile:'Milestone'};const keepX=$('#s-buzz .chips')?.scrollLeft||0;
-  let h=`<div class="chips">${[['all','All'],['recap','Recaps'],['news','News'],['coach','Coaches'],['mile','Milestones']].map(f=>`<button class="${bfilter===f[0]?'on':''}" onclick="bfilter='${f[0]}';buzz()">${f[1]}</button>`).join('')}</div>`;
+  let h=`<div class="chips">${[['all','All'],['recap','Recaps'],['news','News'],['mile','Milestones']].map(f=>`<button class="${bfilter===f[0]?'on':''}" onclick="bfilter='${f[0]}';buzz()">${f[1]}</button>`).join('')}</div>`;
   const posts=[...(DATA.buzz||[]),...(DATA.milestones||[]).map(m=>({...m,kind:'mile',title:m.text}))].map(b=>({...b,d:pd(b.date)})).filter(b=>b.d&&(bfilter==='all'||b.kind===bfilter)).sort((a,b)=>b.d-a.d);
-  if(!posts.length)h+=`<div class="card empty" style="margin-top:10px"><b>Nothing here yet</b>${bfilter==='mile'?'Firsts and career highs show up as the girls record them.':bfilter==='coach'?'Coaching-staff news is checked twice a week.':'News is gathered Monday and Thursday mornings.'}</div>`;
+  if(!posts.length)h+=`<div class="card empty" style="margin-top:10px"><b>Nothing here yet</b>${bfilter==='mile'?'Firsts and career highs show up as the girls record them.':'News is gathered Monday and Thursday mornings.'}</div>`;
   posts.forEach(b=>{const p=b.player_id?byId[b.player_id]:null;const isPrev=b.kind==='recap'&&/preview/i.test(b.title);
     h+=`<div class="post"><div class="k ovl"><i class="${b.kind}">${isPrev?'Preview':K[b.kind]||b.kind}</i><span>${fday(b.d)}</span></div>`;
     if(b.kind==='mile'&&p)h+=`<div style="display:flex;align-items:center;gap:10px;margin-top:8px">${av(p,'sm')}<div><h3 style="margin:0">${esc(b.title)}</h3><div style="font-size:13px;color:var(--ink3)">${esc(short(p))} · ${esc(p.school_short)}</div></div></div>`;
