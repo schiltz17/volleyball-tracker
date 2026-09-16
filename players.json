@@ -17,7 +17,7 @@
       "conference": "Ohio Valley Conference",
       "city": "Morehead, KY",
       "hometown_hs": "Hampshire, IL / Hampshire HS",
-      "site": "https://msueagles.com",
+      "site": "https://msueagles.com/sports/womens-volleyball",
       "roster_url": "https://msueagles.com/sports/womens-volleyball/roster",
       "schedule_url": "https://msueagles.com/sports/womens-volleyball/schedule",
       "stats_url": "https://msueagles.com/sports/womens-volleyball/stats",
@@ -40,7 +40,7 @@
       "conference": "Missouri Valley Conference",
       "city": "Chicago, IL",
       "hometown_hs": "Hampshire HS",
-      "site": "https://uicflames.com",
+      "site": "https://uicflames.com/sports/womens-volleyball",
       "roster_url": "https://uicflames.com/sports/womens-volleyball/roster/elizabeth-king/11821",
       "schedule_url": "https://uicflames.com/sports/womens-volleyball/schedule",
       "stats_url": "https://uicflames.com/sports/womens-volleyball/stats",
@@ -63,7 +63,7 @@
       "conference": "Big South Conference",
       "city": "Boiling Springs, NC",
       "hometown_hs": "Carpentersville, IL / Jacobs HS",
-      "site": "https://gwusports.com",
+      "site": "https://gwusports.com/sports/womens-volleyball",
       "roster_url": "https://gwusports.com/sports/womens-volleyball/roster",
       "schedule_url": "https://gwusports.com/sports/womens-volleyball/schedule",
       "stats_url": "https://gwusports.com/sports/womens-volleyball/stats",
@@ -71,7 +71,9 @@
         "primary": "#BB0000",
         "secondary": "#111111"
       },
-      "tz": "America/New_York"
+      "tz": "America/New_York",
+      "jersey": "20",
+      "disambiguation": "Gardner-Webb has TWO players named Gracyn Sanders. Ours is #20, a freshman middle blocker from Carpentersville, IL (Jacobs HS). The other is #21, a sophomore setter from Poquoson, VA — ignore her rows entirely."
     },
     {
       "id": "hard",
@@ -86,7 +88,7 @@
       "conference": "East Coast Conference",
       "city": "Rochester, NY",
       "hometown_hs": "North Aurora, IL / Aurora Christian",
-      "site": "https://robertsredhawks.com",
+      "site": "https://robertsredhawks.com/sports/womens-volleyball",
       "roster_url": "https://robertsredhawks.com/sports/womens-volleyball/roster",
       "schedule_url": "https://robertsredhawks.com/sports/womens-volleyball/schedule",
       "stats_url": "https://robertsredhawks.com/sports/womens-volleyball/stats",
@@ -109,7 +111,7 @@
       "conference": "Great American Conference",
       "city": "Russellville, AR",
       "hometown_hs": "Hampshire HS",
-      "site": "https://arkansastechsports.com",
+      "site": "https://arkansastechsports.com/sports/womens-volleyball",
       "roster_url": "https://arkansastechsports.com/sports/womens-volleyball/roster",
       "schedule_url": "https://arkansastechsports.com/sports/womens-volleyball/schedule",
       "stats_url": "https://arkansastechsports.com/sports/womens-volleyball/stats",
@@ -132,7 +134,7 @@
       "conference": "Northern Sun Intercollegiate Conference",
       "city": "Winona, MN",
       "hometown_hs": "",
-      "site": "https://winonastatewarriors.com",
+      "site": "https://winonastatewarriors.com/sports/womens-volleyball",
       "roster_url": "https://winonastatewarriors.com/sports/womens-volleyball/roster",
       "schedule_url": "https://winonastatewarriors.com/sports/womens-volleyball/schedule",
       "stats_url": "https://winonastatewarriors.com/sports/womens-volleyball/stats",
@@ -155,7 +157,7 @@
       "conference": "Gulf South Conference",
       "city": "Nashville, TN",
       "hometown_hs": "Elk Grove Village, IL / St. Viator HS",
-      "site": "https://tnutrojans.com",
+      "site": "https://tnutrojans.com/sports/womens-volleyball",
       "roster_url": "https://tnutrojans.com/sports/womens-volleyball/roster/mary-francl/7073",
       "schedule_url": "https://tnutrojans.com/sports/womens-volleyball/schedule",
       "stats_url": "https://tnutrojans.com/sports/womens-volleyball/stats",
@@ -178,7 +180,7 @@
       "conference": "Northern Sun Intercollegiate Conference",
       "city": "Mankato, MN",
       "hometown_hs": "Elgin, IL / Central HS",
-      "site": "https://msumavericks.com",
+      "site": "https://msumavericks.com/sports/womens-volleyball",
       "roster_url": "https://msumavericks.com/sports/womens-volleyball/roster",
       "schedule_url": "https://msumavericks.com/sports/womens-volleyball/schedule",
       "stats_url": "https://msumavericks.com/sports/womens-volleyball/stats",
@@ -201,7 +203,7 @@
       "conference": "Illinois Skyway Collegiate Conference",
       "city": "Crystal Lake, IL",
       "hometown_hs": "",
-      "site": "https://www.mccscots.com",
+      "site": "https://www.mccscots.com/sports/wvball",
       "roster_url": "https://www.mccscots.com/sports/wvball/2026-27/roster",
       "schedule_url": "https://www.mccscots.com/sports/wvball/2026-27/schedule",
       "stats_url": "https://www.mccscots.com/sports/wvball/2026-27/teams/mchenrycountycollege",
@@ -210,7 +212,8 @@
         "secondary": "#1F4E9A"
       },
       "tz": "America/Chicago",
-      "fetch_note": "This site blocks automated fetching — go straight to web_search for the roster, results, and stats (search the school name + 'volleyball' + the player's name; opponent recaps and the ISCC conference site also carry results)."
+      "fetch_note": "This site blocks automated fetching — go straight to web_search for the roster, results, and stats (search the school name + 'volleyball' + the player's name; opponent recaps and the ISCC conference site also carry results).",
+      "model": "claude-sonnet-5"
     },
     {
       "id": "mitchell",
@@ -225,7 +228,7 @@
       "conference": "Illinois Skyway Collegiate Conference",
       "city": "Crystal Lake, IL",
       "hometown_hs": "",
-      "site": "https://www.mccscots.com",
+      "site": "https://www.mccscots.com/sports/wvball",
       "roster_url": "https://www.mccscots.com/sports/wvball/2026-27/roster",
       "schedule_url": "https://www.mccscots.com/sports/wvball/2026-27/schedule",
       "stats_url": "https://www.mccscots.com/sports/wvball/2026-27/teams/mchenrycountycollege",
@@ -234,7 +237,8 @@
         "secondary": "#1F4E9A"
       },
       "tz": "America/Chicago",
-      "fetch_note": "This site blocks automated fetching — go straight to web_search for the roster, results, and stats (search the school name + 'volleyball' + the player's name; opponent recaps and the ISCC conference site also carry results)."
+      "fetch_note": "This site blocks automated fetching — go straight to web_search for the roster, results, and stats (search the school name + 'volleyball' + the player's name; opponent recaps and the ISCC conference site also carry results).",
+      "model": "claude-sonnet-5"
     },
     {
       "id": "wurtz",
@@ -249,7 +253,7 @@
       "conference": "Illinois Skyway Collegiate Conference",
       "city": "Elgin, IL",
       "hometown_hs": "",
-      "site": "https://www.eccathletics.com",
+      "site": "https://www.eccathletics.com/sports/wvball",
       "roster_url": "https://www.eccathletics.com/sports/wvball/2026-27/roster",
       "schedule_url": "https://www.eccathletics.com/sports/wvball/2026-27/schedule",
       "stats_url": "https://www.eccathletics.com/sports/wvball/2026-27/teams/elgin",
@@ -257,7 +261,8 @@
         "primary": "#1B4F9C",
         "secondary": "#F2B01E"
       },
-      "tz": "America/Chicago"
+      "tz": "America/Chicago",
+      "model": "claude-sonnet-5"
     },
     {
       "id": "schatz",

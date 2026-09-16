@@ -313,7 +313,7 @@ const TABLES={
   set:{note:'A/set = assists per set · BHE = ball-handling errors · Hit % = (K−E)/TA',cols:[['a','Asst'],['aps','A/set'],['bhe','BHE'],['k','K'],['hit','Hit %']],
     row:x=>({a:n(x.a),aps:per(x.a,x.sp),bhe:n(x.bhe),k:n(x.k),hit:pct(n(x.k)-n(x.e),x.ta)}),sort:'a',has:x=>n(x.a)>0},
   serve:{note:'Ace % and Err % are per serve attempt · Aces/set = aces per set',cols:[['srv','Att'],['sa','Aces'],['se','Err'],['ar','Ace %'],['er','Err %'],['aps','Aces/set']],
-    row:x=>({srv:n(x.srv),sa:n(x.sa),se:n(x.se),ar:rate(x.sa,x.srv),er:rate(x.se,x.srv),aps:per(x.sa,x.sp)}),sort:'sa',has:x=>n(x.srv)>0},
+    row:x=>({srv:n(x.srv),sa:n(x.sa),se:n(x.se),ar:rate(x.sa,x.srv),er:rate(x.se,x.srv),aps:per(x.sa,x.sp)}),sort:'sa',has:x=>n(x.srv)>0||n(x.sa)>0||n(x.se)>0},
   dig:{note:'D/set = digs per set · RE = reception errors',cols:[['dig','Digs'],['dps','D/set'],['re','RE']],
     row:x=>({dig:n(x.dig),dps:per(x.dig,x.sp),re:n(x.re)}),sort:'dig',has:x=>n(x.dig)>0},
 };
