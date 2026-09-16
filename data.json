@@ -3,8 +3,8 @@
  "club": "Top Flight Volleyball Club, Elgin IL",
  "club_season": "2025-26",
  "college_season": "2026",
- "updated_at": "2026-09-15T19:44-05:00",
- "updated_label": "Tuesday 7:44 PM CT",
+ "updated_at": "2026-09-15T20:57-05:00",
+ "updated_label": "Tuesday 8:57 PM CT",
  "summary": {
   "headline": "Big Weekend for Gracyn, Tough Stretch for Others",
   "body": [
@@ -30,8 +30,8 @@
    "division": "NCAA D1",
    "conference": "Ohio Valley Conference",
    "city": "Morehead, KY",
-   "hometown_hs": "Hampshire, Ill. / Hampshire HS",
-   "site": "https://msueagles.com",
+   "hometown_hs": "Hampshire, IL / Hampshire HS",
+   "site": "https://msueagles.com/sports/womens-volleyball",
    "roster_url": "https://msueagles.com/sports/womens-volleyball/roster",
    "schedule_url": "https://msueagles.com/sports/womens-volleyball/schedule",
    "stats_url": "https://msueagles.com/sports/womens-volleyball/stats",
@@ -46,35 +46,35 @@
      "date": "2026-09-12",
      "opponent": "Michigan State",
      "home_away": "home",
-     "result": "L 3-0",
+     "result": "L 0-3",
      "box_url": "https://msueagles.com/sports/womens-volleyball/stats/2026/michigan-state/boxscore/6802",
-     "player_line": "2 blocks"
+     "player_line": "2 blocks, 1 dig"
     },
     {
      "date": "2026-09-10",
      "opponent": "Cincinnati",
      "home_away": "home",
-     "result": "L 3-0",
+     "result": "L 0-3",
      "box_url": "https://msueagles.com/sports/womens-volleyball/stats/2026/cincinnati/boxscore/6830"
     },
     {
      "date": "2026-09-05",
      "opponent": "Siena",
-     "home_away": "away",
+     "home_away": "neutral",
      "result": "W 3-1",
      "box_url": "https://msueagles.com/sports/womens-volleyball/stats/2026/siena/boxscore/6818"
     },
     {
      "date": "2026-09-04",
      "opponent": "Cleveland State",
-     "home_away": "away",
+     "home_away": "neutral",
      "result": "W 3-1",
      "box_url": "https://msueagles.com/sports/womens-volleyball/stats/2026/cleveland-state/boxscore/6817"
     },
     {
      "date": "2026-09-04",
      "opponent": "Mercyhurst",
-     "home_away": "away",
+     "home_away": "neutral",
      "result": "W 3-0",
      "box_url": "https://msueagles.com/sports/womens-volleyball/stats/2026/mercyhurst/boxscore/6816"
     }
@@ -226,7 +226,7 @@
     },
     {
      "label": "Blocks",
-     "value": 10
+     "value": 11
     }
    ],
    "stats": {
@@ -241,10 +241,10 @@
     "se": 1,
     "srv": null,
     "dig": 10,
-    "re": 0,
-    "bs": 0,
+    "re": null,
+    "bs": 1,
     "ba": 10,
-    "be": 0
+    "be": 3
    },
    "team_record": {
     "overall": "4-4",
@@ -261,11 +261,12 @@
    "class_year": "Fr.",
    "height": "6-2",
    "bio_url": "https://msueagles.com/sports/womens-volleyball/roster/anna-schiltz/9037",
-   "blurb": "Anna has been contributing as a freshman middle blocker, appearing in 8 matches with solid defensive presence including 10 digs and 10 block assists. The Eagles are 4-4 overall after dropping their last two matches to strong opponents Cincinnati and Michigan State, but showed promise earlier in the season winning at the Mercyhurst Invitational. Upcoming matches against Marshall should be important for building momentum in conference play.",
+   "blurb": "Anna is getting steady court time as a backup middle blocker for the Eagles. The team is 4-4 overall after starting strong with three wins at the Mercyhurst Invitational, but has since dropped two home games to Michigan State and Cincinnati. Anna contributed 2 blocks in her 2 sets of play against Michigan State last Saturday.",
    "_highs": {
-    "block": 2
+    "block": 2,
+    "dig": 1
    },
-   "fetched_at": "2026-09-15T19:44-05:00",
+   "fetched_at": "2026-09-15T20:57-05:00",
    "matches_played": 8,
    "sets_played": 26
   },
@@ -281,8 +282,8 @@
    "division": "NCAA D1",
    "conference": "Missouri Valley Conference",
    "city": "Chicago, IL",
-   "hometown_hs": "Hampshire, Ill.",
-   "site": "https://uicflames.com",
+   "hometown_hs": "Hampshire HS",
+   "site": "https://uicflames.com/sports/womens-volleyball",
    "roster_url": "https://uicflames.com/sports/womens-volleyball/roster/elizabeth-king/11821",
    "schedule_url": "https://uicflames.com/sports/womens-volleyball/schedule",
    "stats_url": "https://uicflames.com/sports/womens-volleyball/stats",
@@ -293,6 +294,34 @@
    "tz": "America/Chicago",
    "college_season": "2026",
    "recent_matches": [
+    {
+     "date": "2026-09-13",
+     "opponent": "Western Michigan",
+     "home_away": "home",
+     "result": "W 3-0",
+     "box_url": "https://uicflames.com/sports/womens-volleyball/stats/2026/western-michigan/boxscore/21491"
+    },
+    {
+     "date": "2026-09-12",
+     "opponent": "Central Michigan",
+     "home_away": "home",
+     "result": "W 3-0",
+     "box_url": "https://uicflames.com/sports/womens-volleyball/stats/2026/central-michigan/boxscore/21490"
+    },
+    {
+     "date": "2026-09-11",
+     "opponent": "Auburn",
+     "home_away": "home",
+     "result": "L 0-3",
+     "box_url": "https://uicflames.com/sports/womens-volleyball/stats/2026/auburn/boxscore/21489"
+    },
+    {
+     "date": "2026-09-05",
+     "opponent": "Montana State",
+     "home_away": "neutral",
+     "result": "L 0-3",
+     "box_url": "https://uicflames.com/sports/womens-volleyball/stats/2026/montana-state/boxscore/21487"
+    },
     {
      "date": "2026-09-04",
      "opponent": "St. Thomas",
@@ -339,7 +368,7 @@
     "be": 0
    },
    "team_record": {
-    "overall": "1-4",
+    "overall": "3-6",
     "conference": "0-0"
    },
    "photo_url": "https://uicflames.com/images/2026/8/25/DSC01669.jpg",
@@ -347,20 +376,21 @@
     "instagram": null,
     "x": null
    },
-   "stale": true,
+   "stale": false,
    "jersey": "1",
    "position": "OH",
    "class_year": "Freshman",
    "height": "5-11",
    "bio_url": "https://uicflames.com/sports/womens-volleyball/roster/elizabeth-king/11821",
-   "blurb": "Elizabeth had a strong performance at the St. Thomas match on September 4, contributing 3 kills and 5 block assists in a thrilling 5-set victory. She has earned regular playing time early in her freshman season and continues to develop her game. The Flames look ahead to their home invitational matches this week against Auburn, Central Michigan, and Western Michigan.",
+   "blurb": "Elizabeth is a freshman outside hitter who has played in 8 matches this fall while primarily developing her game off the bench. She recorded 20 kills and 8 block assists in limited sets played. The Flames took two straight wins to close out their home invitational, improving momentum heading into conference play next week.",
    "_highs": {
     "kill": 3,
     "block": 5
    },
    "error": "no JSON in response: I'll collect the information for UIC Flames volleyball. Let me start by fetching the schedule page.The schedule page content was truncated. Let me fetch it again to get the comple",
    "matches_played": 8,
-   "sets_played": 18
+   "sets_played": 18,
+   "fetched_at": "2026-09-15T20:57-05:00"
   },
   {
    "id": "sanders",
@@ -374,8 +404,8 @@
    "division": "NCAA D1",
    "conference": "Big South Conference",
    "city": "Boiling Springs, NC",
-   "hometown_hs": "Carpentersvilla, Ill. / Jacobs HS",
-   "site": "https://gwusports.com",
+   "hometown_hs": "Carpentersville, IL / Jacobs HS",
+   "site": "https://gwusports.com/sports/womens-volleyball",
    "roster_url": "https://gwusports.com/sports/womens-volleyball/roster",
    "schedule_url": "https://gwusports.com/sports/womens-volleyball/schedule",
    "stats_url": "https://gwusports.com/sports/womens-volleyball/stats",
@@ -389,14 +419,14 @@
     {
      "date": "2026-09-12",
      "opponent": "New Orleans",
-     "home_away": "home",
+     "home_away": "neutral",
      "result": "W 3-1",
      "box_url": "https://gwusports.com/boxscore.aspx?id=9178"
     },
     {
      "date": "2026-09-12",
      "opponent": "Mercer",
-     "home_away": "home",
+     "home_away": "neutral",
      "result": "W 3-2",
      "box_url": "https://gwusports.com/boxscore.aspx?id=9182"
     },
@@ -418,13 +448,15 @@
      "date": "2026-09-05",
      "opponent": "Alabama State",
      "home_away": "home",
-     "result": "W 3-0"
+     "result": "W 3-0",
+     "box_url": "https://gwusports.com/boxscore.aspx?id=9176"
     },
     {
      "date": "2026-09-04",
      "opponent": "UNC Wilmington",
      "home_away": "home",
-     "result": "W 3-0"
+     "result": "W 3-2",
+     "box_url": "https://gwusports.com/boxscore.aspx?id=9175"
     },
     {
      "date": "2026-09-01",
@@ -511,24 +543,24 @@
     }
    ],
    "stats": {
-    "mp": 5,
+    "mp": 6,
     "sp": 14,
     "k": 24,
     "e": 12,
     "ta": 87,
     "a": 1,
-    "bhe": 0,
+    "bhe": null,
     "sa": 1,
     "se": 2,
     "srv": null,
-    "dig": 0,
+    "dig": null,
     "re": null,
-    "bs": 0,
-    "ba": 0,
-    "be": 0
+    "bs": null,
+    "ba": null,
+    "be": null
    },
    "team_record": {
-    "overall": "4-4"
+    "overall": "6-4"
    },
    "photo_url": "https://images.sidearmdev.com/crop?url=https%3A%2F%2Fdxbhsrqyrr690.cloudfront.net%2Fsidearm.nextgen.sites%2Fgwu.sidearmsports.com%2Fimages%2F2026%2F8%2F8%2F20.jpg&width=180&height=270&type=webp",
    "socials": {
@@ -536,16 +568,17 @@
     "x": "gwusports"
    },
    "stale": false,
-   "jersey": 20,
+   "jersey": "20",
    "position": "MB",
    "class_year": "Fr",
    "height": "6-1",
    "bio_url": "https://gwusports.com/sports/womens-volleyball/roster/gracyn-sanders/11699",
-   "blurb": "Gracyn is a freshman middle blocker who has been getting solid court time this season. Through early September, the Runnin' Bulldogs sit at 4-4 overall with a busy schedule ahead. She's contributing with kills and solid blocking as the team continues to develop.",
+   "blurb": "Gracyn is getting valuable court time as a freshman middle blocker, appearing in six matches with strong contributions early in the season. The Runnin' Bulldogs are 6-4 overall through September 15 and recently won two matches in the UWG tournament. Gracyn should see continued playing time as Gardner-Webb continues their fall schedule.",
    "_highs": {},
-   "fetched_at": "2026-09-15T19:44-05:00",
-   "matches_played": 5,
-   "sets_played": 14
+   "fetched_at": "2026-09-15T20:57-05:00",
+   "matches_played": 6,
+   "sets_played": 14,
+   "disambiguation": "Gardner-Webb has TWO players named Gracyn Sanders. Ours is #20, a freshman middle blocker from Carpentersville, IL (Jacobs HS). The other is #21, a sophomore setter from Poquoson, VA — ignore her rows entirely."
   },
   {
    "id": "hard",
@@ -560,7 +593,7 @@
    "conference": "East Coast Conference",
    "city": "Rochester, NY",
    "hometown_hs": "North Aurora, IL / Aurora Christian",
-   "site": "https://robertsredhawks.com",
+   "site": "https://robertsredhawks.com/sports/womens-volleyball",
    "roster_url": "https://robertsredhawks.com/sports/womens-volleyball/roster",
    "schedule_url": "https://robertsredhawks.com/sports/womens-volleyball/schedule",
    "stats_url": "https://robertsredhawks.com/sports/womens-volleyball/stats",
@@ -570,26 +603,111 @@
    },
    "tz": "America/New_York",
    "college_season": "2026",
-   "recent_matches": [],
+   "recent_matches": [
+    {
+     "date": "2026-09-12",
+     "opponent": "Frostburg State University",
+     "home_away": "neutral",
+     "result": "L 1-3",
+     "box_url": "https://robertsredhawks.com/sports/womens-volleyball/stats/2026/frostburg-state-university-at-slippery-rock-tournament-/boxscore/5812",
+     "player_line": "7 assists, 5 digs"
+    },
+    {
+     "date": "2026-09-12",
+     "opponent": "Slippery Rock University",
+     "home_away": "away",
+     "result": "L 0-3",
+     "box_url": "https://robertsredhawks.com/sports/womens-volleyball/stats/2026/slippery-rock-university-at-slippery-rock-tournament-/boxscore/5811"
+    },
+    {
+     "date": "2026-09-11",
+     "opponent": "Bloomsburg University",
+     "home_away": "neutral",
+     "result": "L 0-3",
+     "box_url": "https://robertsredhawks.com/sports/womens-volleyball/stats/2026/bloomsburg-university-at-slippery-rock-tournament-/boxscore/5790"
+    },
+    {
+     "date": "2026-09-05",
+     "opponent": "Redeemer University",
+     "home_away": "home",
+     "result": "W 3-1",
+     "box_url": "https://robertsredhawks.com/sports/womens-volleyball/stats/2026/redeemer-university-roberts-wesleyan-invitational-/boxscore/5807"
+    },
+    {
+     "date": "2026-09-05",
+     "opponent": "Georgian Court University",
+     "home_away": "home",
+     "result": "L 1-3",
+     "box_url": "https://robertsredhawks.com/sports/womens-volleyball/stats/2026/georgian-court-university-roberts-wesleyan-invitational-/boxscore/5806"
+    },
+    {
+     "date": "2026-09-04",
+     "opponent": "Lock Haven University",
+     "home_away": "home",
+     "result": "L 0-3",
+     "box_url": "https://robertsredhawks.com/sports/womens-volleyball/stats/2026/lock-haven-university-roberts-wesleyan-invitational-/boxscore/5789"
+    }
+   ],
    "upcoming": [],
-   "season_stats": [],
-   "stats": null,
-   "team_record": null,
+   "season_stats": [
+    {
+     "label": "Assists",
+     "value": 55
+    },
+    {
+     "label": "Assists/set",
+     "value": "2.89"
+    },
+    {
+     "label": "Digs",
+     "value": 22
+    },
+    {
+     "label": "Aces",
+     "value": 1
+    }
+   ],
+   "stats": {
+    "mp": 8,
+    "sp": 19,
+    "k": 2,
+    "e": 4,
+    "ta": 8,
+    "a": 55,
+    "bhe": 0,
+    "sa": 1,
+    "se": 8,
+    "srv": null,
+    "dig": 22,
+    "re": 0,
+    "bs": 0,
+    "ba": 0,
+    "be": 1
+   },
+   "team_record": {
+    "overall": "2-8",
+    "conference": "0-0"
+   },
    "photo_url": "https://robertsredhawks.com/images/2026/8/16/Breanna_Hard.jpg",
    "socials": {
     "instagram": null,
     "x": null
    },
-   "stale": true,
+   "stale": false,
    "jersey": "8",
    "position": "S",
    "class_year": "Fr.",
    "height": "5-9",
    "bio_url": "https://robertsredhawks.com/sports/womens-volleyball/roster/breanna-hard/5672",
-   "_highs": {},
+   "_highs": {
+    "assist": 7,
+    "dig": 5
+   },
    "error": "no JSON in response: I'll help you collect this information about Roberts Wesleyan University Redhawks volleyball. Let me start by fetching the schedule page.Let me try the web search approach to find",
-   "matches_played": null,
-   "sets_played": null
+   "matches_played": 8,
+   "sets_played": 19,
+   "blurb": "Breanna has played in 8 matches as the team's setter, handling 55 assists while also contributing 22 digs on defense. The Redhawks started the season 2-8, though they captured a win over Redeemer early on. Breanna is getting consistent court time and working to develop her setting skills in her freshman year.",
+   "fetched_at": "2026-09-15T20:57-05:00"
   },
   {
    "id": "lambert",
@@ -603,8 +721,8 @@
    "division": "NCAA D2",
    "conference": "Great American Conference",
    "city": "Russellville, AR",
-   "hometown_hs": "Pingree Grove, Ill. / Hampshire HS",
-   "site": "https://arkansastechsports.com",
+   "hometown_hs": "Hampshire HS",
+   "site": "https://arkansastechsports.com/sports/womens-volleyball",
    "roster_url": "https://arkansastechsports.com/sports/womens-volleyball/roster",
    "schedule_url": "https://arkansastechsports.com/sports/womens-volleyball/schedule",
    "stats_url": "https://arkansastechsports.com/sports/womens-volleyball/stats",
@@ -614,25 +732,125 @@
    },
    "tz": "America/Chicago",
    "college_season": "2026",
-   "recent_matches": [],
+   "recent_matches": [
+    {
+     "date": "2026-09-12",
+     "opponent": "Illinois-Springfield",
+     "home_away": "away",
+     "result": "L 2-3",
+     "box_url": "https://arkansastechsports.com/sports/womens-volleyball/stats/2026/illinois-springfield/boxscore/7600",
+     "player_line": "8 assists, 3 digs"
+    },
+    {
+     "date": "2026-09-11",
+     "opponent": "McKendree",
+     "home_away": "away",
+     "result": "W 3-0",
+     "box_url": "https://arkansastechsports.com/sports/womens-volleyball/stats/2026/mckendree/boxscore/7598"
+    },
+    {
+     "date": "2026-09-11",
+     "opponent": "Missouri Western",
+     "home_away": "away",
+     "result": "L 0-3",
+     "box_url": "https://arkansastechsports.com/sports/womens-volleyball/stats/2026/missouri-western/boxscore/7597"
+    },
+    {
+     "date": "2026-09-08",
+     "opponent": "Henderson State",
+     "home_away": "home",
+     "result": "W 3-1",
+     "box_url": "https://arkansastechsports.com/sports/womens-volleyball/stats/2026/henderson-state/boxscore/7553"
+    },
+    {
+     "date": "2026-09-04",
+     "opponent": "Pittsburg State",
+     "home_away": "away",
+     "result": "L 1-3",
+     "box_url": "https://arkansastechsports.com/sports/womens-volleyball/stats/2026/pittsburg-state/boxscore/7596"
+    },
+    {
+     "date": "2026-09-04",
+     "opponent": "Truman State",
+     "home_away": "away",
+     "result": "W 3-0",
+     "box_url": "https://arkansastechsports.com/sports/womens-volleyball/stats/2026/truman-state/boxscore/7595"
+    },
+    {
+     "date": "2026-09-03",
+     "opponent": "William Jewell",
+     "home_away": "away",
+     "result": "W 3-0",
+     "box_url": "https://arkansastechsports.com/sports/womens-volleyball/stats/2026/william-jewell/boxscore/7594"
+    },
+    {
+     "date": "2026-09-03",
+     "opponent": "Missouri Southern",
+     "home_away": "away",
+     "result": "W 3-0",
+     "box_url": "https://arkansastechsports.com/sports/womens-volleyball/stats/2026/missouri-southern/boxscore/7593"
+    }
+   ],
    "upcoming": [],
-   "season_stats": [],
-   "stats": null,
-   "team_record": null,
+   "season_stats": [
+    {
+     "label": "Assists",
+     "value": 93
+    },
+    {
+     "label": "Assists/set",
+     "value": "4.04"
+    },
+    {
+     "label": "Digs",
+     "value": 24
+    },
+    {
+     "label": "Aces",
+     "value": 7
+    }
+   ],
+   "stats": {
+    "mp": 9,
+    "sp": 23,
+    "k": 0,
+    "e": 1,
+    "ta": 1,
+    "a": 93,
+    "bhe": 0,
+    "sa": 7,
+    "se": 5,
+    "srv": null,
+    "dig": 24,
+    "re": 2,
+    "bs": 0,
+    "ba": 0,
+    "be": 0
+   },
+   "team_record": {
+    "overall": "7-6",
+    "conference": "1-0"
+   },
    "photo_url": "https://arkansastechsports.com/images/2026/7/16/_2_Lambert__Kylie.jpg",
    "socials": {
     "instagram": null,
     "x": null
    },
-   "stale": true,
+   "stale": false,
    "jersey": 2,
    "position": "S",
    "class_year": "Fr.",
    "height": "5-8",
    "bio_url": "https://arkansastechsports.com/sports/womens-volleyball/roster/kylie-lambert/5939",
    "error": "Extra data: line 99 column 1 (char 2266)",
-   "matches_played": null,
-   "sets_played": null
+   "matches_played": 9,
+   "sets_played": 23,
+   "blurb": "Kylie is gaining confidence as Arkansas Tech's setter, working her way into matches after an impressive start. She ran the offense in the team's September 12 loss to Illinois-Springfield, recording 8 assists. The Golden Suns sit 7-6 overall with conference play underway; Kylie's playmaking will be crucial as ATU continues its season.",
+   "_highs": {
+    "assist": 8,
+    "dig": 3
+   },
+   "fetched_at": "2026-09-15T20:57-05:00"
   },
   {
    "id": "merlin",
@@ -646,8 +864,8 @@
    "division": "NCAA D2",
    "conference": "Northern Sun Intercollegiate Conference",
    "city": "Winona, MN",
-   "hometown_hs": "Algonquin, Ill. / Jacobs",
-   "site": "https://winonastatewarriors.com",
+   "hometown_hs": "",
+   "site": "https://winonastatewarriors.com/sports/womens-volleyball",
    "roster_url": "https://winonastatewarriors.com/sports/womens-volleyball/roster",
    "schedule_url": "https://winonastatewarriors.com/sports/womens-volleyball/schedule",
    "stats_url": "https://winonastatewarriors.com/sports/womens-volleyball/stats",
@@ -826,9 +1044,9 @@
    "class_year": "Freshman",
    "height": "5-11",
    "bio_url": "https://winonastatewarriors.com/sports/womens-volleyball/roster/layla-merlin/15975",
-   "blurb": "Layla is on the Winona State roster as a freshman right side hitter. The Warriors are off to a challenging start this season with a 2-6 overall record and 1-1 in conference play. Layla has not yet appeared in the individual statistics from matches through September 15, though she remains part of the active roster for upcoming conference and non-conference games.",
+   "blurb": "Layla has not appeared in the cumulative statistics or recent box scores through September 15, indicating she has not yet seen court time this season. The Warriors are 2-6 overall (1-1 in conference play) as they continue to develop their roster. Layla will have opportunities as the season progresses.",
    "_highs": {},
-   "fetched_at": "2026-09-15T19:44-05:00",
+   "fetched_at": "2026-09-15T20:57-05:00",
    "matches_played": 0,
    "sets_played": 0
   },
@@ -845,7 +1063,7 @@
    "conference": "Gulf South Conference",
    "city": "Nashville, TN",
    "hometown_hs": "Elk Grove Village, IL / St. Viator HS",
-   "site": "https://tnutrojans.com",
+   "site": "https://tnutrojans.com/sports/womens-volleyball",
    "roster_url": "https://tnutrojans.com/sports/womens-volleyball/roster/mary-francl/7073",
    "schedule_url": "https://tnutrojans.com/sports/womens-volleyball/schedule",
    "stats_url": "https://tnutrojans.com/sports/womens-volleyball/stats",
@@ -857,11 +1075,67 @@
    "college_season": "2026",
    "recent_matches": [
     {
+     "date": "2026-09-12",
+     "opponent": "Palm Beach Atlantic",
+     "home_away": "away",
+     "result": "L 0-3",
+     "box_url": "https://tnutrojans.com/sports/womens-volleyball/stats/2026/palm-beach-atlantic/boxscore/8892"
+    },
+    {
+     "date": "2026-09-11",
+     "opponent": "Lynn",
+     "home_away": "away",
+     "result": "L 0-3",
+     "box_url": "https://tnutrojans.com/sports/womens-volleyball/stats/2026/lynn-fla-/boxscore/8891"
+    },
+    {
+     "date": "2026-09-11",
+     "opponent": "Nova Southeastern",
+     "home_away": "away",
+     "result": "L 0-3",
+     "box_url": "https://tnutrojans.com/sports/womens-volleyball/stats/2026/nova-southeatern-fla-/boxscore/8890"
+    },
+    {
+     "date": "2026-09-05",
+     "opponent": "Spring Hill",
+     "home_away": "away",
+     "result": "L 1-3",
+     "box_url": "https://tnutrojans.com/sports/womens-volleyball/stats/2026/spring-hill-ala-/boxscore/8889"
+    },
+    {
      "date": "2026-09-04",
      "opponent": "Mars Hill",
      "home_away": "away",
      "result": "W 3-0",
      "box_url": "https://tnutrojans.com/sports/womens-volleyball/stats/2026/mars-hill-n-c-/boxscore/8888"
+    },
+    {
+     "date": "2026-09-04",
+     "opponent": "Harding",
+     "home_away": "away",
+     "result": "L 0-3",
+     "box_url": "https://tnutrojans.com/sports/womens-volleyball/stats/2026/harding-ark-/boxscore/8887"
+    },
+    {
+     "date": "2026-08-29",
+     "opponent": "Shorter",
+     "home_away": "home",
+     "result": "W 3-0",
+     "box_url": "https://tnutrojans.com/sports/womens-volleyball/stats/2026/shorter-ga-/boxscore/8886"
+    },
+    {
+     "date": "2026-08-29",
+     "opponent": "Ohio Dominican",
+     "home_away": "home",
+     "result": "L 0-3",
+     "box_url": "https://tnutrojans.com/sports/womens-volleyball/stats/2026/ohio-dominican/boxscore/8885"
+    },
+    {
+     "date": "2026-08-28",
+     "opponent": "Lincoln Memorial",
+     "home_away": "home",
+     "result": "L 2-3",
+     "box_url": "https://tnutrojans.com/sports/womens-volleyball/stats/2026/lincoln-memorial-tenn-/boxscore/8884"
     }
    ],
    "upcoming": [
@@ -949,7 +1223,7 @@
     "sp": 0,
     "k": 0,
     "e": 0,
-    "ta": 0,
+    "ta": null,
     "a": 0,
     "bhe": 0,
     "sa": 0,
@@ -962,9 +1236,10 @@
     "be": 0
    },
    "team_record": {
-    "overall": "1-2",
+    "overall": "2-7",
     "standing": "9th of 10 GSC",
-    "standings_url": "https://gscsports.org/standings.aspx?path=wvball"
+    "standings_url": "https://gscsports.org/standings.aspx?path=wvball",
+    "conference": "0-0"
    },
    "photo_url": "https://tnutrojans.com/images/2026/9/4/VB_Mary_Francl_HS_2026_tsaliboy_387.png",
    "socials": {
@@ -977,9 +1252,9 @@
    "class_year": "Freshman",
    "height": "6-0",
    "bio_url": "https://tnutrojans.com/sports/womens-volleyball/roster/mary-francl/7073",
-   "blurb": "Mary is a freshman on the Trojans volleyball roster but hasn't appeared in matches or stats yet this early season. The team is still building toward conference play, with a 1-2 record through early September. She'll have opportunities to contribute as the season develops.",
+   "blurb": "Mary has not yet appeared in published statistics for the Trojans' matches this season. The team is currently 2-7 overall as of September 15, and continues to search for consistency. She will have opportunities ahead as the season progresses.",
    "_highs": {},
-   "fetched_at": "2026-09-15T19:44-05:00",
+   "fetched_at": "2026-09-15T20:57-05:00",
    "matches_played": 0,
    "sets_played": 0
   },
@@ -995,8 +1270,8 @@
    "division": "NCAA D2",
    "conference": "Northern Sun Intercollegiate Conference",
    "city": "Mankato, MN",
-   "hometown_hs": "Elgin, Ill. / Central",
-   "site": "https://msumavericks.com",
+   "hometown_hs": "Elgin, IL / Central HS",
+   "site": "https://msumavericks.com/sports/womens-volleyball",
    "roster_url": "https://msumavericks.com/sports/womens-volleyball/roster",
    "schedule_url": "https://msumavericks.com/sports/womens-volleyball/schedule",
    "stats_url": "https://msumavericks.com/sports/womens-volleyball/stats",
@@ -1006,25 +1281,72 @@
    },
    "tz": "America/Chicago",
    "college_season": "2026",
-   "recent_matches": [],
+   "recent_matches": [
+    {
+     "date": "2026-09-11",
+     "opponent": "Wayne State",
+     "home_away": "home",
+     "result": "L 0-3",
+     "box_url": "https://msumavericks.com/sports/womens-volleyball/stats/2026/wayne-state/boxscore/20009"
+    }
+   ],
    "upcoming": [],
-   "season_stats": [],
-   "stats": null,
-   "team_record": null,
+   "season_stats": [
+    {
+     "label": "Kills",
+     "value": 0
+    },
+    {
+     "label": "Kills/set",
+     "value": "0.00"
+    },
+    {
+     "label": "Hitting %",
+     "value": "–"
+    },
+    {
+     "label": "Blocks",
+     "value": 0
+    }
+   ],
+   "stats": {
+    "mp": 1,
+    "sp": 1,
+    "k": 0,
+    "e": 0,
+    "ta": 0,
+    "a": 0,
+    "bhe": 0,
+    "sa": 0,
+    "se": 0,
+    "srv": null,
+    "dig": 0,
+    "re": null,
+    "bs": 0,
+    "ba": 0,
+    "be": 0
+   },
+   "team_record": {
+    "overall": "2-8",
+    "conference": "0-2"
+   },
    "photo_url": "https://msumavericks.com/images/2026/8/17/Strout_Peyton_BRI_1614.jpg",
    "socials": {
     "instagram": null,
     "x": null
    },
-   "stale": true,
+   "stale": false,
    "jersey": 14,
    "position": "MB/RS",
    "class_year": "Fr.",
    "height": "5-10",
    "bio_url": "https://msumavericks.com/sports/womens-volleyball/roster/peyton-strout/14321",
    "error": "no JSON in response: I'll help you collect information about Peyton Strout from Minnesota State University, Mankato. Let me start by fetching the official pages.I need to fetch the stats page. Let me ",
-   "matches_played": null,
-   "sets_played": null
+   "matches_played": 1,
+   "sets_played": 1,
+   "blurb": "Peyton appeared in one set for Minnesota State this season as the Mavericks have struggled early, posting a 2-8 record (0-2 in NSIC play). The team lost to #2 Wayne State 3-0 at home on September 11, with Peyton getting limited court time. The Mavericks continue building in what is a challenging start to the season.",
+   "_highs": {},
+   "fetched_at": "2026-09-15T20:57-05:00"
   },
   {
    "id": "callahan",
@@ -1039,7 +1361,97 @@
    "conference": "Illinois Skyway Collegiate Conference",
    "city": "Crystal Lake, IL",
    "hometown_hs": "",
-   "site": "https://www.mccscots.com",
+   "site": "https://www.mccscots.com/sports/wvball",
+   "roster_url": "https://www.mccscots.com/sports/wvball/2026-27/roster",
+   "schedule_url": "https://www.mccscots.com/sports/wvball/2026-27/schedule",
+   "stats_url": "https://www.mccscots.com/sports/wvball/2026-27/teams/mchenrycountycollege",
+   "colors": {
+    "primary": "#1E6B3A",
+    "secondary": "#1F4E9A"
+   },
+   "tz": "America/Chicago",
+   "college_season": "2026",
+   "recent_matches": [
+    {
+     "date": "2026-09-12",
+     "opponent": "Sauk Valley Community College",
+     "home_away": "neutral"
+    },
+    {
+     "date": "2026-09-12",
+     "opponent": "Illinois Central College",
+     "home_away": "neutral"
+    },
+    {
+     "date": "2026-09-11",
+     "opponent": "Parkland College",
+     "home_away": "neutral"
+    },
+    {
+     "date": "2026-09-11",
+     "opponent": "Waubonsee Community College",
+     "home_away": "away"
+    },
+    {
+     "date": "2026-09-08",
+     "opponent": "College of Lake County",
+     "home_away": "away"
+    },
+    {
+     "date": "2026-09-02",
+     "opponent": "John Wood Community College",
+     "home_away": "neutral"
+    }
+   ],
+   "upcoming": [],
+   "season_stats": [],
+   "stats": {
+    "mp": null,
+    "sp": null,
+    "k": null,
+    "e": null,
+    "ta": null,
+    "a": null,
+    "bhe": null,
+    "sa": null,
+    "se": null,
+    "srv": null,
+    "dig": null,
+    "re": null,
+    "bs": null,
+    "ba": null,
+    "be": null
+   },
+   "team_record": {},
+   "photo_url": null,
+   "socials": {
+    "instagram": null,
+    "x": null
+   },
+   "stale": false,
+   "blurb": "The Scots had a busy stretch in early-to-mid September, playing six matches in about two weeks, including a run of games at the Kirkwood Invitational on September 11-12. We weren't able to pull the final scores or Catherine's individual box-score lines from the official pages this time, so we can't yet say exactly how much court time she's logging, but as a freshman libero/DS she'd typically be in the mix for serve-receive and back-row minutes. Next up for the team is a matchup with North Iowa Area Community College on September 16 at the Kirkwood Invitational in Cedar Rapids, Iowa - we'll keep checking for updated stats.",
+   "_highs": {},
+   "error": "no JSON in response: I'll help you gather information about McHenry County College volleyball. Since the schedule page blocks automated fetching, I'll use web search to find the schedule, standings, a",
+   "matches_played": null,
+   "sets_played": null,
+   "model": "claude-sonnet-5",
+   "class_year": "Freshman",
+   "fetched_at": "2026-09-15T20:57-05:00"
+  },
+  {
+   "id": "mitchell",
+   "name": "Madison Mitchell",
+   "club_number": 11,
+   "club_position": "Opposite / Outside Hitter",
+   "status": "playing",
+   "school": "McHenry County College",
+   "school_short": "McHenry County",
+   "team_name": "Scots",
+   "division": "NJCAA",
+   "conference": "Illinois Skyway Collegiate Conference",
+   "city": "Crystal Lake, IL",
+   "hometown_hs": "",
+   "site": "https://www.mccscots.com/sports/wvball",
    "roster_url": "https://www.mccscots.com/sports/wvball/2026-27/roster",
    "schedule_url": "https://www.mccscots.com/sports/wvball/2026-27/schedule",
    "stats_url": "https://www.mccscots.com/sports/wvball/2026-27/teams/mchenrycountycollege",
@@ -1075,50 +1487,14 @@
     "instagram": null,
     "x": null
    },
-   "stale": true,
-   "blurb": "Unable to retrieve data—the official MCC athletics pages are not accessible through automated tools. Please visit mccscots.com directly for Catherine's current statistics and team schedule.",
-   "_highs": {},
-   "error": "no JSON in response: I'll help you gather information about McHenry County College volleyball. Since the schedule page blocks automated fetching, I'll use web search to find the schedule, standings, a",
-   "matches_played": null,
-   "sets_played": null
-  },
-  {
-   "id": "mitchell",
-   "name": "Madison Mitchell",
-   "club_number": 11,
-   "club_position": "Opposite / Outside Hitter",
-   "status": "playing",
-   "school": "McHenry County College",
-   "school_short": "McHenry County",
-   "team_name": "Scots",
-   "division": "NJCAA",
-   "conference": "Illinois Skyway Collegiate Conference",
-   "city": "Crystal Lake, IL",
-   "hometown_hs": "",
-   "site": "https://www.mccscots.com",
-   "roster_url": "https://www.mccscots.com/sports/wvball/2026-27/roster",
-   "schedule_url": "https://www.mccscots.com/sports/wvball/2026-27/schedule",
-   "stats_url": "https://www.mccscots.com/sports/wvball/2026-27/teams/mchenrycountycollege",
-   "colors": {
-    "primary": "#1E6B3A",
-    "secondary": "#1F4E9A"
-   },
-   "tz": "America/Chicago",
-   "college_season": "2026",
-   "recent_matches": [],
-   "upcoming": [],
-   "season_stats": [],
-   "stats": null,
-   "team_record": null,
-   "photo_url": null,
-   "socials": {
-    "instagram": null,
-    "x": null
-   },
-   "stale": true,
+   "stale": false,
    "error": "no JSON in response: I'll help you collect information about Madison Mitchell from McHenry County College. Let me start by trying to fetch the official pages, and if they're blocked, I'll use web sear",
    "matches_played": null,
-   "sets_played": null
+   "sets_played": null,
+   "model": "claude-sonnet-5",
+   "blurb": "We weren't able to pull verified numbers for Madison this update — the official McHenry County College athletics site was blocking automated access today, and web searches didn't turn up a reliable box score or stats-table row specifically matching her jersey number and hometown for the September 1–15 window. We know the Scots (ISCC, NJCAA) opened their 2026 season in late August at a tournament in Rockford, IL, but we don't want to guess at her individual kills, digs, or playing time without seeing her actual row. The best next step is checking mccscots.com/sports/wvball directly (roster, schedule, and stats pages) or asking the coaching staff for her latest box score — we'll update this tracker as soon as we can confirm real numbers.",
+   "_highs": {},
+   "fetched_at": "2026-09-15T20:57-05:00"
   },
   {
    "id": "wurtz",
@@ -1133,7 +1509,7 @@
    "conference": "Illinois Skyway Collegiate Conference",
    "city": "Elgin, IL",
    "hometown_hs": "",
-   "site": "https://www.eccathletics.com",
+   "site": "https://www.eccathletics.com/sports/wvball",
    "roster_url": "https://www.eccathletics.com/sports/wvball/2026-27/roster",
    "schedule_url": "https://www.eccathletics.com/sports/wvball/2026-27/schedule",
    "stats_url": "https://www.eccathletics.com/sports/wvball/2026-27/teams/elgin",
@@ -1146,17 +1522,37 @@
    "recent_matches": [],
    "upcoming": [],
    "season_stats": [],
-   "stats": null,
-   "team_record": null,
+   "stats": {
+    "mp": null,
+    "sp": null,
+    "k": null,
+    "e": null,
+    "ta": null,
+    "a": null,
+    "bhe": null,
+    "sa": null,
+    "se": null,
+    "srv": null,
+    "dig": null,
+    "re": null,
+    "bs": null,
+    "ba": null,
+    "be": null
+   },
+   "team_record": {},
    "photo_url": null,
    "socials": {
     "instagram": null,
     "x": null
    },
-   "stale": true,
+   "stale": false,
    "error": "no JSON in response: I'll fetch the roster page to find Peyton Wurtz's information.Let me try accessing the page with a slightly different approach:I'm unable to access the Elgin Community College ath",
    "matches_played": null,
-   "sets_played": null
+   "sets_played": null,
+   "model": "claude-sonnet-5",
+   "blurb": "The official Elgin Spartans roster, schedule, and stats pages were not reachable to pull exact numbers for September 1-15, so we can't confirm her latest match-by-match line or the team's current W-L right now. What we do know: Elgin opened the season in late August at a tournament in Rockford, IL, and Peyton (DS/Libero) got real court time there, including a strong 26-dig effort in a five-set win over Ellsworth (25-23, 25-27, 25-19, 13-25, 15-10) — a good early sign she's earning minutes as a freshman. We'll need to check the official site again once it's back up to get her most recent stats and the next few results; her next listed match is at Lewis & Clark Community College on 2026-09-19.",
+   "_highs": {},
+   "fetched_at": "2026-09-15T20:57-05:00"
   },
   {
    "id": "schatz",
@@ -1192,7 +1588,13 @@
    "stale": false
   }
  ],
- "milestones": [],
+ "milestones": [
+  {
+   "date": "2026-09-15",
+   "player_id": "schiltz",
+   "text": "First college solo block"
+  }
+ ],
  "reunions": [
   {
    "date": "2026-09-12",
@@ -1229,8 +1631,8 @@
  ],
  "run": {
   "date": "2026-09-15",
-  "full": true,
-  "failures": 7,
+  "full": false,
+  "failures": 0,
   "model": "claude-haiku-4-5-20251001"
  }
 }
