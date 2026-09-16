@@ -6,10 +6,9 @@ Runs every morning on GitHub Actions. Reads players.json + the previous data.jso
 asks Claude (web fetch + web search) for what changed, writes data.json for the app.
 
 Cadence
-  Mon, Thu, Sat stats, team record, results (with box score and her line) for each girl
-  Mon + Thu     full-season schedules (times in Central), standings, program socials,
-                and the written piece: Monday recap / Thursday preview
-  Mon           news + coach items
+  Mon, Thu, Sat stats, team record, results (with box scores and her line)
+  Mon + Thu     the written piece: Monday recap / Thursday preview
+  Mon only      full-season schedules (times in Central), standings, program socials, news + coach items
   as needed     profile facts (photo, jersey, class, height, hometown)
 
 Env:  ANTHROPIC_API_KEY (required) · TRACKER_MODEL (Haiku, daily stat pulls) · TRACKER_STRONG_MODEL (Sonnet: schedules, standings, news, juco sites) · TRACKER_WRITER_MODEL (Sonnet: recap/preview)
@@ -182,7 +181,8 @@ def research_news(p, today, first_run=False):
 Skip recaps that do not mention her and skip anything older than {since}. Return an empty list if nothing qualifies.
 For a recap that mentions her, put her line or the quote in "note" (one sentence). Return up to 6 items.
 Return ONLY: {{"items": [{{"date":"YYYY-MM-DD","kind":"news" or "coach","title":"","source":"publication name","url":"https://...","note":null}}]}}"""
-    return call_claude(prompt, tools_for(STRONG_MODEL), max_tokens=2000, model=STRONG_MODEL)
+    tools = tools_for(STRONG_MODEL); tools[1] = {**SEARCH, "max_uses": 2}
+    return call_claude(prompt, tools, max_tokens=2000, model=STRONG_MODEL)
 
 
 def write_piece(kind, players, today, milestones, reunions):
@@ -313,7 +313,9 @@ def main():
     prev_players = {p["id"]: p for p in prev.get("players", [])}
     first_run = not prev_players or prev.get("run", {}).get("model") in (None, "bootstrap", "sample")
     no_news_yet = not any(b.get("kind") in ("news", "coach") for b in prev.get("buzz", []))
-    full = os.environ.get("TRACKER_FULL") == "1" or first_run or no_news_yet or today.weekday() in (0, 3)   # Mon=0, Thu=3
+    full = os.environ.get("TRACKER_FULL") == "1" or first_run or no_news_yet or today.weekday() in (0, 3)   # Mon=0, Thu=3: news + writing
+    schedules_day = os.environ.get("TRACKER_FULL") == "1" or first_run or today.weekday() == 0    # schedules/standings: Monday (plus any girl missing hers)
+    news_day = os.environ.get("TRACKER_FULL") == "1" or first_run or no_news_yet or today.weekday() == 0   # news: Monday only
     piece_kind = "recap" if today.weekday() in (0, 1, 5, 6) else "preview"
     reseed = not any(m.get("v") == 2 for m in prev.get("milestones", []))       # one-time: replace the badly dated first-run milestones
     log(f"Run {today} · full={full} · first_run={first_run} · reseed={reseed} · model={MODEL}")
@@ -332,7 +334,8 @@ def main():
 
         log(f"{p['name']} ({p['school_short']})")
         try:
-            if not old.get("jersey") or not old.get("photo_url"):
+            if (not old.get("jersey") or not old.get("photo_url")) and (not old.get("profile_tried") or today.weekday() == 0):
+                p["profile_tried"] = True
                 log("  profile"); prof = research_profile(c)
                 p.update({k: v for k, v in prof.items() if v and not (k == "position" and c.get("position"))})
             if c.get("position"): p["position"] = c["position"]
@@ -350,14 +353,14 @@ def main():
             if seeding: prev_stats = {k: 0 for k in STAT_KEYS}; reseeded.add(p["id"])
             miles, highs = detect_milestones(p, prev_stats, p["stats"], today, old.get("_highs") if not seeding else None, seeding)
             p["_highs"] = highs; new_miles += miles
-            if full:
+            if schedules_day or not p["upcoming"]:
                 log("  weekly"); w = research_weekly({**c, **p}, today)
                 if w.get("schedule"):
                     p["upcoming"] = sorted([m for m in clean_matches(w["schedule"]) if m.get("date") and (m["date"], (m.get("opponent") or "").lower()) not in played], key=lambda m: m["date"])
                 if w.get("standing"): p["team_record"] = {**(p.get("team_record") or {}), "standing": as_text(w["standing"]), "standings_url": as_text(w.get("standings_url"))}
                 if w.get("socials") and any((w["socials"] or {}).values()): p["socials"] = w["socials"]
-                if True:
-                    log("  news"); n = research_news(c, today, first_run or not any(b.get("kind") in ("news", "coach") for b in prev.get("buzz", [])))
+            if news_day:
+                    log("  news"); n = research_news(c, today, first_run or no_news_yet)
                     new_buzz += [{**it, "player_id": p["id"]} for it in n.get("items", []) if it.get("url") and it.get("title")]
             p["fetched_at"] = now.isoformat(timespec="minutes")
         except Exception as e:
