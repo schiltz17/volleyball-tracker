@@ -3,18 +3,19 @@
  "club": "Top Flight Volleyball Club, Elgin IL",
  "club_season": "2025-26",
  "college_season": "2026",
- "updated_at": "2026-09-16T14:02-05:00",
- "updated_label": "Wednesday 2:02 PM CT",
+ "updated_at": "2026-09-16T14:37-05:00",
+ "updated_label": "Wednesday 2:37 PM CT",
  "summary": {
-  "headline": "Big Weekend for Gracyn, Tough Stretch for Others",
+  "headline": "This Weekend: UIC's Road Trip, Redhawks Host Assumption",
   "body": [
-   "Gracyn had a standout weekend for Gardner-Webb, racking up 24 kills as the Runnin' Bulldogs split their weekend, beating New Orleans and Mercer on Saturday after a Friday loss to West Georgia. Her hitting was a bright spot in a busy stretch of matches.",
-   "Anna's Morehead State Eagles had a rough two days at home, falling 3-0 to both Cincinnati and Michigan State. Anna still made her mark defensively with 2 blocks against Michigan State, showing steady effort even as the team searches for its footing before conference play.",
-   "Layla's Winona State team went 1-1 over the weekend, beating Sioux Falls but falling to Southwest Minnesota State. Layla hasn't seen match action yet this season, though she remains on the active roster as the Warriors keep working through a tough non-conference slate."
+   "It's a busy weekend across the country — Elizabeth's UIC squad plays three matches in three days on the road, while Breanna's Roberts Wesleyan team hosts two home dates at Voller Athletic Center. Peyton Wurtz and Elgin CC also hit the road Saturday morning for junior college action.",
+   "Elizabeth — UIC plays at Loyola Thu 6 PM CT, at NIU Fri 6 PM CT, and at DePaul Sat 5 PM CT, all on ESPN+. She just picked up her first college dig and block assist, so keep an eye out for more firsts this weekend.",
+   "Breanna — Roberts Wesleyan hosts Assumption Sat 12 PM CT and Saint Michael's Sun 12 PM CT, both on FloSports. She's been a steady hand at setter all season, and these home matches are a great chance to cheer her on.",
+   "Peyton — Elgin CC travels to Lewis & Clark Community College Sat 10 AM CT. No stream is confirmed yet, but it's another chance for the Spartans to build momentum this fall."
   ],
   "spotlight": {
-   "name": "Gracyn Sanders",
-   "note": "Her 24 kills powered Gardner-Webb to two wins in a busy three-match weekend."
+   "name": "Elizabeth King",
+   "note": "She notched her first career dig and block assist this week and now heads into three straight matches for UIC."
   }
  },
  "players": [
@@ -337,7 +338,8 @@
    "fetched_at": "2026-09-15T20:57-05:00",
    "matches_played": 8,
    "sets_played": 26,
-   "error": "The read operation timed out"
+   "position_note": "Listed MB on the roster; has started at right side every match so far (per family).",
+   "error": "API HTTP 400: {\"type\":\"error\",\"error\":{\"type\":\"invalid_request_error\",\"message\":\"messages.0.content.0.pdf.source.base64.data: The PDF specified was not valid.\"},\"request_id\":\"req_011Cf7gYDoEZJQer8nymh"
   },
   {
    "id": "king",
@@ -387,7 +389,7 @@
     {
      "date": "2026-09-05",
      "opponent": "Montana State",
-     "home_away": "neutral",
+     "home_away": "away",
      "result": "L 0-3",
      "box_url": "https://uicflames.com/sports/womens-volleyball/stats/2026/montana-state/boxscore/21487"
     },
@@ -402,7 +404,7 @@
     {
      "date": "2026-09-03",
      "opponent": "Milwaukee",
-     "home_away": "neutral",
+     "home_away": "away",
      "result": "L 0-3",
      "box_url": "https://uicflames.com/sports/womens-volleyball/stats/2026/milwaukee/boxscore/21486"
     }
@@ -684,7 +686,7 @@
     },
     {
      "label": "Blocks",
-     "value": 0
+     "value": 8
     }
    ],
    "stats": {
@@ -694,15 +696,15 @@
     "e": 21,
     "ta": 80,
     "a": 0,
-    "bhe": null,
+    "bhe": 0,
     "sa": 1,
     "se": 1,
     "srv": null,
-    "dig": null,
-    "re": null,
-    "bs": null,
-    "ba": null,
-    "be": null
+    "dig": 3,
+    "re": 1,
+    "bs": 0,
+    "ba": 8,
+    "be": 0
    },
    "team_record": {
     "overall": "3-6",
@@ -721,7 +723,7 @@
    "class_year": "Freshman",
    "height": "5-11",
    "bio_url": "https://uicflames.com/sports/womens-volleyball/roster/elizabeth-king/11821",
-   "blurb": "Elizabeth and the Flames have been playing well lately, closing out the UIC-DePaul Invitational with back-to-back sweeps over Central Michigan and Western Michigan to move to 3-6 on the season. Elizabeth, the freshman outside hitter from Hampshire, has been getting good early-season minutes off the bench — she's appeared in 8 of the team's 9 matches (18 sets) and already has 20 kills, so the coaches are clearly trusting her in matches. We weren't able to pull her exact box-score lines from the most recent games or the full defensive stat columns this update, but her season numbers show steady involvement, and conference (MVC) play is still ahead on the schedule.",
+   "blurb": "Elizabeth has appeared in 8 of UIC's matches this season, picking up 18 sets with 20 kills, 8 blocking assists and a few digs along the way — solid reps for a freshman working into the rotation. The Flames have been up and down lately, closing out their home invitational with wins over Central Michigan and Western Michigan after a tough loss to Auburn. Up next, UIC heads to Loyola on Thursday before Friday's trip to NIU, so there should be more chances for Elizabeth to get on the court.",
    "_highs": {
     "kill": 3,
     "block": 5,
@@ -729,7 +731,7 @@
    },
    "matches_played": 8,
    "sets_played": 18,
-   "fetched_at": "2026-09-16T14:02-05:00"
+   "fetched_at": "2026-09-16T14:37-05:00"
   },
   {
    "id": "sanders",
@@ -997,7 +999,7 @@
    "fetched_at": "2026-09-15T20:57-05:00",
    "matches_played": 5,
    "sets_played": 9,
-   "error": "The read operation timed out"
+   "error": "API HTTP 400: {\"type\":\"error\",\"error\":{\"type\":\"invalid_request_error\",\"message\":\"messages.0.content.0.pdf.source.base64.data: The PDF specified was not valid.\"},\"request_id\":\"req_011Cf7gYQDYsiV5yzUS84"
   },
   {
    "id": "hard",
@@ -1313,7 +1315,7 @@
     "be": 1
    },
    "team_record": {
-    "overall": "2-8",
+    "overall": "2-6",
     "conference": "0-0",
     "standing": "6th of 7 ECC",
     "standings_url": "https://eccsports.org/standings.aspx?path=wvball"
@@ -1336,8 +1338,8 @@
    },
    "matches_played": 8,
    "sets_played": 19,
-   "blurb": "Breanna has been getting steady court time as a freshman setter, appearing in 8 of the team's 10 matches so far with 55 assists and 22 digs on the season. The Redhawks are 2-8 overall and had a tough weekend at the Slippery Rock Tournament, dropping matches to Bloomsburg (0-3) on Sept. 11 and to host Slippery Rock (0-3) on Sept. 12. We weren't able to pull her exact stat line from those two box scores this time, but her season totals show she's a regular part of the rotation as the Redhawks continue their fall schedule.",
-   "fetched_at": "2026-09-16T14:02-05:00"
+   "blurb": "Breanna has been getting steady time on the court this season, appearing in all 8 matches and 19 sets for the Redhawks as a setter, racking up 55 assists and 22 digs along the way. The team has had a tough stretch lately, but Breanna keeps contributing in a variety of ways beyond just setting. Up next for Roberts Wesleyan is a home match against Assumption on Sept. 19.",
+   "fetched_at": "2026-09-16T14:37-05:00"
   },
   {
    "id": "lambert",
@@ -1527,7 +1529,7 @@
     "dig": 3
    },
    "fetched_at": "2026-09-15T20:57-05:00",
-   "error": "The read operation timed out"
+   "error": "API HTTP 400: {\"type\":\"error\",\"error\":{\"type\":\"invalid_request_error\",\"message\":\"messages.0.content.0.pdf.source.base64.data: The PDF specified was not valid.\"},\"request_id\":\"req_011Cf7gZNDH3TxaudCBpy"
   },
   {
    "id": "merlin",
@@ -1756,7 +1758,7 @@
    "fetched_at": "2026-09-15T20:57-05:00",
    "matches_played": 0,
    "sets_played": 0,
-   "error": "The read operation timed out"
+   "error": "API HTTP 400: {\"type\":\"error\",\"error\":{\"type\":\"invalid_request_error\",\"message\":\"messages.0.content.0.pdf.source.base64.data: The PDF specified was not valid.\"},\"request_id\":\"req_011Cf7gZCpUfHstMDX6Qo"
   },
   {
    "id": "francl",
@@ -1784,107 +1786,185 @@
    "recent_matches": [
     {
      "date": "2026-09-12",
+     "time": null,
+     "time_ct": null,
      "opponent": "Palm Beach Atlantic",
      "home_away": "away",
+     "location": null,
      "result": "L 0-3",
      "box_url": "https://tnutrojans.com/sports/womens-volleyball/stats/2026/palm-beach-atlantic/boxscore/8892",
-     "player_line": "did not play"
+     "player_line": "did not play",
+     "stream_name": null,
+     "stream_url": null
     },
     {
      "date": "2026-09-11",
+     "time": null,
+     "time_ct": null,
      "opponent": "Lynn",
      "home_away": "away",
-     "result": "L 0-3",
-     "box_url": "https://tnutrojans.com/sports/womens-volleyball/stats/2026/lynn-fla-/boxscore/8891"
-    },
-    {
-     "date": "2026-09-11",
-     "opponent": "Nova Southeastern",
-     "home_away": "away",
-     "result": "L 0-3",
-     "box_url": "https://tnutrojans.com/sports/womens-volleyball/stats/2026/nova-southeatern-fla-/boxscore/8890"
-    },
-    {
-     "date": "2026-09-11",
-     "opponent": "Lynn (Fla.)",
-     "home_away": "away",
+     "location": null,
      "result": "L 0-3",
      "box_url": "https://tnutrojans.com/sports/womens-volleyball/stats/2026/lynn-fla-/boxscore/8891",
-     "player_line": "did not play"
+     "player_line": null,
+     "stream_name": null,
+     "stream_url": null
     },
     {
      "date": "2026-09-11",
-     "opponent": "Nova Southeastern (Fla.)",
-     "home_away": "neutral",
+     "time": null,
+     "time_ct": null,
+     "opponent": "Nova Southeastern",
+     "home_away": "away",
+     "location": null,
      "result": "L 0-3",
      "box_url": "https://tnutrojans.com/sports/womens-volleyball/stats/2026/nova-southeatern-fla-/boxscore/8890",
-     "player_line": "did not play"
+     "player_line": null,
+     "stream_name": null,
+     "stream_url": null
+    },
+    {
+     "date": "2026-09-11",
+     "time": null,
+     "time_ct": null,
+     "opponent": "Lynn (Fla.)",
+     "home_away": "away",
+     "location": null,
+     "result": "L 0-3",
+     "box_url": "https://tnutrojans.com/sports/womens-volleyball/stats/2026/lynn-fla-/boxscore/8891",
+     "player_line": "did not play",
+     "stream_name": null,
+     "stream_url": null
+    },
+    {
+     "date": "2026-09-11",
+     "time": null,
+     "time_ct": null,
+     "opponent": "Nova Southeastern (Fla.)",
+     "home_away": "neutral",
+     "location": null,
+     "result": "L 0-3",
+     "box_url": "https://tnutrojans.com/sports/womens-volleyball/stats/2026/nova-southeatern-fla-/boxscore/8890",
+     "player_line": "did not play",
+     "stream_name": null,
+     "stream_url": null
     },
     {
      "date": "2026-09-05",
+     "time": null,
+     "time_ct": null,
      "opponent": "Spring Hill",
      "home_away": "away",
+     "location": null,
      "result": "L 1-3",
-     "box_url": "https://tnutrojans.com/sports/womens-volleyball/stats/2026/spring-hill-ala-/boxscore/8889"
+     "box_url": "https://tnutrojans.com/sports/womens-volleyball/stats/2026/spring-hill-ala-/boxscore/8889",
+     "player_line": null,
+     "stream_name": null,
+     "stream_url": null
     },
     {
      "date": "2026-09-05",
+     "time": null,
+     "time_ct": null,
      "opponent": "Spring Hill (Ala.)",
      "home_away": "neutral",
+     "location": null,
      "result": "L 1-3",
      "box_url": "https://tnutrojans.com/sports/womens-volleyball/stats/2026/spring-hill-ala-/boxscore/8889",
-     "player_line": "did not play"
+     "player_line": "did not play",
+     "stream_name": null,
+     "stream_url": null
     },
     {
      "date": "2026-09-04",
+     "time": null,
+     "time_ct": null,
      "opponent": "Mars Hill",
      "home_away": "away",
-     "result": "W 3-0",
-     "box_url": "https://tnutrojans.com/sports/womens-volleyball/stats/2026/mars-hill-n-c-/boxscore/8888"
-    },
-    {
-     "date": "2026-09-04",
-     "opponent": "Harding",
-     "home_away": "away",
-     "result": "L 0-3",
-     "box_url": "https://tnutrojans.com/sports/womens-volleyball/stats/2026/harding-ark-/boxscore/8887"
-    },
-    {
-     "date": "2026-09-04",
-     "opponent": "Mars Hill (N.C.)",
-     "home_away": "neutral",
+     "location": null,
      "result": "W 3-0",
      "box_url": "https://tnutrojans.com/sports/womens-volleyball/stats/2026/mars-hill-n-c-/boxscore/8888",
-     "player_line": "did not play"
+     "player_line": null,
+     "stream_name": null,
+     "stream_url": null
     },
     {
      "date": "2026-09-04",
-     "opponent": "Harding (Ark.)",
-     "home_away": "neutral",
+     "time": null,
+     "time_ct": null,
+     "opponent": "Harding",
+     "home_away": "away",
+     "location": null,
      "result": "L 0-3",
      "box_url": "https://tnutrojans.com/sports/womens-volleyball/stats/2026/harding-ark-/boxscore/8887",
-     "player_line": "did not play"
+     "player_line": null,
+     "stream_name": null,
+     "stream_url": null
+    },
+    {
+     "date": "2026-09-04",
+     "time": null,
+     "time_ct": null,
+     "opponent": "Mars Hill (N.C.)",
+     "home_away": "neutral",
+     "location": null,
+     "result": "W 3-0",
+     "box_url": "https://tnutrojans.com/sports/womens-volleyball/stats/2026/mars-hill-n-c-/boxscore/8888",
+     "player_line": "did not play",
+     "stream_name": null,
+     "stream_url": null
+    },
+    {
+     "date": "2026-09-04",
+     "time": null,
+     "time_ct": null,
+     "opponent": "Harding (Ark.)",
+     "home_away": "neutral",
+     "location": null,
+     "result": "L 0-3",
+     "box_url": "https://tnutrojans.com/sports/womens-volleyball/stats/2026/harding-ark-/boxscore/8887",
+     "player_line": "did not play",
+     "stream_name": null,
+     "stream_url": null
     },
     {
      "date": "2026-08-29",
+     "time": null,
+     "time_ct": null,
      "opponent": "Shorter",
      "home_away": "home",
+     "location": null,
      "result": "W 3-0",
-     "box_url": "https://tnutrojans.com/sports/womens-volleyball/stats/2026/shorter-ga-/boxscore/8886"
+     "box_url": "https://tnutrojans.com/sports/womens-volleyball/stats/2026/shorter-ga-/boxscore/8886",
+     "player_line": null,
+     "stream_name": null,
+     "stream_url": null
     },
     {
      "date": "2026-08-29",
+     "time": null,
+     "time_ct": null,
      "opponent": "Ohio Dominican",
      "home_away": "home",
+     "location": null,
      "result": "L 0-3",
-     "box_url": "https://tnutrojans.com/sports/womens-volleyball/stats/2026/ohio-dominican/boxscore/8885"
+     "box_url": "https://tnutrojans.com/sports/womens-volleyball/stats/2026/ohio-dominican/boxscore/8885",
+     "player_line": null,
+     "stream_name": null,
+     "stream_url": null
     },
     {
      "date": "2026-08-28",
+     "time": null,
+     "time_ct": null,
      "opponent": "Lincoln Memorial",
      "home_away": "home",
+     "location": null,
      "result": "L 2-3",
-     "box_url": "https://tnutrojans.com/sports/womens-volleyball/stats/2026/lincoln-memorial-tenn-/boxscore/8884"
+     "box_url": "https://tnutrojans.com/sports/womens-volleyball/stats/2026/lincoln-memorial-tenn-/boxscore/8884",
+     "player_line": null,
+     "stream_name": null,
+     "stream_url": null
     }
    ],
    "upcoming": [
@@ -2013,7 +2093,7 @@
     "instagram": "treveccaVolleyball",
     "x": "TNUVolleyball"
    },
-   "stale": false,
+   "stale": true,
    "jersey": 10,
    "position": "OH/RS",
    "class_year": "Freshman",
@@ -2025,7 +2105,8 @@
    },
    "fetched_at": "2026-09-16T14:02-05:00",
    "matches_played": 0,
-   "sets_played": 0
+   "sets_played": 0,
+   "error": "API HTTP 400: {\"type\":\"error\",\"error\":{\"type\":\"invalid_request_error\",\"message\":\"messages.0.content.0.pdf.source.base64.data: The PDF specified was not valid.\"},\"request_id\":\"req_011Cf7gan8EANqF5LWcKa"
   },
   {
    "id": "strout",
@@ -2121,7 +2202,7 @@
    "blurb": "Peyton appeared in one set for Minnesota State this season as the Mavericks have struggled early, posting a 2-8 record (0-2 in NSIC play). The team lost to #2 Wayne State 3-0 at home on September 11, with Peyton getting limited court time. The Mavericks continue building in what is a challenging start to the season.",
    "_highs": {},
    "fetched_at": "2026-09-15T20:57-05:00",
-   "error": "The read operation timed out"
+   "error": "API HTTP 400: {\"type\":\"error\",\"error\":{\"type\":\"invalid_request_error\",\"message\":\"messages.0.content.0.pdf.source.base64.data: The PDF specified was not valid.\"},\"request_id\":\"req_011Cf7ga3H2Qf7UGAHQ1t"
   },
   {
    "id": "callahan",
@@ -2149,81 +2230,39 @@
    "recent_matches": [
     {
      "date": "2026-09-12",
-     "time": null,
-     "time_ct": null,
      "opponent": "Sauk Valley Community College",
-     "home_away": "neutral",
-     "location": null,
-     "result": null,
-     "box_url": null,
-     "player_line": null,
-     "stream_name": null,
-     "stream_url": null
+     "home_away": "neutral"
     },
     {
      "date": "2026-09-12",
-     "time": null,
-     "time_ct": null,
      "opponent": "Illinois Central College",
-     "home_away": "neutral",
-     "location": null,
-     "result": null,
-     "box_url": null,
-     "player_line": null,
-     "stream_name": null,
-     "stream_url": null
+     "home_away": "neutral"
     },
     {
      "date": "2026-09-11",
-     "time": null,
-     "time_ct": null,
      "opponent": "Parkland College",
-     "home_away": "neutral",
-     "location": null,
-     "result": null,
-     "box_url": null,
-     "player_line": null,
-     "stream_name": null,
-     "stream_url": null
+     "home_away": "neutral"
     },
     {
      "date": "2026-09-11",
-     "time": null,
-     "time_ct": null,
      "opponent": "Waubonsee Community College",
-     "home_away": "away",
-     "location": null,
-     "result": null,
-     "box_url": null,
-     "player_line": null,
-     "stream_name": null,
-     "stream_url": null
+     "home_away": "away"
     },
     {
      "date": "2026-09-08",
-     "time": null,
-     "time_ct": null,
      "opponent": "College of Lake County",
+     "home_away": "away"
+    },
+    {
+     "date": "2026-09-03",
+     "opponent": "Waubonsee Community College",
      "home_away": "away",
-     "location": null,
-     "result": null,
-     "box_url": null,
-     "player_line": null,
-     "stream_name": null,
-     "stream_url": null
+     "result": "L 0-3"
     },
     {
      "date": "2026-09-02",
-     "time": null,
-     "time_ct": null,
      "opponent": "John Wood Community College",
-     "home_away": "neutral",
-     "location": null,
-     "result": null,
-     "box_url": null,
-     "player_line": null,
-     "stream_name": null,
-     "stream_url": null
+     "home_away": "neutral"
     }
    ],
    "upcoming": [],
@@ -2251,15 +2290,17 @@
     "instagram": null,
     "x": null
    },
-   "stale": true,
-   "blurb": "The Scots had a busy stretch in early-to-mid September, playing six matches in about two weeks, including a run of games at the Kirkwood Invitational on September 11-12. We weren't able to pull the final scores or Catherine's individual box-score lines from the official pages this time, so we can't yet say exactly how much court time she's logging, but as a freshman libero/DS she'd typically be in the mix for serve-receive and back-row minutes. Next up for the team is a matchup with North Iowa Area Community College on September 16 at the Kirkwood Invitational in Cedar Rapids, Iowa - we'll keep checking for updated stats.",
-   "_highs": {},
+   "stale": false,
+   "blurb": "The Scots were in action on September 3rd, falling 0-3 on the road at Waubonsee Community College — that was the only completed match we could confirm in the September 2–16 window from public results. Unfortunately, McHenry County College's stats pages were cookie/blocker-protected in our search, so we weren't able to pull Catherine's individual box-score line (kills, digs, etc.) or confirm her playing time for this stretch — we don't want to guess at numbers that aren't clearly hers. We'll keep checking for her next match and box score so we can give you a clearer picture of how much court time she's getting as a freshman libero/DS.",
+   "_highs": {
+    "_last": "2026-09-03"
+   },
    "matches_played": null,
    "sets_played": null,
    "model": "claude-sonnet-5",
    "class_year": "Freshman",
-   "fetched_at": "2026-09-15T20:57-05:00",
-   "error": "run token budget spent (1,421,605 input tokens)"
+   "fetched_at": "2026-09-16T14:37-05:00",
+   "profile_tried": true
   },
   {
    "id": "mitchell",
@@ -2284,7 +2325,14 @@
    },
    "tz": "America/Chicago",
    "college_season": "2026",
-   "recent_matches": [],
+   "recent_matches": [
+    {
+     "date": "2026-09-03",
+     "opponent": "Waubonsee Community College",
+     "home_away": "away",
+     "result": "W 3-0"
+    }
+   ],
    "upcoming": [],
    "season_stats": [],
    "stats": {
@@ -2310,14 +2358,17 @@
     "instagram": null,
     "x": null
    },
-   "stale": true,
+   "stale": false,
    "matches_played": null,
    "sets_played": null,
    "model": "claude-sonnet-5",
-   "blurb": "We weren't able to pull verified numbers for Madison this update — the official McHenry County College athletics site was blocking automated access today, and web searches didn't turn up a reliable box score or stats-table row specifically matching her jersey number and hometown for the September 1–15 window. We know the Scots (ISCC, NJCAA) opened their 2026 season in late August at a tournament in Rockford, IL, but we don't want to guess at her individual kills, digs, or playing time without seeing her actual row. The best next step is checking mccscots.com/sports/wvball directly (roster, schedule, and stats pages) or asking the coaching staff for her latest box score — we'll update this tracker as soon as we can confirm real numbers.",
-   "_highs": {},
-   "fetched_at": "2026-09-15T20:57-05:00",
-   "error": "run token budget spent (1,421,605 input tokens)"
+   "blurb": "The Scots picked up a solid road sweep at Waubonsee on September 3rd (3-0), which is a nice confidence boost heading into conference play. Unfortunately, McHenry County College's site is blocking the automated tools we use to pull individual player stats, so we don't have Madison's specific kill, block, or playing-time numbers from this stretch of the schedule yet. As an Opposite/Outside Hitter, she's exactly the type of player who could see real minutes on a team like this - we'll keep checking for her box-score line and season stats as more games are logged.",
+   "_highs": {
+    "_last": "2026-09-03"
+   },
+   "fetched_at": "2026-09-16T14:37-05:00",
+   "profile_tried": true,
+   "class_year": "Freshman"
   },
   {
    "id": "wurtz",
@@ -2331,7 +2382,7 @@
    "division": "NJCAA",
    "conference": "Illinois Skyway Collegiate Conference",
    "city": "Elgin, IL",
-   "hometown_hs": "",
+   "hometown_hs": "Hampshire, IL / Hampshire High School",
    "site": "https://www.eccathletics.com/sports/wvball",
    "roster_url": "https://www.eccathletics.com/sports/wvball/2026-27/roster",
    "schedule_url": "https://www.eccathletics.com/sports/wvball/2026-27/schedule",
@@ -2343,7 +2394,21 @@
    "tz": "America/Chicago",
    "college_season": "2026",
    "recent_matches": [],
-   "upcoming": [],
+   "upcoming": [
+    {
+     "date": "2026-09-19",
+     "time": "11:00 AM ET",
+     "time_ct": "10:00 AM CT",
+     "opponent": "Lewis & Clark Community College",
+     "home_away": "away",
+     "location": "Lewis & Clark Community College",
+     "result": null,
+     "box_url": null,
+     "player_line": null,
+     "stream_name": null,
+     "stream_url": null
+    }
+   ],
    "season_stats": [],
    "stats": {
     "mp": null,
@@ -2368,14 +2433,17 @@
     "instagram": null,
     "x": null
    },
-   "stale": true,
+   "stale": false,
    "matches_played": null,
    "sets_played": null,
    "model": "claude-sonnet-5",
-   "blurb": "The official Elgin Spartans roster, schedule, and stats pages were not reachable to pull exact numbers for September 1-15, so we can't confirm her latest match-by-match line or the team's current W-L right now. What we do know: Elgin opened the season in late August at a tournament in Rockford, IL, and Peyton (DS/Libero) got real court time there, including a strong 26-dig effort in a five-set win over Ellsworth (25-23, 25-27, 25-19, 13-25, 15-10) — a good early sign she's earning minutes as a freshman. We'll need to check the official site again once it's back up to get her most recent stats and the next few results; her next listed match is at Lewis & Clark Community College on 2026-09-19.",
+   "blurb": "I wasn't able to pull Peyton's actual 2026 season box scores, team record, or match results for the September 2–16 window from the available search snippets — the school's stats and schedule pages didn't return the detailed tables needed to confirm her numbers safely. What I can confirm is that Peyton is listed on Elgin Community College's volleyball roster as a Defensive Specialist/Libero, so she's part of the active squad this fall. For the latest on her playing time and the team's most recent matches, checking the ECC Spartans volleyball site directly (or asking the coaching staff) would give the most accurate, up-to-date picture.",
    "_highs": {},
-   "fetched_at": "2026-09-15T20:57-05:00",
-   "error": "run token budget spent (1,421,605 input tokens)"
+   "fetched_at": "2026-09-16T14:37-05:00",
+   "profile_tried": true,
+   "jersey": 26,
+   "position": "Defensive Specialist/Libero",
+   "class_year": "Freshman"
   },
   {
    "id": "schatz",
@@ -2412,6 +2480,18 @@
   }
  ],
  "milestones": [
+  {
+   "date": "2026-09-13",
+   "player_id": "king",
+   "text": "First college dig",
+   "v": 2
+  },
+  {
+   "date": "2026-09-13",
+   "player_id": "king",
+   "text": "First college block assist",
+   "v": 2
+  },
   {
    "date": "2026-09-04",
    "player_id": "king",
@@ -2524,6 +2604,21 @@
  ],
  "buzz": [
   {
+   "date": "2026-09-16",
+   "kind": "recap",
+   "title": "This Weekend: UIC's Road Trip, Redhawks Host Assumption",
+   "body": [
+    "It's a busy weekend across the country — Elizabeth's UIC squad plays three matches in three days on the road, while Breanna's Roberts Wesleyan team hosts two home dates at Voller Athletic Center. Peyton Wurtz and Elgin CC also hit the road Saturday morning for junior college action.",
+    "Elizabeth — UIC plays at Loyola Thu 6 PM CT, at NIU Fri 6 PM CT, and at DePaul Sat 5 PM CT, all on ESPN+. She just picked up her first college dig and block assist, so keep an eye out for more firsts this weekend.",
+    "Breanna — Roberts Wesleyan hosts Assumption Sat 12 PM CT and Saint Michael's Sun 12 PM CT, both on FloSports. She's been a steady hand at setter all season, and these home matches are a great chance to cheer her on.",
+    "Peyton — Elgin CC travels to Lewis & Clark Community College Sat 10 AM CT. No stream is confirmed yet, but it's another chance for the Spartans to build momentum this fall."
+   ],
+   "spotlight": {
+    "name": "Elizabeth King",
+    "note": "She notched her first career dig and block assist this week and now heads into three straight matches for UIC."
+   }
+  },
+  {
    "date": "2026-09-15",
    "kind": "recap",
    "title": "Big Weekend for Gracyn, Tough Stretch for Others",
@@ -2540,11 +2635,11 @@
  ],
  "run": {
   "date": "2026-09-16",
-  "failures": 8,
+  "failures": 6,
   "model": "claude-sonnet-5",
   "note": "complete",
-  "input_tokens": 1421605,
-  "output_tokens": 35816,
-  "calls": 5
+  "input_tokens": 403403,
+  "output_tokens": 20325,
+  "calls": 19
  }
 }
