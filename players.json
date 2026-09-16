@@ -73,7 +73,7 @@
       },
       "tz": "America/New_York",
       "jersey": "20",
-      "disambiguation": "Gardner-Webb has TWO players named Gracyn Sanders. Ours is #20, a freshman middle blocker from Carpentersville, IL (Jacobs HS). The other is #21, a sophomore setter from Poquoson, VA — ignore her rows entirely."
+      "disambiguation": "Gardner-Webb's HTML stats page mislabels teammate Lara Matta's #20 row as 'Sanders, Gracyn', so two rows appear under her name. The season PDF ('View PDF' on the stats page) names rows correctly: Gracyn Sanders #20 is the freshman MB from Carpentersville, IL. Use only that row."
     },
     {
       "id": "hard",
@@ -212,8 +212,7 @@
         "secondary": "#1F4E9A"
       },
       "tz": "America/Chicago",
-      "fetch_note": "This site blocks automated fetching — go straight to web_search for the roster, results, and stats (search the school name + 'volleyball' + the player's name; opponent recaps and the ISCC conference site also carry results).",
-      "model": "claude-sonnet-5"
+      "fetch_note": "This site blocks automated fetching — go straight to web_search for the roster, results, and stats (search the school name + 'volleyball' + the player's name; opponent recaps and the ISCC conference site also carry results)."
     },
     {
       "id": "mitchell",
@@ -237,8 +236,7 @@
         "secondary": "#1F4E9A"
       },
       "tz": "America/Chicago",
-      "fetch_note": "This site blocks automated fetching — go straight to web_search for the roster, results, and stats (search the school name + 'volleyball' + the player's name; opponent recaps and the ISCC conference site also carry results).",
-      "model": "claude-sonnet-5"
+      "fetch_note": "This site blocks automated fetching — go straight to web_search for the roster, results, and stats (search the school name + 'volleyball' + the player's name; opponent recaps and the ISCC conference site also carry results)."
     },
     {
       "id": "wurtz",
@@ -261,8 +259,7 @@
         "primary": "#1B4F9C",
         "secondary": "#F2B01E"
       },
-      "tz": "America/Chicago",
-      "model": "claude-sonnet-5"
+      "tz": "America/Chicago"
     },
     {
       "id": "schatz",

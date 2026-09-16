@@ -22,7 +22,7 @@ from zoneinfo import ZoneInfo
 
 API_URL = "https://api.anthropic.com/v1/messages"
 API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
-MODEL = os.environ.get("TRACKER_MODEL", "claude-haiku-4-5-20251001")      # research calls
+MODEL = os.environ.get("TRACKER_MODEL", "claude-sonnet-5")      # research calls (Haiku proved too sloppy: merged rows, missed box scores)
 WRITER_MODEL = os.environ.get("TRACKER_WRITER_MODEL", "claude-sonnet-5")   # Monday recap / Thursday preview only
 HERE = os.path.dirname(os.path.abspath(__file__))
 PLAYERS_FILE, DATA_FILE = os.path.join(HERE, "players.json"), os.path.join(HERE, "data.json")
@@ -111,8 +111,9 @@ def pages(p):
 
 
 # ---------------------------------------------------------------- research calls
-def research_daily(p, today):
+def research_daily(p, today, need_lines=()):
     since = (today - timedelta(days=14)).isoformat()
+    need = ", ".join(f"{d} vs {o}" for d, o in need_lines[:4]) or "none yet"
     prompt = f"""Today is {today.isoformat()}. Fall {p['college_season']} season. Player: {p['name']}, freshman at {p['school']} ({p['division']}). Position: {p.get('position') or p['club_position']}.
 {pages(p)}
 
@@ -122,13 +123,16 @@ Never add two rows together. If two rows could be her and you cannot tell which,
 
 Collect:
 1. team_record: overall and conference W-L from the schedule page.
-2. stats: HER season totals from her single row in the individual stats table, as integers (null if the column is not published):
+2. stats: HER season totals, as integers (null if the column is not published). The stats page has a "View PDF" link to the season cumulative PDF —
+   open that PDF; it is the authoritative table (the HTML table sometimes mislabels rows). Match her row by jersey number AND last name.
    mp matches played, sp sets played, k kills, e attack errors, ta total attacks, a assists, bhe ball-handling errors,
    sa service aces, se service errors, srv serve attempts, dig digs, re reception errors, bs block solos, ba block assists, be block errors.
    If she does not appear in the table at all, set every field to 0 except srv/re/ta which may be null — but first confirm by searching the page text for her last name; do not report zeros because a table was truncated.
 3. results: team matches from {since} through {today.isoformat()} with a final score, most recent first. For each: date, opponent, home_away (home/away/neutral),
-   result ("W 3-1" / "L 0-3"), box_url (the box score link from the schedule page), player_line (her numbers from that box score — the row matching her jersey number — in plain words,
-   e.g. "7 kills, 3 blocks" or "24 assists, 6 digs" or "did not play"; null if you could not open the box score). Open only the newest box score (one fetch); leave player_line null for older matches you did not open.
+   result ("W 3-1" / "L 0-3"), box_url (the box score link from the schedule page), player_line.
+   player_line = her numbers from the box score in plain words ("7 kills, 3 blocks, 2 digs" / "24 assists, 6 digs" / "did not play"). The individual lines are on the
+   box score page under the "Individual" tab, listed by team with jersey numbers — find the row with her number. Open the box score for every match that still needs a
+   line (up to 4 fetches): {need} plus any newer match. Leave null only if you truly could not open it.
 4. blurb: 2-3 sentences for her parents: what she and the team did lately, whether she is getting court time, what is next. Warm, plain, factual.
 
 Return ONLY:
@@ -171,12 +175,14 @@ Return ONLY: {{"jersey":null,"position":null,"class_year":null,"height":null,"ho
 
 def research_news(p, today, first_run=False):
     since = (today - timedelta(days=21 if first_run else 8)).isoformat()
-    prompt = f"""Today is {today.isoformat()}. Use web_search (3-4 searches, e.g. "{p['name']} volleyball", "{p['school_short']} volleyball {p['name'].split()[-1]}", "{p['school_short']} volleyball coach"). Find up to 5 items published since {since} that either
+    news_url = p["site"].rstrip("/") + "/news"
+    prompt = f"""Today is {today.isoformat()}. First open the program's news page: {news_url} (fall back to {p['site']} if that 404s) and read the headlines and recaps since {since}. Then use web_search (2-3 searches, e.g. "{p['name']} volleyball", "{p['school_short']} volleyball {p['name'].split()[-1]}", "{p['school_short']} volleyball coach"). Find up to 5 items published since {since} that either
 (a) mention {p['name']} by name — school match recaps and features, signing/roster announcements, local papers (Daily Herald, Kane County Reporter, Northwest Herald, Elgin Courier-News), conference weekly honors — or
 (b) concern the {p['school']} volleyball coaching staff — hires, departures, contract extensions, awards, suspensions — head coach or assistants.
 Skip recaps that do not mention her and skip anything older than {since}. Return an empty list if nothing qualifies.
-Return ONLY: {{"items": [{{"date":"YYYY-MM-DD","kind":"news" or "coach","title":"","source":"publication name","url":"https://..."}}]}}"""
-    return call_claude(prompt, [SEARCH], max_tokens=1500, model=STRONG_MODEL)
+For a recap that mentions her, put her line or the quote in "note" (one sentence). Return up to 6 items.
+Return ONLY: {{"items": [{{"date":"YYYY-MM-DD","kind":"news" or "coach","title":"","source":"publication name","url":"https://...","note":null}}]}}"""
+    return call_claude(prompt, tools_for(STRONG_MODEL), max_tokens=2000, model=STRONG_MODEL)
 
 
 def write_piece(kind, players, today, milestones, reunions):
@@ -188,21 +194,24 @@ def write_piece(kind, players, today, milestones, reunions):
                        | {"results_last_7": [m for m in p.get("recent_matches", []) if (m.get("date") or "") >= wk_ago],
                           "next_7": [m for m in p.get("upcoming", []) if today.isoformat() <= (m.get("date") or "") <= wk_ahead]})
     if kind == "recap":
-        ask = ("Write the MONDAY WEEKEND RECAP: what happened Thursday–Sunday across the group. Who played, who stood out, notable team results, "
-               "any milestone. Mention girls by first name. Do not list everyone. Say plainly if someone did not see the court.")
+        ask = ("Write the MONDAY WEEKEND RECAP. Paragraph 1: the weekend in two or three sentences — who stood out, any milestone, any big team result. "
+               "Then ONE short paragraph (1-2 sentences) for EACH girl who had a match this week, in this form: her first name, the results, her line, one human note "
+               "(e.g. 'Anna — Morehead State split at Marshall (L 1-3, W 3-2); 5 kills and 4 blocks Saturday, her best block night yet.'). "
+               "Skip girls with no match this week. Say plainly if a girl did not see the court.")
     else:
-        ask = ("Write the THURSDAY WEEKEND PREVIEW: what is coming Thursday–Sunday. Big matches, home openers, conference play, any reunion where two of "
-               "the girls face each other, and which streams to have ready (all times Central). Mention girls by first name. Do not list everyone.")
+        ask = ("Write the THURSDAY WEEKEND PREVIEW. Paragraph 1: the weekend ahead in two or three sentences — the biggest matches, conference openers, anything at stake. "
+               "Then ONE short paragraph (1-2 sentences) for EACH girl with a match this weekend: first name, opponent(s), day and Central time, stream, and why it matters "
+               "(e.g. 'Kylie — Arkansas Tech at Southern Nazarene, Fri 6 PM CT on FloSports; a win keeps the Suns alone atop the GAC.').")
     prompt = f"""Today is {today.isoformat()}. Data for the girls (JSON): {json.dumps(compact, ensure_ascii=False)}
 Milestones this week: {json.dumps(milestones)}
 Reunions coming up: {json.dumps(reunions[:3])}
 
 {ask}
-Rules: title under 12 words, no "Recap:" prefix. body = 2-3 paragraphs, each under 70 words, plain warm language, no hype, no bullet points, no jargon.
+Rules: title under 12 words, no "Recap:" prefix. body = the paragraphs described above (the intro plus one per girl), each under 60 words, plain warm language, no hype, no bullet points, no jargon.
 Ignore anyone marked stale. spotlight = one girl with the best week and a one-sentence reason, or null.
 Return ONLY: {{"title":"", "body":["",""], "spotlight": {{"name":"First Last","note":""}} }}"""
     system = "You write short, warm notes for a group of volleyball moms whose daughters played club together and are now college freshmen. Return ONLY valid JSON."
-    return call_claude(prompt, None, max_tokens=1200, system=system, model=WRITER_MODEL)
+    return call_claude(prompt, None, max_tokens=2500, system=system, model=WRITER_MODEL)
 
 
 # ---------------------------------------------------------------- normalize model output
@@ -247,22 +256,28 @@ def season_stats_list(x):
     return [{"label": "Kills", "value": x.get("k")}, {"label": "Kills/set", "value": per(x.get("k"))}, {"label": "Hitting %", "value": hit}, {"label": "Blocks", "value": (x.get("bs") or 0) + (x.get("ba") or 0)}]
 
 
-def detect_milestones(p, prev_stats, new_stats, today, prev_highs):
+def detect_milestones(p, prev_stats, new_stats, today, prev_highs, seeding=False):
     out, highs = [], dict(prev_highs or {})
+    results = [m for m in (p.get("recent_matches") or []) if m.get("result") and m.get("date")]
+    newest = results[0]["date"] if results else today.isoformat()          # firsts happen in matches, not on run days
+    earliest = min((m["date"] for m in results), default=today.isoformat())
     if prev_stats and new_stats:
         for key, (name, thresholds) in MILESTONES.items():
             before, after = prev_stats.get(key) or 0, new_stats.get(key) or 0
             for t in thresholds:
                 if before < t <= after:
-                    out.append({"date": today.isoformat(), "player_id": p["id"],
-                                "text": f"First college {name}" if t == 1 else f"{t} college {name}s"})
-    for m in (p.get("recent_matches") or [])[:2]:
+                    text = f"First college {name}" if t == 1 else f"{t} college {name}s"
+                    if seeding: out.append({"date": earliest, "player_id": p["id"], "text": text + " (earlier this season)", "approx": True, "v": 2})
+                    else: out.append({"date": newest, "player_id": p["id"], "text": text, "v": 2})
+    last_seen = highs.get("_last", "")                                      # career highs: walk matches oldest -> newest, only new ones
+    for m in sorted(results, key=lambda m: m["date"]):
         for n, word in re.findall(r"(\d+)\s+(kills?|assists?|digs?|aces?|blocks?)", m.get("player_line") or "", re.I):
             w, n = word.lower().rstrip("s"), int(n)
             if n > highs.get(w, 0):
-                if highs.get(w, 0) > 0 and n >= 3:
-                    out.append({"date": m.get("date") or today.isoformat(), "player_id": p["id"], "text": f"Career high {n} {w}s vs {m.get('opponent', '')}".strip()})
+                if not seeding and m["date"] > last_seen and highs.get(w, 0) > 0 and n >= 3:
+                    out.append({"date": m["date"], "player_id": p["id"], "text": f"Career high {n} {w}s vs {m.get('opponent', '')}".strip(), "v": 2})
                 highs[w] = n
+    if results: highs["_last"] = max(highs.get("_last", ""), results[0]["date"])
     return out, highs
 
 
@@ -297,9 +312,11 @@ def main():
         except Exception: prev = {}
     prev_players = {p["id"]: p for p in prev.get("players", [])}
     first_run = not prev_players or prev.get("run", {}).get("model") in (None, "bootstrap", "sample")
-    full = os.environ.get("TRACKER_FULL") == "1" or first_run or today.weekday() in (0, 3)   # Mon=0, Thu=3
+    no_news_yet = not any(b.get("kind") in ("news", "coach") for b in prev.get("buzz", []))
+    full = os.environ.get("TRACKER_FULL") == "1" or first_run or no_news_yet or today.weekday() in (0, 3)   # Mon=0, Thu=3
     piece_kind = "recap" if today.weekday() in (0, 1, 5, 6) else "preview"
-    log(f"Run {today} · full={full} · first_run={first_run} · model={MODEL}")
+    reseed = not any(m.get("v") == 2 for m in prev.get("milestones", []))       # one-time: replace the badly dated first-run milestones
+    log(f"Run {today} · full={full} · first_run={first_run} · reseed={reseed} · model={MODEL}")
 
     players, failures, new_miles, new_buzz = [], 0, [], []
     for c in cfg["players"]:
@@ -307,6 +324,7 @@ def main():
         p = {**old, **c, "college_season": cfg["college_season"]}
         p.pop("fetch_note", None)
         for k in ("recent_matches", "upcoming", "season_stats"): p.setdefault(k, [])
+        p["recent_matches"], p["upcoming"] = clean_matches(p["recent_matches"]), clean_matches(p["upcoming"])
         for k in ("stats", "team_record", "photo_url"): p.setdefault(k, None)
         p.setdefault("socials", {"instagram": None, "x": None}); p["stale"] = False
         if c.get("status") != "playing":
@@ -317,7 +335,8 @@ def main():
             if not old.get("jersey") or not old.get("photo_url"):
                 log("  profile"); prof = research_profile(c)
                 p.update({k: v for k, v in prof.items() if v})
-            log("  daily"); d = research_daily({**c, **p}, today)
+            need = [(m["date"], m["opponent"]) for m in old.get("recent_matches", []) if m.get("result") and not m.get("player_line")]
+            log("  daily"); d = research_daily({**c, **p}, today, need)
             prev_stats = old.get("stats")
             if isinstance(d.get("team_record"), dict): p["team_record"] = {**(p.get("team_record") or {}), **{k: as_text(v) for k, v in d["team_record"].items() if v}}
             if isinstance(d.get("stats"), dict): p["stats"] = {k: (int(float(d["stats"][k])) if str(d["stats"].get(k, "")).replace(".", "").isdigit() else None) for k in STAT_KEYS}
@@ -325,8 +344,9 @@ def main():
             if d.get("blurb"): p["blurb"] = as_text(d["blurb"])
             played = {(m.get("date"), (m.get("opponent") or "").lower()) for m in p["recent_matches"] if m.get("result")}
             p["upcoming"] = [m for m in p["upcoming"] if m.get("date") and m["date"] >= today.isoformat() and (m["date"], (m.get("opponent") or "").lower()) not in played]
-            if first_run and p["stats"]: prev_stats = {k: 0 for k in STAT_KEYS}
-            miles, highs = detect_milestones(p, prev_stats, p["stats"], today, old.get("_highs"))
+            seeding = (first_run or reseed) and bool(p["stats"])
+            if seeding: prev_stats = {k: 0 for k in STAT_KEYS}
+            miles, highs = detect_milestones(p, prev_stats, p["stats"], today, old.get("_highs") if not seeding else None, seeding)
             p["_highs"] = highs; new_miles += miles
             if full:
                 log("  weekly"); w = research_weekly({**c, **p}, today)
@@ -334,8 +354,8 @@ def main():
                     p["upcoming"] = sorted([m for m in clean_matches(w["schedule"]) if m.get("date") and (m["date"], (m.get("opponent") or "").lower()) not in played], key=lambda m: m["date"])
                 if w.get("standing"): p["team_record"] = {**(p.get("team_record") or {}), "standing": as_text(w["standing"]), "standings_url": as_text(w.get("standings_url"))}
                 if w.get("socials") and any((w["socials"] or {}).values()): p["socials"] = w["socials"]
-                if first_run or today.weekday() == 0:
-                    log("  news"); n = research_news(c, today, first_run)
+                if True:
+                    log("  news"); n = research_news(c, today, first_run or not any(b.get("kind") in ("news", "coach") for b in prev.get("buzz", [])))
                     new_buzz += [{**it, "player_id": p["id"]} for it in n.get("items", []) if it.get("url") and it.get("title")]
             p["fetched_at"] = now.isoformat(timespec="minutes")
         except Exception as e:
@@ -344,7 +364,8 @@ def main():
         p["season_stats"] = season_stats_list(p["stats"])
         players.append(p); time.sleep(1.5)
 
-    milestones = sorted((prev.get("milestones") or []) + new_miles, key=lambda m: m["date"], reverse=True)[:60]
+    kept = [] if reseed else (prev.get("milestones") or [])
+    milestones = sorted(kept + new_miles, key=lambda m: m["date"], reverse=True)[:80]
     reunions = compute_reunions(players)
     buzz = list(prev.get("buzz") or [])
     have = {b.get("url") for b in buzz if b.get("url")}
