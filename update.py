@@ -402,7 +402,7 @@ def main():
     flags = {"first_run": first_run,
              "reseed": not any(m.get("v") == 2 for m in prev.get("milestones", [])),
              "schedules_day": forced or first_run or today.weekday() == 0,                    # schedules/standings: Monday (plus any girl missing hers)
-             "news_day": forced or first_run or today.weekday() == 0,                        # news: Monday only (a mid-week manual run skips it)
+             "news_day": forced or first_run or no_news_yet or today.weekday() == 0,         # news: Monday, or whenever Buzz has none yet
              "no_news_yet": no_news_yet}
     summary_age = (today - datetime.fromisoformat(prev["run"]["date"]).date()).days if prev.get("run", {}).get("date") and prev.get("summary") else 99
     writing_day = forced or first_run or today.weekday() in (0, 3) or summary_age > 4       # recap Monday, preview Thursday, or the note is stale
