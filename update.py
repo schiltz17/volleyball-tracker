@@ -15,7 +15,8 @@ Env:  ANTHROPIC_API_KEY (required) · TRACKER_MODEL (Haiku, daily stat pulls) ·
       TRACKER_FULL=1 forces the Mon/Thu work to run today (the first run does this automatically)
 """
 
-import json, os, re, sys, time, urllib.request, urllib.error
+import json, os, re, sys, time, threading, urllib.request, urllib.error
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
@@ -26,6 +27,11 @@ WRITER_MODEL = os.environ.get("TRACKER_WRITER_MODEL", "claude-sonnet-5")   # Mon
 HERE = os.path.dirname(os.path.abspath(__file__))
 PLAYERS_FILE, DATA_FILE = os.path.join(HERE, "players.json"), os.path.join(HERE, "data.json")
 
+TOKEN_BUDGET = int(os.environ.get("TRACKER_TOKEN_BUDGET", "1200000"))   # input tokens per run; optional work stops at 70%, everything at 100%
+WORKERS = int(os.environ.get("TRACKER_WORKERS", "4"))
+CALL_TIMEOUT = 240
+USAGE = {"in": 0, "out": 0, "calls": 0}
+LOCK = threading.Lock()
 STAT_KEYS = ["mp", "sp", "k", "e", "ta", "a", "bhe", "sa", "se", "srv", "dig", "re", "bs", "ba", "be"]
 MILESTONES = {"k": ("kill", [1, 25, 50, 100, 150, 200, 300]), "a": ("assist", [1, 50, 100, 200, 300, 500, 750]),
               "dig": ("dig", [1, 50, 100, 150, 200, 300, 400]), "sa": ("ace", [1, 10, 25, 50]),
@@ -35,11 +41,11 @@ STRONG_MODEL = os.environ.get("TRACKER_STRONG_MODEL", WRITER_MODEL)   # schedule
 SEARCH = {"type": "web_search_20250305", "name": "web_search", "max_uses": 3}
 
 
-def tools_for(model, fetch_cap=14000):
+def tools_for(model, fetch_cap=8000):
     """Haiku lacks the newer fetch tool's dynamic filtering, so it gets the basic fetch with a tighter cap."""
     if "haiku" in (model or MODEL):
         return [{"type": "web_fetch_20250910", "name": "web_fetch", "max_uses": 6, "max_content_tokens": min(fetch_cap, 10000)}, SEARCH]
-    return [{"type": "web_fetch_20260318", "name": "web_fetch", "max_uses": 8, "max_content_tokens": fetch_cap, "use_cache": False}, SEARCH]
+    return [{"type": "web_fetch_20260318", "name": "web_fetch", "max_uses": 6, "max_content_tokens": fetch_cap, "use_cache": False}, SEARCH]
 SYSTEM = ("You maintain a small, family-friendly tracker of college volleyball players for their parents. "
           "Research only from the official pages you are given (and web_search when told to). Return ONLY valid JSON "
           "matching the requested structure — no prose, no code fences. Accuracy beats completeness: never invent a "
@@ -49,9 +55,16 @@ SYSTEM = ("You maintain a small, family-friendly tracker of college volleyball p
 def log(m): print(f"[{datetime.now().strftime('%H:%M:%S')}] {m}", flush=True)
 
 
+def spent(): return USAGE["in"] / TOKEN_BUDGET
+
+
+class BudgetExceeded(RuntimeError): pass
+
+
 # ---------------------------------------------------------------- API
 def call_claude(prompt, tools=None, max_tokens=5000, system=SYSTEM, model=None):
-    """One retry on any failure (network, HTTP, bad JSON)."""
+    """One retry on any failure (network, HTTP, bad JSON). Refuses to start once the run budget is spent."""
+    if spent() >= 1.0: raise BudgetExceeded(f"run token budget spent ({USAGE['in']:,} input tokens)")
     for attempt in (1, 2):
         try:
             return _call(prompt, tools, max_tokens, system, model)
@@ -68,7 +81,7 @@ def _call(prompt, tools, max_tokens, system, model):
         req = urllib.request.Request(API_URL, data=json.dumps(body).encode(), method="POST", headers={
             "x-api-key": API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json"})
         try:
-            with urllib.request.urlopen(req, timeout=600) as r:
+            with urllib.request.urlopen(req, timeout=CALL_TIMEOUT) as r:
                 data = json.loads(r.read())
         except urllib.error.HTTPError as e:
             raise RuntimeError(f"API HTTP {e.code}: {e.read().decode('utf-8', 'replace')[:600]}") from None
@@ -76,7 +89,9 @@ def _call(prompt, tools, max_tokens, system, model):
             convo.append({"role": "assistant", "content": data["content"]}); continue
         text = "".join(b.get("text", "") for b in data.get("content", []) if b.get("type") == "text")
         u = data.get("usage", {}); st = u.get("server_tool_use", {})
-        log(f"    tokens {u.get('input_tokens')}/{u.get('output_tokens')} fetch={st.get('web_fetch_requests', 0)} search={st.get('web_search_requests', 0)}")
+        with LOCK:
+            USAGE["in"] += u.get("input_tokens", 0) or 0; USAGE["out"] += u.get("output_tokens", 0) or 0; USAGE["calls"] += 1
+        log(f"    tokens {u.get('input_tokens')}/{u.get('output_tokens')} fetch={st.get('web_fetch_requests', 0)} search={st.get('web_search_requests', 0)} · run {spent():.0%} of budget")
         try:
             return parse_json(text)
         except ValueError:
@@ -112,7 +127,7 @@ def pages(p):
 # ---------------------------------------------------------------- research calls
 def research_daily(p, today, need_lines=()):
     since = (today - timedelta(days=14)).isoformat()
-    need = ", ".join(f"{d} vs {o}" for d, o in need_lines[:4]) or "none yet"
+    need = ", ".join(f"{d} vs {o}" for d, o in need_lines[:2]) or "none yet"
     prompt = f"""Today is {today.isoformat()}. Fall {p['college_season']} season. Player: {p['name']}, freshman at {p['school']} ({p['division']}). Position: {p.get('position') or p['club_position']}.
 {pages(p)}
 
@@ -130,8 +145,8 @@ Collect:
 3. results: team matches from {since} through {today.isoformat()} with a final score, most recent first. For each: date, opponent, home_away (home/away/neutral),
    result ("W 3-1" / "L 0-3"), box_url (the box score link from the schedule page), player_line.
    player_line = her numbers from the box score in plain words ("7 kills, 3 blocks, 2 digs" / "24 assists, 6 digs" / "did not play"). The individual lines are on the
-   box score page under the "Individual" tab, listed by team with jersey numbers — find the row with her number. Open the box score for every match that still needs a
-   line (up to 4 fetches): {need} plus any newer match. Leave null only if you truly could not open it.
+   box score page under the "Individual" tab, listed by team with jersey numbers — find the row with her number. Open the box score for the matches that still need a
+   line (at most 2 fetches, newest first): {need} plus any newer match. Leave null only if you truly could not open it.
 4. blurb: 2-3 sentences for her parents: what she and the team did lately, whether she is getting court time, what is next. Warm, plain, factual.
 
 Return ONLY:
@@ -160,7 +175,7 @@ Return ONLY:
 {{"schedule": [{{"date":"YYYY-MM-DD","time":"6:00 PM ET","time_ct":"5:00 PM CT","opponent":"","home_away":"home","location":null,"stream_name":null,"stream_url":null}}],
  "standing": "3rd of 11 OVC", "standings_url": null, "socials": {{"instagram": null, "x": null}}}}"""
     m = p.get("model") or STRONG_MODEL
-    return call_claude(prompt, tools_for(m, fetch_cap=22000), max_tokens=7000, model=m)
+    return call_claude(prompt, tools_for(m, fetch_cap=10000), max_tokens=6000, model=m)
 
 
 def research_profile(p):
@@ -175,14 +190,13 @@ Return ONLY: {{"jersey":null,"position":null,"class_year":null,"height":null,"ho
 def research_news(p, today, first_run=False):
     since = (today - timedelta(days=21 if first_run else 8)).isoformat()
     news_url = p["site"].rstrip("/") + "/news"
-    prompt = f"""Today is {today.isoformat()}. First open the program's news page: {news_url} (fall back to {p['site']} if that 404s) and read the headlines and recaps since {since}. Then use web_search (2-3 searches, e.g. "{p['name']} volleyball", "{p['school_short']} volleyball {p['name'].split()[-1]}", "{p['school_short']} volleyball coach"). Find up to 5 items published since {since} that either
+    prompt = f"""Today is {today.isoformat()}. Use web_search only (2 searches, e.g. "{p['name']} volleyball", "{p['school_short']} volleyball {p['name'].split()[-1]}", "{p['school_short']} volleyball coach"). Find up to 5 items published since {since} that either
 (a) mention {p['name']} by name — school match recaps and features, signing/roster announcements, local papers (Daily Herald, Kane County Reporter, Northwest Herald, Elgin Courier-News), conference weekly honors — or
 (b) concern the {p['school']} volleyball coaching staff — hires, departures, contract extensions, awards, suspensions — head coach or assistants.
 Skip recaps that do not mention her and skip anything older than {since}. Return an empty list if nothing qualifies.
 For a recap that mentions her, put her line or the quote in "note" (one sentence). Return up to 6 items.
 Return ONLY: {{"items": [{{"date":"YYYY-MM-DD","kind":"news" or "coach","title":"","source":"publication name","url":"https://...","note":null}}]}}"""
-    tools = tools_for(STRONG_MODEL); tools[1] = {**SEARCH, "max_uses": 2}
-    return call_claude(prompt, tools, max_tokens=2000, model=STRONG_MODEL)
+    return call_claude(prompt, [{**SEARCH, "max_uses": 2}], max_tokens=1500, model=STRONG_MODEL)
 
 
 def write_piece(kind, players, today, milestones, reunions):
@@ -301,6 +315,77 @@ def compute_reunions(players):
 
 
 # ---------------------------------------------------------------- main
+def process_player(c, cfg, prev, prev_players, today, now, flags):
+    """All the work for one girl. Returns (entry, milestones, buzz_items, reseeded, failed)."""
+    first_run, reseed, schedules_day, news_day, no_news_yet = (flags[k] for k in ("first_run", "reseed", "schedules_day", "news_day", "no_news_yet"))
+    old = prev_players.get(c["id"], {}) if not first_run else {}
+    p = {**old, **c, "college_season": cfg["college_season"]}
+    p.pop("fetch_note", None); p.pop("disambiguation", None); p.pop("position_note", None)
+    for k in ("recent_matches", "upcoming", "season_stats"): p.setdefault(k, [])
+    p["recent_matches"], p["upcoming"] = clean_matches(p["recent_matches"]), clean_matches(p["upcoming"])
+    for k in ("stats", "team_record", "photo_url"): p.setdefault(k, None)
+    p.setdefault("socials", {"instagram": None, "x": None}); p["stale"] = False
+    miles, items, reseeded, failed = [], [], False, False
+    if c.get("status") != "playing":
+        p.update({"recent_matches": [], "upcoming": [], "stats": None, "season_stats": []})
+        return p, miles, items, reseeded, failed
+
+    log(f"{p['name']} ({p['school_short']})")
+    p.pop("error", None)
+    try:
+        optional = spent() < 0.7            # past 70% of budget: stats only
+        if (not old.get("jersey") or not old.get("photo_url")) and (not old.get("profile_tried") or today.weekday() == 0) and optional and (first_run or today.weekday() == 0 or not old.get("profile_tried")):
+            p["profile_tried"] = True
+            log("  profile"); prof = research_profile(c)
+            p.update({k: v for k, v in prof.items() if v and not (k == "position" and c.get("position"))})
+        if c.get("position"): p["position"] = c["position"]
+        need = [(m["date"], m["opponent"]) for m in old.get("recent_matches", []) if m.get("result") and not m.get("player_line")]
+        log("  daily"); d = research_daily({**c, **p}, today, need)
+        prev_stats = old.get("stats")
+        if isinstance(d.get("team_record"), dict): p["team_record"] = {**(p.get("team_record") or {}), **{k: as_text(v) for k, v in d["team_record"].items() if v}}
+        if isinstance(d.get("stats"), dict): p["stats"] = {k: (int(float(d["stats"][k])) if str(d["stats"].get(k, "")).replace(".", "").isdigit() else None) for k in STAT_KEYS}
+        p["recent_matches"] = merge_matches(old.get("recent_matches"), clean_matches(d.get("results")))
+        if d.get("blurb"): p["blurb"] = as_text(d["blurb"])
+        played = {(m.get("date"), (m.get("opponent") or "").lower()) for m in p["recent_matches"] if m.get("result")}
+        p["upcoming"] = [m for m in p["upcoming"] if m.get("date") and m["date"] >= today.isoformat() and (m["date"], (m.get("opponent") or "").lower()) not in played]
+        has_firsts = any(m.get("player_id") == p["id"] and "First college" in m.get("text", "") for m in prev.get("milestones", []))
+        seeding = (first_run or reseed or not has_firsts) and bool(p["stats"])
+        if seeding: prev_stats = {k: 0 for k in STAT_KEYS}; reseeded = True
+        miles, highs = detect_milestones(p, prev_stats, p["stats"], today, old.get("_highs") if not seeding else None, seeding)
+        p["_highs"] = highs
+        if (schedules_day or not p["upcoming"]) and spent() < 0.7:
+            log("  weekly"); w = research_weekly({**c, **p}, today)
+            if w.get("schedule"):
+                p["upcoming"] = sorted([m for m in clean_matches(w["schedule"]) if m.get("date") and (m["date"], (m.get("opponent") or "").lower()) not in played], key=lambda m: m["date"])
+            if w.get("standing"): p["team_record"] = {**(p.get("team_record") or {}), "standing": as_text(w["standing"]), "standings_url": as_text(w.get("standings_url"))}
+            if w.get("socials") and any((w["socials"] or {}).values()): p["socials"] = w["socials"]
+        if news_day and spent() < 0.7:
+            log("  news"); n = research_news(c, today, first_run or no_news_yet)
+            items = [{**it, "player_id": p["id"]} for it in n.get("items", []) if it.get("url") and it.get("title")]
+        p["fetched_at"] = now.isoformat(timespec="minutes")
+    except Exception as e:
+        failed = True; log(f"  FAILED {p['name']}: {str(e)[:160]}"); p["stale"] = True; p["error"] = str(e)[:200]
+    p["matches_played"], p["sets_played"] = (p["stats"] or {}).get("mp"), (p["stats"] or {}).get("sp")
+    p["season_stats"] = season_stats_list(p["stats"])
+    return p, miles, items, reseeded, failed
+
+
+def assemble(cfg, prev, players_by_id, milestones, reunions, buzz, summary, now, today, failures, note):
+    ordered = [players_by_id.get(c["id"]) or {**c, "stale": True, "recent_matches": [], "upcoming": [], "season_stats": [], "stats": None, "team_record": None}
+               for c in cfg["players"]]
+    for p in ordered: p.pop("fetch_note", None); p.pop("disambiguation", None); p.pop("position_note", None)
+    return {"team": cfg["team"], "club": cfg["club"], "club_season": cfg["club_season"], "college_season": cfg["college_season"],
+            "updated_at": now.isoformat(timespec="minutes"), "updated_label": now.strftime("%A %-I:%M %p CT"),
+            "summary": summary, "players": ordered, "milestones": milestones, "reunions": reunions, "buzz": buzz,
+            "run": {"date": today.isoformat(), "failures": failures, "model": MODEL, "note": note,
+                    "input_tokens": USAGE["in"], "output_tokens": USAGE["out"], "calls": USAGE["calls"]}}
+
+
+def save(data):
+    tmp = DATA_FILE + ".tmp"
+    json.dump(data, open(tmp, "w", encoding="utf-8"), ensure_ascii=False, indent=1); os.replace(tmp, DATA_FILE)
+
+
 def main():
     if not API_KEY: sys.exit("ANTHROPIC_API_KEY is not set")
     cfg = json.load(open(PLAYERS_FILE, encoding="utf-8"))
@@ -313,70 +398,45 @@ def main():
     prev_players = {p["id"]: p for p in prev.get("players", [])}
     first_run = not prev_players or prev.get("run", {}).get("model") in (None, "bootstrap", "sample")
     no_news_yet = not any(b.get("kind") in ("news", "coach") for b in prev.get("buzz", []))
-    full = os.environ.get("TRACKER_FULL") == "1" or first_run or no_news_yet or today.weekday() in (0, 3)   # Mon=0, Thu=3: news + writing
-    schedules_day = os.environ.get("TRACKER_FULL") == "1" or first_run or today.weekday() == 0    # schedules/standings: Monday (plus any girl missing hers)
-    news_day = os.environ.get("TRACKER_FULL") == "1" or first_run or no_news_yet or today.weekday() == 0   # news: Monday only
+    forced = os.environ.get("TRACKER_FULL") == "1"
+    flags = {"first_run": first_run,
+             "reseed": not any(m.get("v") == 2 for m in prev.get("milestones", [])),
+             "schedules_day": forced or first_run or today.weekday() == 0,                    # schedules/standings: Monday (plus any girl missing hers)
+             "news_day": forced or first_run or today.weekday() == 0,                        # news: Monday only (a mid-week manual run skips it)
+             "no_news_yet": no_news_yet}
+    summary_age = (today - datetime.fromisoformat(prev["run"]["date"]).date()).days if prev.get("run", {}).get("date") and prev.get("summary") else 99
+    writing_day = forced or first_run or today.weekday() in (0, 3) or summary_age > 4       # recap Monday, preview Thursday, or the note is stale
     piece_kind = "recap" if today.weekday() in (0, 1, 5, 6) else "preview"
-    reseed = not any(m.get("v") == 2 for m in prev.get("milestones", []))       # one-time: replace the badly dated first-run milestones
-    log(f"Run {today} · full={full} · first_run={first_run} · reseed={reseed} · model={MODEL}")
+    log(f"Run {today} · {flags} · writing={writing_day} · budget={TOKEN_BUDGET:,} tokens · workers={WORKERS} · model={MODEL}")
 
-    players, failures, new_miles, new_buzz, reseeded = [], 0, [], [], set()
-    for c in cfg["players"]:
-        old = prev_players.get(c["id"], {}) if not first_run else {}
-        p = {**old, **c, "college_season": cfg["college_season"]}
-        p.pop("fetch_note", None)
-        for k in ("recent_matches", "upcoming", "season_stats"): p.setdefault(k, [])
-        p["recent_matches"], p["upcoming"] = clean_matches(p["recent_matches"]), clean_matches(p["upcoming"])
-        for k in ("stats", "team_record", "photo_url"): p.setdefault(k, None)
-        p.setdefault("socials", {"instagram": None, "x": None}); p["stale"] = False
-        if c.get("status") != "playing":
-            p.update({"recent_matches": [], "upcoming": [], "stats": None, "season_stats": []}); players.append(p); continue
-
-        log(f"{p['name']} ({p['school_short']})")
-        try:
-            if (not old.get("jersey") or not old.get("photo_url")) and (not old.get("profile_tried") or today.weekday() == 0):
-                p["profile_tried"] = True
-                log("  profile"); prof = research_profile(c)
-                p.update({k: v for k, v in prof.items() if v and not (k == "position" and c.get("position"))})
-            if c.get("position"): p["position"] = c["position"]
-            need = [(m["date"], m["opponent"]) for m in old.get("recent_matches", []) if m.get("result") and not m.get("player_line")]
-            log("  daily"); d = research_daily({**c, **p}, today, need)
-            prev_stats = old.get("stats")
-            if isinstance(d.get("team_record"), dict): p["team_record"] = {**(p.get("team_record") or {}), **{k: as_text(v) for k, v in d["team_record"].items() if v}}
-            if isinstance(d.get("stats"), dict): p["stats"] = {k: (int(float(d["stats"][k])) if str(d["stats"].get(k, "")).replace(".", "").isdigit() else None) for k in STAT_KEYS}
-            p["recent_matches"] = merge_matches(old.get("recent_matches"), clean_matches(d.get("results")))
-            if d.get("blurb"): p["blurb"] = as_text(d["blurb"])
-            played = {(m.get("date"), (m.get("opponent") or "").lower()) for m in p["recent_matches"] if m.get("result")}
-            p["upcoming"] = [m for m in p["upcoming"] if m.get("date") and m["date"] >= today.isoformat() and (m["date"], (m.get("opponent") or "").lower()) not in played]
-            has_firsts = any(m.get("player_id") == p["id"] and "First college" in m.get("text", "") for m in prev.get("milestones", []))
-            seeding = (first_run or reseed or not has_firsts) and bool(p["stats"])   # any girl still missing her firsts gets seeded
-            if seeding: prev_stats = {k: 0 for k in STAT_KEYS}; reseeded.add(p["id"])
-            miles, highs = detect_milestones(p, prev_stats, p["stats"], today, old.get("_highs") if not seeding else None, seeding)
-            p["_highs"] = highs; new_miles += miles
-            if schedules_day or not p["upcoming"]:
-                log("  weekly"); w = research_weekly({**c, **p}, today)
-                if w.get("schedule"):
-                    p["upcoming"] = sorted([m for m in clean_matches(w["schedule"]) if m.get("date") and (m["date"], (m.get("opponent") or "").lower()) not in played], key=lambda m: m["date"])
-                if w.get("standing"): p["team_record"] = {**(p.get("team_record") or {}), "standing": as_text(w["standing"]), "standings_url": as_text(w.get("standings_url"))}
-                if w.get("socials") and any((w["socials"] or {}).values()): p["socials"] = w["socials"]
-            if news_day:
-                    log("  news"); n = research_news(c, today, first_run or no_news_yet)
-                    new_buzz += [{**it, "player_id": p["id"]} for it in n.get("items", []) if it.get("url") and it.get("title")]
-            p["fetched_at"] = now.isoformat(timespec="minutes")
-        except Exception as e:
-            failures += 1; log(f"  FAILED: {e}"); p["stale"] = True; p["error"] = str(e)[:200]
-        p["matches_played"], p["sets_played"] = (p["stats"] or {}).get("mp"), (p["stats"] or {}).get("sp")
-        p["season_stats"] = season_stats_list(p["stats"])
-        players.append(p); time.sleep(1.5)
-
-    kept = [m for m in (prev.get("milestones") or []) if m.get("player_id") not in reseeded]
-    milestones = sorted(kept + new_miles, key=lambda m: m["date"], reverse=True)[:80]
-    reunions = compute_reunions(players)
+    players_by_id = {pid: p for pid, p in prev_players.items()}          # start from last good data; replace as girls finish
+    milestones = list(prev.get("milestones") or [])
     buzz = list(prev.get("buzz") or [])
-    have = {b.get("url") for b in buzz if b.get("url")}
-    buzz += [b for b in new_buzz if b["url"] not in have]
     summary = prev.get("summary")
-    if full:
+    failures, done = 0, 0
+    with ThreadPoolExecutor(max_workers=WORKERS) as pool:
+        futs = {pool.submit(process_player, c, cfg, prev, prev_players, today, now, flags): c for c in cfg["players"]}
+        for fut in as_completed(futs):
+            c = futs[fut]
+            try: p, miles, items, reseeded, failed = fut.result()
+            except Exception as e:
+                failed, p, miles, items, reseeded = True, {**prev_players.get(c["id"], c), "stale": True, "error": str(e)[:200]}, [], [], False
+                log(f"  FAILED {c['name']}: {str(e)[:160]}")
+            failures += int(failed); done += 1
+            players_by_id[c["id"]] = p
+            if reseeded: milestones = [m for m in milestones if m.get("player_id") != c["id"]]
+            milestones += miles
+            have = {b.get("url") for b in buzz if b.get("url")}
+            buzz += [b for b in items if b["url"] not in have]
+            snapshot = assemble(cfg, prev, players_by_id, sorted(milestones, key=lambda m: m["date"], reverse=True)[:80],
+                                prev.get("reunions") or [], buzz, summary, now, today, failures, f"in progress · {done}/{len(cfg['players'])} done")
+            save(snapshot)                                                   # a timeout or a billing stop keeps everything finished so far
+            log(f"  saved · {done}/{len(cfg['players'])} · {spent():.0%} of budget")
+
+    players = [players_by_id[c["id"]] for c in cfg["players"] if c["id"] in players_by_id]
+    milestones = sorted(milestones, key=lambda m: m["date"], reverse=True)[:80]
+    reunions = compute_reunions(players)
+    if writing_day and spent() < 1.0:
         try:
             log(f"Writing the {piece_kind}")
             week_miles = [m for m in milestones if m["date"] >= (today - timedelta(days=7)).isoformat()]
@@ -388,13 +448,8 @@ def main():
             failures += 1; log(f"  writing FAILED: {e}")
     cutoff = (today - timedelta(days=75)).isoformat()
     buzz = sorted([b for b in buzz if (b.get("date") or "") >= cutoff], key=lambda b: b["date"], reverse=True)
-
-    data = {"team": cfg["team"], "club": cfg["club"], "club_season": cfg["club_season"], "college_season": cfg["college_season"],
-            "updated_at": now.isoformat(timespec="minutes"), "updated_label": now.strftime("%A %-I:%M %p CT"),
-            "summary": summary, "players": players, "milestones": milestones, "reunions": reunions, "buzz": buzz,
-            "run": {"date": today.isoformat(), "full": full, "failures": failures, "model": MODEL}}
-    json.dump(data, open(DATA_FILE, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
-    log(f"Wrote data.json · {len(players)} players · {failures} failure(s) · {len(new_miles)} milestone(s) · {len(reunions)} reunion(s)")
+    save(assemble(cfg, prev, players_by_id, milestones, reunions, buzz, summary, now, today, failures, "complete"))
+    log(f"Done · {len(players)} players · {failures} failure(s) · {USAGE['calls']} calls · {USAGE['in']:,} in / {USAGE['out']:,} out tokens ({spent():.0%} of budget)")
 
 
 if __name__ == "__main__":
