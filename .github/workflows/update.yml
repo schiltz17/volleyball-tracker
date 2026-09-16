@@ -1,0 +1,41 @@
+name: Update tracker
+
+on:
+  schedule:
+    - cron: "0 11 * * 1,4,6"   # Mon, Thu, Sat · 6:00 AM Chicago (5:00 AM after Nov 1)
+  workflow_dispatch:        # adds a "Run workflow" button for manual runs
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-tracker
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run updater
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python update.py
+
+      - name: Commit data.json
+        run: |
+          git config user.name "tracker-bot"
+          git config user.email "tracker-bot@users.noreply.github.com"
+          git add data.json
+          if git diff --cached --quiet; then
+            echo "No changes."
+          else
+            git commit -m "Update $(date -u +%Y-%m-%d)"
+            git push
+          fi
