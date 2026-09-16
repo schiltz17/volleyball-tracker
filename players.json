@@ -25,7 +25,9 @@
         "primary": "#005DAA",
         "secondary": "#FFCC00"
       },
-      "tz": "America/New_York"
+      "tz": "America/New_York",
+      "position": "RS/MB",
+      "position_note": "Listed MB on the roster; has started at right side every match so far (per family)."
     },
     {
       "id": "king",

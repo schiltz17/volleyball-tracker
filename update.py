@@ -69,7 +69,7 @@ def _call(prompt, tools, max_tokens, system, model):
         req = urllib.request.Request(API_URL, data=json.dumps(body).encode(), method="POST", headers={
             "x-api-key": API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json"})
         try:
-            with urllib.request.urlopen(req, timeout=300) as r:
+            with urllib.request.urlopen(req, timeout=600) as r:
                 data = json.loads(r.read())
         except urllib.error.HTTPError as e:
             raise RuntimeError(f"API HTTP {e.code}: {e.read().decode('utf-8', 'replace')[:600]}") from None
@@ -318,7 +318,7 @@ def main():
     reseed = not any(m.get("v") == 2 for m in prev.get("milestones", []))       # one-time: replace the badly dated first-run milestones
     log(f"Run {today} · full={full} · first_run={first_run} · reseed={reseed} · model={MODEL}")
 
-    players, failures, new_miles, new_buzz = [], 0, [], []
+    players, failures, new_miles, new_buzz, reseeded = [], 0, [], [], set()
     for c in cfg["players"]:
         old = prev_players.get(c["id"], {}) if not first_run else {}
         p = {**old, **c, "college_season": cfg["college_season"]}
@@ -334,7 +334,8 @@ def main():
         try:
             if not old.get("jersey") or not old.get("photo_url"):
                 log("  profile"); prof = research_profile(c)
-                p.update({k: v for k, v in prof.items() if v})
+                p.update({k: v for k, v in prof.items() if v and not (k == "position" and c.get("position"))})
+            if c.get("position"): p["position"] = c["position"]
             need = [(m["date"], m["opponent"]) for m in old.get("recent_matches", []) if m.get("result") and not m.get("player_line")]
             log("  daily"); d = research_daily({**c, **p}, today, need)
             prev_stats = old.get("stats")
@@ -344,8 +345,9 @@ def main():
             if d.get("blurb"): p["blurb"] = as_text(d["blurb"])
             played = {(m.get("date"), (m.get("opponent") or "").lower()) for m in p["recent_matches"] if m.get("result")}
             p["upcoming"] = [m for m in p["upcoming"] if m.get("date") and m["date"] >= today.isoformat() and (m["date"], (m.get("opponent") or "").lower()) not in played]
-            seeding = (first_run or reseed) and bool(p["stats"])
-            if seeding: prev_stats = {k: 0 for k in STAT_KEYS}
+            has_firsts = any(m.get("player_id") == p["id"] and "First college" in m.get("text", "") for m in prev.get("milestones", []))
+            seeding = (first_run or reseed or not has_firsts) and bool(p["stats"])   # any girl still missing her firsts gets seeded
+            if seeding: prev_stats = {k: 0 for k in STAT_KEYS}; reseeded.add(p["id"])
             miles, highs = detect_milestones(p, prev_stats, p["stats"], today, old.get("_highs") if not seeding else None, seeding)
             p["_highs"] = highs; new_miles += miles
             if full:
@@ -364,7 +366,7 @@ def main():
         p["season_stats"] = season_stats_list(p["stats"])
         players.append(p); time.sleep(1.5)
 
-    kept = [] if reseed else (prev.get("milestones") or [])
+    kept = [m for m in (prev.get("milestones") or []) if m.get("player_id") not in reseeded]
     milestones = sorted(kept + new_miles, key=lambda m: m["date"], reverse=True)[:80]
     reunions = compute_reunions(players)
     buzz = list(prev.get("buzz") or [])
