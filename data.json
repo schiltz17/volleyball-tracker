@@ -3,8 +3,8 @@
  "club": "Top Flight Volleyball Club, Elgin IL",
  "club_season": "2025-26",
  "college_season": "2026",
- "updated_at": "2026-09-16T15:05-05:00",
- "updated_label": "Wednesday 3:05 PM CT",
+ "updated_at": "2026-09-16T15:15-05:00",
+ "updated_label": "Wednesday 3:15 PM CT",
  "summary": {
   "headline": "A Full Weekend of Matches Ahead",
   "body": [
@@ -305,13 +305,13 @@
    "class_year": "Fr.",
    "height": "6-2",
    "bio_url": "https://msueagles.com/sports/womens-volleyball/roster/anna-schiltz/9037",
-   "blurb": "Anna's been getting steady playing time as a freshman right side, appearing in 8 of the team's matches so far with 15 kills, 10 digs, and 10 block assists on the season. The Eagles swept through the Mercyhurst Invitational over Labor Day weekend with three straight wins before falling in tough matches to Cincinnati and Michigan State at home. Up next, Morehead State travels to Huntington, WV to face Marshall on September 18.",
+   "blurb": "Anna has appeared in all eight of the team's matches this season, playing 26 sets and picking up 15 kills, 10 digs, and a block. The Eagles had a strong week at the Mercyhurst Invitational with three straight wins before dropping home matches to Cincinnati and Michigan State. They'll look to bounce back on Friday, September 18 on the road at Marshall.",
    "_highs": {
     "block": 2,
     "dig": 1,
     "_last": "2026-09-12"
    },
-   "fetched_at": "2026-09-16T15:05-05:00",
+   "fetched_at": "2026-09-16T15:15-05:00",
    "matches_played": 8,
    "sets_played": 26,
    "position_note": "Listed MB on the roster; has started at right side every match so far (per family)."
@@ -698,7 +698,7 @@
    "class_year": "Freshman",
    "height": "5-11",
    "bio_url": "https://uicflames.com/sports/womens-volleyball/roster/elizabeth-king/11821",
-   "blurb": "Elizabeth's team has had a busy couple of weeks, closing out the UIC-DePaul Invitational with sweeps of Central Michigan and Western Michigan after a tough loss to Auburn. On the season she's appeared in 8 matches (18 sets) with 20 kills and 8 block assists, so she's carving out real court time as a freshman. Up next, the Flames head to Loyola on Thursday, Sept. 17.",
+   "blurb": "Elizabeth has now played in 8 matches this season for a total of 18 sets, picking up 20 kills and 8 blocks along the way, so she's getting real court time as the season rolls on. The Flames had a busy stretch, dropping matches to Milwaukee, Montana State, and Auburn but bouncing back with wins over St. Thomas, Central Michigan, and Western Michigan. Up next, UIC heads to Loyola on Thursday, September 17.",
    "_highs": {
     "kill": 3,
     "block": 5,
@@ -706,7 +706,7 @@
    },
    "matches_played": 8,
    "sets_played": 18,
-   "fetched_at": "2026-09-16T15:05-05:00"
+   "fetched_at": "2026-09-16T15:15-05:00"
   },
   {
    "id": "sanders",
@@ -857,23 +857,40 @@
      "stream_url": null
     }
    ],
-   "season_stats": [],
+   "season_stats": [
+    {
+     "label": "Kills",
+     "value": 0
+    },
+    {
+     "label": "Kills/set",
+     "value": "–"
+    },
+    {
+     "label": "Hitting %",
+     "value": "–"
+    },
+    {
+     "label": "Blocks",
+     "value": 0
+    }
+   ],
    "stats": {
-    "mp": null,
-    "sp": null,
-    "k": null,
-    "e": null,
-    "ta": null,
-    "a": null,
-    "bhe": null,
-    "sa": null,
-    "se": null,
+    "mp": 0,
+    "sp": 0,
+    "k": 0,
+    "e": 0,
+    "ta": 0,
+    "a": 0,
+    "bhe": 0,
+    "sa": 0,
+    "se": 0,
     "srv": null,
-    "dig": null,
+    "dig": 0,
     "re": null,
-    "bs": null,
-    "ba": null,
-    "be": null
+    "bs": 0,
+    "ba": 0,
+    "be": 0
    },
    "team_record": {
     "overall": "6-4",
@@ -890,13 +907,13 @@
    "class_year": "Fr",
    "height": "6-1",
    "bio_url": "https://gwusports.com/sports/womens-volleyball/roster/gracyn-sanders/11699",
-   "blurb": "Gracyn and the Runnin' Bulldogs have been busy, playing six matches in the last two weeks including a tough road stretch at West Georgia's tournament. The team won four of those six matches, highlighted by a gritty five-set comeback over UNC Wilmington and a sweep of Alabama State at home. We don't have Gracyn's individual stat line from the available box scores this cycle, but she remains part of the freshman middle-blocker rotation as the Bulldogs keep building momentum heading into the next stretch of matches.",
+   "blurb": "Gracyn hasn't gotten into a match yet this season, but the Runnin' Bulldogs have been on quite a roll. They took down Alabama State and UNC Wilmington at home, then split a tough road trip through the West Georgia tournament, beating Mercer and New Orleans after dropping matches to Western Carolina and West Georgia. The team keeps battling in close, multi-set matches, and we'll keep watching for Gracyn's first appearance as the season continues.",
    "_highs": {
     "_last": "2026-09-12"
    },
-   "fetched_at": "2026-09-16T15:05-05:00",
-   "matches_played": null,
-   "sets_played": null
+   "fetched_at": "2026-09-16T15:15-05:00",
+   "matches_played": 0,
+   "sets_played": 0
   },
   {
    "id": "hard",
@@ -1235,8 +1252,8 @@
    },
    "matches_played": 8,
    "sets_played": 19,
-   "blurb": "Breanna has been working her way into the rotation as a freshman setter, picking up 55 assists and 22 digs across her matches so far this season. The team split a busy stretch of tournament play in early September, and Breanna keeps getting valuable minutes as she adjusts to the college game. Up next, the Redhawks host Assumption on September 19 back home in Rochester.",
-   "fetched_at": "2026-09-16T15:05-05:00"
+   "blurb": "Breanna has been seeing steady time as a freshman setter, appearing in 8 matches (19 sets) with 55 assists and 22 digs so far this season. The team split a recent home weekend, falling to Lock Haven and Georgian Court before bouncing back with a win over Redeemer. They're back in action at home against Assumption on September 19.",
+   "fetched_at": "2026-09-16T15:15-05:00"
   },
   {
    "id": "lambert",
@@ -1406,13 +1423,13 @@
    "bio_url": "https://arkansastechsports.com/sports/womens-volleyball/roster/kylie-lambert/5939",
    "matches_played": 9,
    "sets_played": 23,
-   "blurb": "Kylie has been a steady presence for the Golden Suns this season, running the offense in all 23 sets played with 93 assists, 7 aces, and 24 digs so far. The team had a busy couple of weeks, picking up wins over William Jewell, Missouri Southern, and Henderson State, though they dropped matches to Pittsburg State and Missouri Western. She's clearly earned real playing time as a freshman setter, and we'll keep watching as Arkansas Tech continues through its conference schedule.",
+   "blurb": "Kylie has been getting steady court time this season, playing in 9 matches and 23 sets as one of the Golden Suns' setters, with 93 assists, 7 aces and 24 digs on the year. The team has had a mixed stretch lately, beating Henderson State 3-1 at home before losing on the road to Missouri Western and Pittsburg State. She and the Golden Suns will look to keep building as conference play continues.",
    "_highs": {
     "assist": 8,
     "dig": 3,
     "_last": "2026-09-12"
    },
-   "fetched_at": "2026-09-16T15:05-05:00"
+   "fetched_at": "2026-09-16T15:15-05:00"
   },
   {
    "id": "merlin",
@@ -1593,7 +1610,7 @@
    "_highs": {
     "_last": "2026-09-12"
    },
-   "fetched_at": "2026-09-16T15:05-05:00",
+   "fetched_at": "2026-09-16T15:15-05:00",
    "matches_played": null,
    "sets_played": null
   },
@@ -1806,10 +1823,27 @@
      "stream_url": "https://flosports.link/4fHoji8"
     }
    ],
-   "season_stats": [],
+   "season_stats": [
+    {
+     "label": "Kills",
+     "value": null
+    },
+    {
+     "label": "Kills/set",
+     "value": "–"
+    },
+    {
+     "label": "Hitting %",
+     "value": "–"
+    },
+    {
+     "label": "Blocks",
+     "value": 0
+    }
+   ],
    "stats": {
-    "mp": null,
-    "sp": null,
+    "mp": 0,
+    "sp": 0,
     "k": null,
     "e": null,
     "ta": null,
@@ -1841,13 +1875,13 @@
    "class_year": "Freshman",
    "height": "6-0",
    "bio_url": "https://tnutrojans.com/sports/womens-volleyball/roster/mary-francl/7073",
-   "blurb": "The Trojans have been on the road a lot lately, splitting a Labor Day trip to Huntsville and then dropping three straight at a Florida beach tournament in Sep 11-12. We don't have Mary's individual stat line from the pages we could see this time, so we can't say yet how much court time she's getting, but she's part of a young freshman group working through a tough non-conference slate. Up next, Trevecca opens Gulf South Conference play on the road at Auburn-Montgomery on Sep 18, so we'll keep watching for her to get into the rotation.",
+   "blurb": "Mary hasn't appeared in a match yet this season, so she's still waiting for her first minutes on the court. The Trojans have been busy though, splitting a pair of matches over Labor Day weekend in Huntsville with a win over Mars Hill and losses to Harding and Spring Hill. They're back at it soon with conference play starting up against Auburn Montgomery, so we'll keep watching for Mary's chance to get in.",
    "_highs": {
     "_last": "2026-09-12"
    },
-   "fetched_at": "2026-09-16T15:05-05:00",
-   "matches_played": null,
-   "sets_played": null
+   "fetched_at": "2026-09-16T15:15-05:00",
+   "matches_played": 0,
+   "sets_played": 0
   },
   {
    "id": "strout",
@@ -1883,7 +1917,7 @@
     {
      "date": "2026-09-04",
      "opponent": "Alaska Fairbanks",
-     "home_away": "neutral",
+     "home_away": "away",
      "result": "L 2-3",
      "box_url": "https://msumavericks.com/sports/womens-volleyball/stats/2026/alaska-fairbanks/boxscore/20007"
     },
@@ -1955,11 +1989,11 @@
    "bio_url": "https://msumavericks.com/sports/womens-volleyball/roster/peyton-strout/14321",
    "matches_played": 1,
    "sets_played": 1,
-   "blurb": "Peyton has gotten into one set so far this season as she works her way into the Mavericks' rotation, though she hasn't recorded a stat line yet. The team had a rough stretch on their Alaska trip, dropping close five-set battles to Fresno Pacific and Alaska Fairbanks along with a sweep loss to Alaska Anchorage. They're continuing to battle through a tough non-conference schedule as the season moves forward.",
+   "blurb": "Peyton has gotten into one set so far this season, though she hasn't recorded any stats yet. The Mavericks have been through a tough stretch on the road in Alaska, dropping close matches to Fresno Pacific and Alaska Fairbanks and a straight-set loss to Alaska Anchorage. We'll keep watching for more chances for her to get on the court as the season continues.",
    "_highs": {
     "_last": "2026-09-11"
    },
-   "fetched_at": "2026-09-16T15:05-05:00"
+   "fetched_at": "2026-09-16T15:15-05:00"
   },
   {
    "id": "callahan",
@@ -2056,7 +2090,7 @@
    "sets_played": null,
    "model": "claude-sonnet-5",
    "class_year": "Freshman",
-   "fetched_at": "2026-09-16T15:05-05:00",
+   "fetched_at": "2026-09-16T15:15-05:00",
    "profile_tried": true
   },
   {
@@ -2123,7 +2157,7 @@
    "_highs": {
     "_last": "2026-09-03"
    },
-   "fetched_at": "2026-09-16T15:05-05:00",
+   "fetched_at": "2026-09-16T15:15-05:00",
    "profile_tried": true,
    "class_year": "Freshman"
   },
@@ -2196,7 +2230,7 @@
    "model": "claude-sonnet-5",
    "blurb": "We weren't able to find Peyton's individual stat line or the team's game-by-game results for early-to-mid September 2026 in the search snippets available, so we don't want to guess at numbers or scores. What we can confirm is that Peyton is a freshman defensive specialist/libero on the Elgin Community College Spartans this fall, a program that competes in the Illinois Skyway Collegiate Conference under head coach Michele Mueller. We'll keep checking for updated box scores and a current record so we can share exactly how much court time she's getting and what's next on the schedule.",
    "_highs": {},
-   "fetched_at": "2026-09-16T15:05-05:00",
+   "fetched_at": "2026-09-16T15:15-05:00",
    "profile_tried": true,
    "jersey": 26,
    "position": "Defensive Specialist/Libero",
@@ -2522,8 +2556,8 @@
   "failures": 0,
   "model": "claude-sonnet-5",
   "note": "complete",
-  "input_tokens": 331666,
-  "output_tokens": 44317,
-  "calls": 17
+  "input_tokens": 371589,
+  "output_tokens": 46660,
+  "calls": 18
  }
 }
