@@ -178,8 +178,18 @@ def keep_lines(text, patterns, context=0, max_chars=24000):
 
 
 def find_pdf(raw_html, base):
-    m = re.search(r"""href=["']([^"']+\.pdf[^"']*)["']""", raw_html, re.I)
-    return urllib.request.urljoin(base, m.group(1)) if m else None
+    """The season cumulative stats sheet, if the page links one. Prefers links that look like it; ignores media guides etc."""
+    links = [urllib.request.urljoin(base, m) for m in re.findall(r"""href=["']([^"']+\.pdf[^"']*)["']""", raw_html, re.I)]
+    for pat in (r"cume", r"stats?/\d{4}", r"season", r"overall"):
+        for u in links:
+            if re.search(pat, u, re.I): return u
+    return None
+
+
+def fetch_pdf(url, max_bytes=3_000_000):
+    b = http_get(url, binary=True)
+    if not b.startswith(b"%PDF") or len(b) > max_bytes: raise ValueError("not a usable PDF")
+    return b
 
 
 def gather_daily(p, today):
@@ -195,11 +205,11 @@ def gather_daily(p, today):
     pdf = find_pdf(stats_raw, p["stats_url"])
     if pdf:
         try:
-            docs.append(("Season cumulative stats PDF", http_get(pdf, binary=True))); notes.append("stats from PDF")
+            docs.append(("Season cumulative stats PDF", fetch_pdf(pdf))); notes.append("stats PDF attached")
         except Exception as e:
-            notes.append(f"pdf failed: {str(e)[:60]}"); pdf = None
-    if not pdf:
-        parts.append("=== STATS PAGE (tab-separated rows) ===\n" + keep_lines(stats_text, [r"Player|SP\b|Kills|Assists", surname, rf"^\s*{re.escape(str(p.get('jersey') or ''))}\t"], 0, 12000))
+            notes.append(f"pdf skipped ({str(e)[:50]})")
+    parts.append("=== STATS PAGE (tab-separated rows; the PDF, if attached, is the authoritative copy) ===\n" +
+                 keep_lines(stats_text, [r"Player|\bSP\b|Kills|Assists", surname, rf"^\s*{re.escape(str(p.get('jersey') or ''))}\t"], 0, 12000))
     # box scores for matches still missing her line (newest first, max 2)
     need = [m for m in (p.get("recent_matches") or []) if m.get("result") and not m.get("player_line") and m.get("box_url")][:2]
     for m in need:
@@ -243,7 +253,12 @@ Below is text pulled from her school's schedule/results page, her stats (PDF att
 {text}
 
 {rules}"""
-    out = call_claude(prompt, None, max_tokens=3000, model=p.get("model"), docs=docs)
+    try:
+        out = call_claude(prompt, None, max_tokens=3000, model=p.get("model"), docs=docs)
+    except RuntimeError as e:
+        if docs and "pdf" in str(e).lower():
+            notes.append("API rejected the PDF — read the HTML table instead"); out = call_claude(prompt, None, max_tokens=3000, model=p.get("model"))
+        else: raise
     out["_notes"] = notes
     return out
 
@@ -296,13 +311,17 @@ Return ONLY: {shape}"""
 
 
 def research_news(p, today, first_run=False):
-    since = (today - timedelta(days=21 if first_run else 8)).isoformat()
-    prompt = f"""Today is {today.isoformat()}. Use web_search only (2 searches: "{p['name']} volleyball" and "{p['school_short']} volleyball coach"). From the result snippets, list items published since {since} that either
-(a) mention {p['name']} by name — school match recaps and features, roster/signing announcements, local papers (Daily Herald, Kane County Reporter, Northwest Herald, Elgin Courier-News), conference weekly honors — or
+    surname = p["name"].split()[-1]
+    prompt = f"""Today is {today.isoformat()}, mid-season (the 2026 college volleyball season began in late August). Use web_search only — up to 3 searches:
+ 1. "{p['name']}" volleyball {p['school_short']}
+ 2. {p['school_short']} volleyball {surname}
+ 3. {p['school_short']} volleyball coach
+From the result titles and snippets, list up to 6 items from THIS SEASON (August 2026 onward; older items only if clearly about her joining this team) that either
+(a) mention {p['name']} by name — match recaps, features, roster/signing news, local papers (Daily Herald, Kane County Reporter, Northwest Herald, Elgin Courier-News), conference weekly honors — or
 (b) concern the {p['school']} volleyball coaching staff — hires, departures, contract extensions, awards, suspensions.
-Skip anything older than {since} and anything that does not name her or the staff. Return an empty list if nothing qualifies. For a recap that mentions her, put her line or the quote in "note".
+A school recap that names her counts. Skip items that do not name her or the staff. If the snippet shows a date, use it; otherwise use today's date. For recaps, put her line or the quote in "note".
 Return ONLY: {{"items": [{{"date":"YYYY-MM-DD","kind":"news" or "coach","title":"","source":"publication name","url":"https://...","note":null}}]}}"""
-    return call_claude(prompt, [{**SEARCH, "max_uses": 2}], max_tokens=1500, model=STRONG_MODEL)
+    return call_claude(prompt, [{**SEARCH, "max_uses": 3}], max_tokens=1500, model=STRONG_MODEL)
 
 
 def write_piece(kind, players, today, milestones, reunions):
@@ -518,7 +537,7 @@ def main():
 
     players_by_id = {pid: p for pid, p in prev_players.items()}          # start from last good data; replace as girls finish
     milestones = list(prev.get("milestones") or [])
-    buzz = list(prev.get("buzz") or [])
+    buzz = [b for b in (prev.get("buzz") or []) if not (b.get("kind") == "recap" and (b.get("date") or "") < "2026-09-16")]   # pre-rebuild recaps had bad numbers
     summary = prev.get("summary")
     failures, done = 0, 0
     with ThreadPoolExecutor(max_workers=WORKERS) as pool:
