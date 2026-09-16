@@ -75,7 +75,7 @@
       },
       "tz": "America/New_York",
       "jersey": "20",
-      "disambiguation": "Gardner-Webb's HTML stats page mislabels teammate Lara Matta's #20 row as 'Sanders, Gracyn', so two rows appear under her name. The season PDF ('View PDF' on the stats page) names rows correctly: Gracyn Sanders #20 is the freshman MB from Carpentersville, IL. Use only that row."
+      "disambiguation": "Gardner-Webb's HTML stats page shows two rows labeled '20 Sanders, Gracyn'; one is really teammate Lara Matta (a Sidearm labeling bug). If the season PDF is attached it names rows correctly — use the row 'Sanders, Gracyn' there. If only the HTML table is available, hers is the SECOND of the two identical rows (the PDF lists Matta first, then Sanders). Do not return null for this — pick that row."
     },
     {
       "id": "hard",

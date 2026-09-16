@@ -28,7 +28,7 @@ WRITER_MODEL = os.environ.get("TRACKER_WRITER_MODEL", "claude-sonnet-5")   # Mon
 HERE = os.path.dirname(os.path.abspath(__file__))
 PLAYERS_FILE, DATA_FILE = os.path.join(HERE, "players.json"), os.path.join(HERE, "data.json")
 
-TOKEN_BUDGET = int(os.environ.get("TRACKER_TOKEN_BUDGET", "600000"))   # input tokens per run; optional work stops at 70%, everything at 100%
+TOKEN_BUDGET = int(os.environ.get("TRACKER_TOKEN_BUDGET", "900000"))   # input tokens per run; optional work stops at 70%, everything at 100%
 WORKERS = int(os.environ.get("TRACKER_WORKERS", "4"))
 CALL_TIMEOUT = 240
 USAGE = {"in": 0, "out": 0, "calls": 0}
@@ -192,12 +192,30 @@ def fetch_pdf(url, max_bytes=3_000_000):
     return b
 
 
+def record_from(text):
+    """'Overall 4-4 · Conf 0-0' style record text from a Sidearm schedule page, if present."""
+    o = re.search(r"Overall\D{0,12}(\d{1,2}-\d{1,2})", text, re.I)
+    c = re.search(r"Conf(?:erence)?\D{0,12}(\d{1,2}-\d{1,2})", text, re.I)
+    return {"overall": o.group(1) if o else None, "conference": c.group(1) if c else None}
+
+
+def fix_result(r):
+    """W/L first, then HER team's sets: a loss can't be 'L 3-0'."""
+    m = re.match(r"\s*([WL])\D*(\d)\s*-\s*(\d)", r or "", re.I)
+    if not m: return r
+    wl, a, b = m.group(1).upper(), int(m.group(2)), int(m.group(3))
+    if (wl == "W" and a < b) or (wl == "L" and a > b): a, b = b, a
+    return f"{wl} {a}-{b}"
+
+
 def gather_daily(p, today):
     """Fetch stats (PDF preferred), schedule, and the box scores she still needs. Returns compact text + attachments, or raises."""
     parts, docs, notes = [], [], []
     surname = p["name"].split()[-1]
     # schedule page: game blocks with box score links
     sched_text, _ = page_text(p["schedule_url"])
+    rec = record_from(sched_text)
+    if rec["overall"]: notes.append(f"record from page: {rec['overall']}")
     parts.append("=== SCHEDULE / RESULTS PAGE (each line is one game block; [href ...] are the links in it) ===\n" +
                  keep_lines(sched_text, [r"\b(Aug|Sep|Oct|Nov|Dec)\b|\d{1,2}/\d{1,2}", r"\[href [^\]]*box", r"\b[WL]\b,?\s*\d-\d"], 0, 16000))
     # stats: cumulative PDF if the page links one, else the trimmed HTML table
@@ -219,7 +237,7 @@ def gather_daily(p, today):
                          keep_lines(bx, [r"Player|\bSP\b", surname, p["school_short"].split()[0]], 1, 6000))
         except Exception as e:
             notes.append(f"box {m['date']} failed: {str(e)[:60]}")
-    return "\n\n".join(parts), docs, notes
+    return "\n\n".join(parts), docs, notes, rec
 
 
 # ---------------------------------------------------------------- research calls
@@ -234,14 +252,15 @@ def research_daily(p, today, need_lines=()):
               ' "blurb": ""}')
     rules = f"""Rules:
 - stats = HER season totals from her single row (match by jersey number AND last name; never add rows together; if two rows could be her, return null stats and say so in the blurb). Integers; null where a column is not published.
-- team_record from the schedule/results page.
+- team_record = the record printed on the schedule/results page (e.g. "Overall 4-4"); copy it, do not tally matches yourself.
+- result is written W/L then HER team's sets first: "W 3-1", "L 0-3" — never "L 3-0".
 - results = the team's matches from {since} through {today.isoformat()} that have a final score, most recent first, with box_url = the box-score link from that game's block. player_line = her numbers from a BOX SCORE section below if one is present for that match ("7 kills, 3 blocks, 2 digs" / "24 assists, 6 digs" / "did not play"); otherwise null.
-- blurb = 2-3 sentences for her parents: what she and the team did lately, whether she is getting court time, what is next. Warm, plain, factual. Respect the position note above if there is one.
+- blurb = 2-3 sentences for her parents: what she and the team did lately, whether she is getting court time, what is next. Warm, plain, factual. Treat any position note above as fact and never mention where it came from (no "per the family", no "listed as").
 Return ONLY: {schema}"""
-    text, docs, notes = None, [], []
+    text, docs, notes, rec = None, [], [], {}
     if not p.get("fetch_note"):
-        try: text, docs, notes = gather_daily(p, today)
-        except Exception as e: notes = [f"fetch failed ({str(e)[:80]}) — used search"]
+        try: text, docs, notes, rec = gather_daily(p, today)
+        except Exception as e: notes, rec = [f"fetch failed ({str(e)[:80]}) — used search"], {}
     if text is None or len(text) < 200:      # blocked or empty site: one search-only call
         prompt = f"""Today is {today.isoformat()}. Player: {who}
 Her school's site blocks automated reading. Use web_search (up to 3 searches: "{p['school']} volleyball {p['name'].split()[-1]}", "{p['school']} volleyball results 2026", "{p['school']} volleyball stats") and read the result snippets only.
@@ -254,12 +273,16 @@ Below is text pulled from her school's schedule/results page, her stats (PDF att
 
 {rules}"""
     try:
-        out = call_claude(prompt, None, max_tokens=3000, model=p.get("model"), docs=docs)
+        out = call_claude(prompt, None, max_tokens=4500, model=p.get("model"), docs=docs)
     except RuntimeError as e:
         if docs and "pdf" in str(e).lower():
-            notes.append("API rejected the PDF — read the HTML table instead"); out = call_claude(prompt, None, max_tokens=3000, model=p.get("model"))
+            notes.append("API rejected the PDF — read the HTML table instead"); out = call_claude(prompt, None, max_tokens=4500, model=p.get("model"))
         else: raise
     out["_notes"] = notes
+    if rec.get("overall"):          # the page's own record beats anything the model tallied
+        out["team_record"] = {**(out.get("team_record") or {}), "overall": rec["overall"], **({"conference": rec["conference"]} if rec.get("conference") else {})}
+    for m in out.get("results") or []:
+        if isinstance(m, dict) and m.get("result"): m["result"] = fix_result(m["result"])
     return out
 
 
@@ -487,7 +510,9 @@ def process_player(c, cfg, prev, prev_players, today, now, flags):
             if w.get("socials") and any((w["socials"] or {}).values()): p["socials"] = w["socials"]
         if news_day and spent() < 0.7:
             log("  news"); n = research_news(c, today, first_run or no_news_yet)
-            items = [{**it, "player_id": p["id"]} for it in n.get("items", []) if it.get("url") and it.get("title")]
+            junk = re.compile(r"roster|\bcommit|schedule\b|/sports/womens-volleyball/?$|sportsrecruits|topflightvbc", re.I)
+            items = [{**it, "player_id": p["id"]} for it in n.get("items", [])
+                     if it.get("url") and it.get("title") and not junk.search(it["title"] + " " + it["url"])]
         p["fetched_at"] = now.isoformat(timespec="minutes")
     except Exception as e:
         failed = True; log(f"  FAILED {p['name']}: {str(e)[:160]}"); p["stale"] = True; p["error"] = str(e)[:200]
