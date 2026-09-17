@@ -3,23 +3,24 @@
  "club": "Top Flight Volleyball Club, Elgin IL",
  "club_season": "2025-26",
  "college_season": "2026",
- "updated_at": "2026-09-16T15:40-05:00",
- "updated_label": "Wednesday 3:40 PM CT",
+ "updated_at": "2026-09-17T06:10-05:00",
+ "updated_label": "Thursday 6:10 AM CT",
  "summary": {
-  "headline": "A Full Weekend of Matches Ahead",
+  "headline": "A Big Volleyball Weekend Ahead",
   "body": [
-   "It's a busy few days for the group — Elizabeth is riding high after her first college milestones, Kylie opens conference play at home, and Anna gets two cracks at the same opponent. Several of the girls are also in multi-match road trips, so there's a lot to watch this weekend.",
-   "Anna — Morehead State at Marshall Friday 4 PM CT, then hosts Marshall Saturday 1 PM CT, both on ESPN+. A home-and-home gives the Eagles two chances to bounce back after last week's losses.",
-   "Elizabeth — UIC plays three straight Valley road matches: Loyola Thursday 6 PM CT, NIU Friday 6 PM CT, DePaul Saturday 5 PM CT, all on ESPN+. She just picked up her first college dig and block assist, so keep an eye on her stat line growing.",
-   "Gracyn — Gardner-Webb plays three matches in Clarksville, TN: Austin Peay Friday noon CT, Southern Illinois Friday 3 PM CT, and SIUE Saturday 10 AM CT. The Runnin' Bulldogs have won four of their last six, so momentum is on their side.",
-   "Kylie — Arkansas Tech hosts Southern Arkansas Thursday 6 PM CT on GAC Sports Network to open conference play, then travels to Arkansas-Monticello Friday 4 PM CT. The Golden Suns start 1-0 in the GAC.",
-   "Layla — Winona State travels to Wayne State Friday 6 PM CT and Augustana Saturday 5 PM CT, both on MidcoSportsPlus. The Warriors are still looking to build momentum in NSIC play.",
-   "Mary — Trevecca is on the road at Auburn-Montgomery Friday 5 PM CT and Valdosta State Saturday noon CT, both on FloSports. The Trojans are still chasing their first GSC win.",
-   "Peyton — Elgin CC travels to Lewis & Clark Community College Saturday 10 AM CT, her only match this weekend as she keeps working into the libero/DS rotation."
+   "It's a packed few days for the girls, with Elizabeth playing three matches in three days, Gracyn opening a big tournament in Tennessee, and Anna facing Marshall twice as Morehead State tries to build on its recent win streak. A few of the girls are also opening conference play this weekend, so there's plenty to cheer for.",
+   "Anna — Morehead State at Marshall Fri 4 PM CT, then home vs Marshall Sat 1 PM CT, both on ESPN+; back-to-back games give the Eagles a shot to keep their momentum going after three straight wins.",
+   "Elizabeth — UIC at Loyola Thu 6 PM CT, at Northern Illinois Fri 6 PM CT, at DePaul Sat 5 PM CT, all on ESPN+; a busy road stretch right after her first career dig and block assist last week.",
+   "Gracyn — Gardner-Webb opens a tournament in Clarksville, TN: Austin Peay Fri 12 PM CT, Southern Illinois Fri 3 PM CT, SIUE Sat 10 AM CT; three matches in two days as the Bulldogs head toward Big South play.",
+   "Breanna — Roberts Wesleyan hosts Assumption Sat 1 PM CT and Saint Michael's Sun 1 PM CT, both on FloSports; a chance for the Redhawks to pick up home wins.",
+   "Kylie — Arkansas Tech hosts Southern Arkansas Thu 6 PM CT on the GAC Network, then travels to Arkansas-Monticello Fri 4 PM CT; the Golden Suns are 1-0 in conference and looking to stay unbeaten.",
+   "Layla — Winona State at Wayne State Fri 6 PM CT and at Augustana Sat 5 PM CT, both on MidcoSportsPlus; we'll be watching closely for her first minutes of the season.",
+   "Mary — Trevecca opens Gulf South play at Auburn-Montgomery Fri 5 PM CT, then at Valdosta State Sat 12 PM CT, both on FloSports; a fresh start as the Trojans dive into conference games.",
+   "Peyton — Elgin CC travels to Lewis & Clark Sat 10 AM CT; no stream listed, but a good chance for her to log more court time."
   ],
   "spotlight": {
    "name": "Elizabeth King",
-   "note": "She picked up her first career dig and block assist during a 2-2 week that included two sweeps."
+   "note": "She picked up her first career dig and block assist this week and now heads into a demanding three-match road stretch."
   }
  },
  "players": [
@@ -305,13 +306,13 @@
    "class_year": "Fr.",
    "height": "6-2",
    "bio_url": "https://msueagles.com/sports/womens-volleyball/roster/anna-schiltz/9037",
-   "blurb": "Anna has been a steady presence on the right side for the Eagles, appearing in all 8 matches this season and logging time in 26 sets so far, with 15 kills and 10 digs on the year. The team picked up three straight wins at the Mercyhurst Invitational over Labor Day weekend before dropping recent matches to Cincinnati and Michigan State at home. Morehead heads to Huntington, WV next to take on Marshall on September 18.",
+   "blurb": "Anna has been getting real playing time this season, appearing in 8 matches (26 sets) as a freshman starting at right side. Over the last couple weeks she's contributed kills, digs and a few blocks as the Eagles went on a run with wins over Mercyhurst, Cleveland State and Siena, before falling to Cincinnati and Michigan State. Morehead State travels to Huntington, WV next to take on Marshall.",
    "_highs": {
     "block": 2,
     "dig": 1,
     "_last": "2026-09-12"
    },
-   "fetched_at": "2026-09-16T15:40-05:00",
+   "fetched_at": "2026-09-17T06:10-05:00",
    "matches_played": 8,
    "sets_played": 26,
    "position_note": "Listed MB on the roster; has started at right side every match so far (per family).",
@@ -699,7 +700,7 @@
    "class_year": "Freshman",
    "height": "5-11",
    "bio_url": "https://uicflames.com/sports/womens-volleyball/roster/elizabeth-king/11821",
-   "blurb": "Elizabeth has been seeing real court time this season, appearing in 8 matches across 18 sets with 20 kills, 8 blocking assists, and a few digs and aces mixed in. The Flames have been up and down lately, but they closed out their home invitational on a high note with back-to-back sweeps over Central Michigan and Western Michigan after tougher losses to Auburn, Montana State, and Milwaukee and a hard-fought five-set win over St. Thomas. Up next, UIC travels to face Loyola on Thursday, September 17.",
+   "blurb": "Elizabeth is getting real playing time as a freshman, having appeared in 8 matches and 18 sets with 20 kills and 8 blocking assists so far this season, plus a few digs and a service ace. The Flames have been up and down lately, dropping a tough five-setter to Auburn before bouncing back with sweeps over Central Michigan and Western Michigan to close out their home invitational. Next up, they're on the road for a busy stretch starting Thursday against Loyola.",
    "_highs": {
     "kill": 3,
     "block": 5,
@@ -707,7 +708,7 @@
    },
    "matches_played": 8,
    "sets_played": 18,
-   "fetched_at": "2026-09-16T15:40-05:00",
+   "fetched_at": "2026-09-17T06:10-05:00",
    "stats_source": "model-read"
   },
   {
@@ -737,14 +738,14 @@
     {
      "date": "2026-09-12",
      "opponent": "New Orleans",
-     "home_away": "away",
+     "home_away": "home",
      "result": "W 3-1",
      "box_url": "https://gwusports.com/sports/womens-volleyball/stats/2026/new-orleans/boxscore/9178"
     },
     {
      "date": "2026-09-12",
      "opponent": "Mercer",
-     "home_away": "away",
+     "home_away": "home",
      "result": "W 3-2",
      "box_url": "https://gwusports.com/sports/womens-volleyball/stats/2026/mercer/boxscore/9182"
     },
@@ -911,7 +912,7 @@
    "_highs": {
     "_last": "2026-09-12"
    },
-   "fetched_at": "2026-09-16T15:40-05:00",
+   "fetched_at": "2026-09-17T06:10-05:00",
    "matches_played": 5,
    "sets_played": 9
   },
@@ -1252,8 +1253,8 @@
    },
    "matches_played": 8,
    "sets_played": 19,
-   "blurb": "Breanna has settled in as a setter for Roberts Wesleyan this season, appearing in eight matches and 19 sets so far. She's racked up 55 assists and 22 digs, showing she's a steady presence running the offense for the Redhawks. The team is back on the court September 19th at home against Assumption.",
-   "fetched_at": "2026-09-16T15:40-05:00",
+   "blurb": "Breanna has seen the court in a handful of matches so far this season, mostly getting run as a setter with 55 assists and 22 digs on the year. The team has been busy with tournament play through September, taking on a tough slate of opponents. Up next for the Redhawks is a home match on September 19th against Assumption.",
+   "fetched_at": "2026-09-17T06:10-05:00",
    "stats_source": "model-read"
   },
   {
@@ -1424,13 +1425,13 @@
    "bio_url": "https://arkansastechsports.com/sports/womens-volleyball/roster/kylie-lambert/5939",
    "matches_played": 9,
    "sets_played": 23,
-   "blurb": "Kylie has been a steady presence for the Golden Suns this season, playing in 9 matches across 23 sets and running the offense as the team's setter with 93 assists so far. The team has had a mixed stretch lately, picking up a solid 3-1 win over Henderson State to open GAC play before tough losses to Pittsburg State and Missouri Western. She's continuing to get regular court time, and the Golden Suns will keep working to find their rhythm as conference play continues.",
+   "blurb": "Kylie is seeing steady action as a freshman setter, having played in 9 matches with 93 assists, 7 service aces, and 24 digs so far this season. The Golden Suns had a busy stretch recently, beating Henderson State at home before dropping road matches to Pittsburg State and Missouri Western. The team continues conference play in the coming weeks, and Kylie should keep getting opportunities to run the offense.",
    "_highs": {
     "assist": 8,
     "dig": 3,
     "_last": "2026-09-12"
    },
-   "fetched_at": "2026-09-16T15:40-05:00",
+   "fetched_at": "2026-09-17T06:10-05:00",
    "stats_source": "model-read"
   },
   {
@@ -1629,7 +1630,7 @@
    "_highs": {
     "_last": "2026-09-12"
    },
-   "fetched_at": "2026-09-16T15:40-05:00",
+   "fetched_at": "2026-09-17T06:10-05:00",
    "matches_played": 0,
    "sets_played": 0
   },
@@ -1898,7 +1899,7 @@
    "_highs": {
     "_last": "2026-09-12"
    },
-   "fetched_at": "2026-09-16T15:40-05:00",
+   "fetched_at": "2026-09-17T06:10-05:00",
    "matches_played": 0,
    "sets_played": 0,
    "stats_source": "model-read"
@@ -2009,11 +2010,11 @@
    "bio_url": "https://msumavericks.com/sports/womens-volleyball/roster/peyton-strout/14321",
    "matches_played": 1,
    "sets_played": 1,
-   "blurb": "Peyton has gotten into one set so far this season but hasn't recorded a stat line yet, so she's still working her way into the rotation. The Mavericks had a rough stretch in Fairbanks, Alaska, dropping tight five-set battles to Fresno Pacific and Alaska Fairbanks and falling in straight sets to Alaska Anchorage. The team will keep looking for more consistency as the season moves forward, and there should be more chances for Peyton to see the court.",
+   "blurb": "Peyton has gotten into one set so far this season as she works her way into the Mavericks' rotation. The team had a tough stretch in Alaska, dropping a five-set battle to Fresno Pacific, a three-set loss to Alaska Anchorage, and another five-setter to Alaska Fairbanks. The Mavericks keep playing through September, so there should be more chances for Peyton to see the court soon.",
    "_highs": {
     "_last": "2026-09-11"
    },
-   "fetched_at": "2026-09-16T15:40-05:00",
+   "fetched_at": "2026-09-17T06:10-05:00",
    "stats_source": "model-read"
   },
   {
@@ -2111,7 +2112,7 @@
    "sets_played": null,
    "model": "claude-sonnet-5",
    "class_year": "Freshman",
-   "fetched_at": "2026-09-16T15:40-05:00",
+   "fetched_at": "2026-09-17T06:10-05:00",
    "profile_tried": true
   },
   {
@@ -2178,7 +2179,7 @@
    "_highs": {
     "_last": "2026-09-03"
    },
-   "fetched_at": "2026-09-16T15:40-05:00",
+   "fetched_at": "2026-09-17T06:10-05:00",
    "profile_tried": true,
    "class_year": "Freshman"
   },
@@ -2251,7 +2252,7 @@
    "model": "claude-sonnet-5",
    "blurb": "We weren't able to find Peyton's individual stat line or the team's game-by-game results for early-to-mid September 2026 in the search snippets available, so we don't want to guess at numbers or scores. What we can confirm is that Peyton is a freshman defensive specialist/libero on the Elgin Community College Spartans this fall, a program that competes in the Illinois Skyway Collegiate Conference under head coach Michele Mueller. We'll keep checking for updated box scores and a current record so we can share exactly how much court time she's getting and what's next on the schedule.",
    "_highs": {},
-   "fetched_at": "2026-09-16T15:40-05:00",
+   "fetched_at": "2026-09-17T06:10-05:00",
    "profile_tried": true,
    "jersey": 26,
    "position": "Defensive Specialist/Libero",
@@ -2472,6 +2473,26 @@
  ],
  "buzz": [
   {
+   "date": "2026-09-17",
+   "kind": "recap",
+   "title": "A Big Volleyball Weekend Ahead",
+   "body": [
+    "It's a packed few days for the girls, with Elizabeth playing three matches in three days, Gracyn opening a big tournament in Tennessee, and Anna facing Marshall twice as Morehead State tries to build on its recent win streak. A few of the girls are also opening conference play this weekend, so there's plenty to cheer for.",
+    "Anna — Morehead State at Marshall Fri 4 PM CT, then home vs Marshall Sat 1 PM CT, both on ESPN+; back-to-back games give the Eagles a shot to keep their momentum going after three straight wins.",
+    "Elizabeth — UIC at Loyola Thu 6 PM CT, at Northern Illinois Fri 6 PM CT, at DePaul Sat 5 PM CT, all on ESPN+; a busy road stretch right after her first career dig and block assist last week.",
+    "Gracyn — Gardner-Webb opens a tournament in Clarksville, TN: Austin Peay Fri 12 PM CT, Southern Illinois Fri 3 PM CT, SIUE Sat 10 AM CT; three matches in two days as the Bulldogs head toward Big South play.",
+    "Breanna — Roberts Wesleyan hosts Assumption Sat 1 PM CT and Saint Michael's Sun 1 PM CT, both on FloSports; a chance for the Redhawks to pick up home wins.",
+    "Kylie — Arkansas Tech hosts Southern Arkansas Thu 6 PM CT on the GAC Network, then travels to Arkansas-Monticello Fri 4 PM CT; the Golden Suns are 1-0 in conference and looking to stay unbeaten.",
+    "Layla — Winona State at Wayne State Fri 6 PM CT and at Augustana Sat 5 PM CT, both on MidcoSportsPlus; we'll be watching closely for her first minutes of the season.",
+    "Mary — Trevecca opens Gulf South play at Auburn-Montgomery Fri 5 PM CT, then at Valdosta State Sat 12 PM CT, both on FloSports; a fresh start as the Trojans dive into conference games.",
+    "Peyton — Elgin CC travels to Lewis & Clark Sat 10 AM CT; no stream listed, but a good chance for her to log more court time."
+   ],
+   "spotlight": {
+    "name": "Elizabeth King",
+    "note": "She picked up her first career dig and block assist this week and now heads into a demanding three-match road stretch."
+   }
+  },
+  {
    "date": "2026-09-16",
    "kind": "news",
    "title": "Elizabeth King - Volleyball - UIC Athletics (Player Bio)",
@@ -2573,12 +2594,12 @@
   }
  ],
  "run": {
-  "date": "2026-09-16",
+  "date": "2026-09-17",
   "failures": 0,
   "model": "claude-sonnet-5",
   "note": "complete",
-  "input_tokens": 387092,
-  "output_tokens": 38674,
-  "calls": 16
+  "input_tokens": 374876,
+  "output_tokens": 37818,
+  "calls": 17
  }
 }
