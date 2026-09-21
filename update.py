@@ -165,7 +165,17 @@ def results_from_cume(text):
 
 
 def apply_pdf_results(results, pdf_results):
-    """Overwrite the model's W/L and score with the sheet's, matched by date (+ first word of opponent when a date has two matches)."""
+    """Overwrite the model's W/L and score with the sheet's (matched by date, + opponent's first word when a date has two matches), and add any sheet result the model missed."""
+    results = [r for r in (results if isinstance(results, list) else []) if isinstance(r, dict)]
+    first = lambda o: ((o or "").lower().split() or [""])[0]
+    for x in pdf_results:
+        same_day = [r for r in results if r.get("date") == x["date"]]
+        pdf_same_day = [y for y in pdf_results if y["date"] == x["date"]]
+        matched = any(first(r.get("opponent")) == first(x["opponent"]) for r in same_day)
+        for r in same_day:
+            if first(r.get("opponent")) == first(x["opponent"]) and not r.get("box_url") and x.get("box_url"): r["box_url"] = x["box_url"]
+        if not matched and len(same_day) < len(pdf_same_day):
+            results.append({"date": x["date"], "opponent": x["opponent"], "home_away": x["home_away"], "result": x["result"], "box_url": x.get("box_url"), "player_line": None})
     for r in results or []:
         if not isinstance(r, dict) or not r.get("date"): continue
         cands = [x for x in pdf_results if x["date"] == r["date"]]
@@ -176,11 +186,44 @@ def apply_pdf_results(results, pdf_results):
     return results
 
 
+MONTHS = {m: i for i, m in enumerate(["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], 1)}
+
+
+def results_from_schedule_lines(lines, year, home_city=None):
+    """Completed games straight from a Sidearm schedule page's game lines: 'Sep 18 (Fri) 5:00 PM | Marshall | ... L, 3-0 ... [href .../boxscore/6819]'."""
+    out = []
+    for ln in lines:
+        d = re.search(r"\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\.?\s+(\d{1,2})\b", ln)
+        r = re.search(r"\b([WL]),?\s*(\d)\s*-\s*(\d)\b", ln)
+        if not d or not r: continue
+        if re.search(r"exhibition|scrimmage", ln, re.I): continue
+        date = f"{year}-{MONTHS[d.group(1)]:02d}-{int(d.group(2)):02d}"
+        box = re.search(r"\[href (\S*boxscore\S*)\]", ln, re.I)
+        if home_city and home_city.split(",")[0].lower() in ln.lower(): ha = "home"
+        elif re.search(r"\bvs\.?\b", ln[:250]): ha = "neutral"
+        else: ha = "away"
+        # opponent = the text right after the date/time chunk, before the first separator that follows it
+        after = ln[d.end():]
+        after = re.sub(r"^[^|]*?(AM|PM|TBA)\b\s*", "", after)            # drop the time
+        after = re.sub(r"\[(href|img) [^\]]*\]", " ", after)               # drop tags
+        after = re.sub(r"^\s*(\|\s*)*(OVC|Big South|MVC|NSIC|GAC|GSC|ECC|ISCC)?\s*\*?\s*(\|\s*)*(No\.\s*\d+\s*)?(vs\.?|at)?\s*", "", after, flags=re.I)
+        opp = re.split(r"\s*\|\s*", after.strip())[0].strip()
+        opp = re.sub(r"\s+(Greek Night|Family Weekend|Student-Athlete Day|.*Day|.*Night|CAB Collab)$", "", opp)
+        if not opp or len(opp) > 40: continue
+        out.append({"date": date, "opponent": opp, "home_away": ha, "result": f"{r.group(1)} {r.group(2)}-{r.group(3)}", "box_url": box.group(1) if box else None, "player_line": None})
+    return out
+
+
 def pdf_text(b):
-    """Text of a PDF via pypdf (installed by the workflow). Returns "" if unavailable."""
+    """Text of a PDF via pypdf. Installs it on the fly if the workflow didn't. Returns "" if unavailable."""
     try:
         import io
-        from pypdf import PdfReader
+        try:
+            from pypdf import PdfReader
+        except ImportError:
+            import subprocess
+            log("    installing pypdf"); subprocess.run([sys.executable, "-m", "pip", "install", "--quiet", "pypdf"], check=False, timeout=120)
+            from pypdf import PdfReader
         return "\n".join((pg.extract_text() or "") for pg in PdfReader(io.BytesIO(b)).pages)
     except Exception as e:
         log(f"    pypdf failed: {str(e)[:60]}"); return ""
@@ -267,14 +310,17 @@ def record_from(text):
 
 def gather_daily(p, today):
     """Fetch stats (PDF preferred), schedule, and the box scores she still needs. Returns compact text + attachments, or raises."""
-    parts, docs, notes, pdf_results = [], [], [], []
+    parts, docs, notes, pdf_results, page_results = [], [], [], [], []
     surname = p["name"].split()[-1]
     # schedule page: game blocks with box score links
     sched_text, _ = page_text(p["schedule_url"])
     rec = record_from(sched_text)
     if rec["overall"]: notes.append(f"record from page: {rec['overall']}")
-    parts.append("=== SCHEDULE / RESULTS PAGE (each line is one game block; [href ...] are the links in it) ===\n" +
-                 keep_lines(sched_text, [r"\b(Aug|Sep|Oct|Nov|Dec)\b|\d{1,2}/\d{1,2}", r"\[href [^\]]*box", r"\b[WL]\b,?\s*\d-\d"], 0, 16000))
+    game_lines = [ln for ln in sched_text.split("\n") if re.search(r"\b(Aug|Sep|Oct|Nov|Dec)\b\.?\s*\d{1,2}|\d{1,2}/\d{1,2}(/\d{2,4})?", ln)
+                  and re.search(r"\b(vs\.?|at|Final|[WL],?\s*\d-\d|\d\s*-\s*\d|PM|AM|TBA)\b", ln, re.I)]
+    parts.append("=== SCHEDULE / RESULTS PAGE (each line is one game; [href ...] are that game's links) ===\n" + "\n".join(game_lines)[:30000])
+    page_results = results_from_schedule_lines(game_lines, today.year, p.get("city"))
+    if page_results: notes.append(f"{len(page_results)} results parsed from the schedule page")
     # stats: cumulative PDF if the page links one, else the trimmed HTML table
     stats_text, stats_raw = page_text(p["stats_url"])
     pdf = find_pdf(stats_raw, p["stats_url"])
@@ -291,7 +337,7 @@ def gather_daily(p, today):
             elif txt and re.search(rf"\b{re.escape(surname)},", txt, re.I) is None:
                 parsed = {k: (0 if k not in ("srv", "re", "mp") else None) for k in STAT_KEYS}; notes.append("not on the stats sheet — zeros")
             else:
-                docs.append(("Season cumulative stats PDF", pdf_bytes)); notes.append("PDF row not parsed — PDF attached for reading")
+                docs.append(("Season cumulative stats PDF", pdf_bytes)); notes.append("PDF row not parsed — PDF attached for reading" if txt else "PDF text extraction failed — PDF attached for reading")
         except Exception as e:
             notes.append(f"pdf skipped ({str(e)[:50]})")
     if parsed:
@@ -308,7 +354,7 @@ def gather_daily(p, today):
                          keep_lines(bx, [r"Player|\bSP\b", surname, p["school_short"].split()[0]], 1, 6000))
         except Exception as e:
             notes.append(f"box {m['date']} failed: {str(e)[:60]}")
-    return "\n\n".join(parts), docs, notes, rec, parsed, pdf_results
+    return "\n\n".join(parts), docs, notes, rec, parsed, pdf_results + [x for x in page_results if x["date"] not in {y["date"] for y in pdf_results}]
 
 
 # ---------------------------------------------------------------- research calls
@@ -355,7 +401,7 @@ Below is text pulled from her school's schedule/results page, her stats (PDF att
     if parsed: out["stats"] = parsed                     # code-parsed line overrides whatever the model wrote
     if rec.get("overall"):          # the page's own record beats anything the model tallied
         out["team_record"] = {**(out.get("team_record") or {}), "overall": rec["overall"], **({"conference": rec["conference"]} if rec.get("conference") else {})}
-    if pdf_results: apply_pdf_results(out.get("results"), pdf_results)   # the sheet's scores beat the model's
+    if pdf_results: out["results"] = apply_pdf_results(out.get("results"), pdf_results)   # the sheet's scores beat the model's; missed games get added
     for m in out.get("results") or []:
         if isinstance(m, dict) and m.get("result"): m["result"] = fix_result(m["result"])
     return out
@@ -573,7 +619,7 @@ def process_player(c, cfg, prev, prev_players, today, now, flags):
         if c.get("position"): p["position"] = c["position"]
         need = [(m["date"], m["opponent"]) for m in old.get("recent_matches", []) if m.get("result") and not m.get("player_line")]
         log("  daily"); d = research_daily({**p, **c}, today, need)
-        if d.get("_notes"): log("    " + "; ".join(d["_notes"]))
+        if d.get("_notes"): log("    " + "; ".join(d["_notes"])); p["_notes"] = d["_notes"]
         prev_stats = old.get("stats")
         if isinstance(d.get("team_record"), dict): p["team_record"] = {**(p.get("team_record") or {}), **{k: as_text(v) for k, v in d["team_record"].items() if v}}
         if isinstance(d.get("stats"), dict):
