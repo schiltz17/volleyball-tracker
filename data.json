@@ -3,22 +3,22 @@
  "club": "Top Flight Volleyball Club, Elgin IL",
  "club_season": "2025-26",
  "college_season": "2026",
- "updated_at": "2026-09-21T14:00-05:00",
- "updated_label": "Monday 2:00 PM CT",
+ "updated_at": "2026-09-24T06:10-05:00",
+ "updated_label": "Thursday 6:10 AM CT",
  "summary": {
-  "headline": "A Milestone Week, Two Sweeps, and Steady Progress",
+  "headline": "Openers, Milestones, and a Sweet Reunion Weekend",
   "body": [
-   "It was a busy weekend across the country — Elizabeth King passed 25 college kills and helped UIC grind out a five-set win over Loyola, while Gracyn Sanders and Kylie Lambert both picked up sweeps for teams on winning streaks. A few other girls are still waiting for their first match reps, but everyone's staying in the mix.",
-   "Anna — Morehead State dropped both matches to Marshall this weekend (L 0-3, L 0-3), but Anna kept her spot starting at right side and has 16 kills and 10 blocks on the season.",
-   "Elizabeth — UIC lost to DePaul and Northern Illinois but bounced back to beat Loyola in five sets; she also crossed 25 career kills along the way.",
-   "Gracyn — Gardner-Webb swept both Southern Illinois and Austin Peay this weekend, and Gracyn's hitting .333 on the year with 10 kills in limited action.",
-   "Kylie — Arkansas Tech kept rolling with a sweep of Arkansas-Monticello and a four-set win over Southern Arkansas; Kylie's up to 121 assists and 35 digs running the offense.",
-   "Layla — Winona State lost to Wayne State and Augustana this week; Layla is still waiting for her first match action as a freshman.",
-   "Mary — Trevecca split the week, falling to Valdosta State but sweeping Auburn Montgomery; Mary hasn't gotten into a match yet this season."
+   "This weekend brings conference play into full swing for several of the girls, with Anna opening OVC action and Elizabeth hosting a pair of MVC matches after a milestone night. Mary's Trojans look for more Gulf South wins, while up in Minnesota, Layla and Peyton Strout will share a court for the first time this season as rivals.",
+   "Anna — Morehead State hosts Lindenwood Fri 5 PM CT and Sat 1 PM CT on ESPN+; it's the Eagles' OVC opener after a tough non-conference stretch.",
+   "Elizabeth — UIC hosts Illinois State Fri 6 PM CT and Belmont Sat 2 PM CT, both streaming on ESPN+; she just picked up her 25th college kill last week.",
+   "Gracyn — Gardner-Webb hosts Winthrop Sat 3 PM CT at Paul Porter Arena; a Big South opener as the Runnin' Bulldogs look to keep their winning ways going.",
+   "Layla — Winona State hosts Concordia-St. Paul Thu 6 PM CT, then travels to Minnesota State Mankato Sat 2 PM CT on Midco Sports+; that match doubles as a reunion with Peyton Strout.",
+   "Mary — Trevecca hosts Union (Tenn.) Fri 6 PM CT and Christian Brothers Sat 2 PM CT on FloSports; home matches as the Trojans keep building in Gulf South play.",
+   "Peyton — Minnesota State hosts Winona State Sat 2 PM CT on Midco Sports+, a fun reunion match against Layla Merlin's Warriors."
   ],
   "spotlight": {
    "name": "Elizabeth King",
-   "note": "She hit a career milestone with her 25th college kill and helped UIC battle back for a five-set win over Loyola."
+   "note": "She hit 25 college kills last week and now gets two straight home matches at Credit Union 1 Arena."
   }
  },
  "players": [
@@ -225,13 +225,13 @@
    "class_year": "Fr.",
    "height": "6-2",
    "bio_url": "https://msueagles.com/sports/womens-volleyball/roster/anna-schiltz/9037",
-   "blurb": "Anna has been seeing steady court time this season, appearing in 10 matches and 28 sets so far while starting at right side. The Eagles hit a rough patch recently, dropping matches to Cincinnati, Michigan State, and Marshall (twice), but Anna has continued to contribute on both offense and defense, including some solid digging and blocking. Next up for Morehead State is the start of OVC play against Lindenwood on September 25-26.",
+   "blurb": "Anna has been a steady part of the Eagles' rotation this season, appearing in 10 matches and starting six of them at right side. The team hit a rough patch over the past two weeks, dropping straight-set matches to Cincinnati, Michigan State, and Marshall, but Anna has kept contributing on both offense and defense with kills, digs, and blocks. Morehead State now turns to Ohio Valley Conference play, opening at home against Lindenwood on September 25-26.",
    "_highs": {
     "block": 2,
     "dig": 1,
     "_last": "2026-09-19"
    },
-   "fetched_at": "2026-09-21T14:00-05:00",
+   "fetched_at": "2026-09-24T06:10-05:00",
    "matches_played": 10,
    "sets_played": 28,
    "position_note": "Listed MB on the roster; has started at right side every match so far (per family).",
@@ -436,7 +436,7 @@
    "class_year": "Freshman",
    "height": "5-11",
    "bio_url": "https://uicflames.com/sports/womens-volleyball/roster/elizabeth-king/11821",
-   "blurb": "Elizabeth has been seeing regular court time this season, appearing in 11 matches and 24 sets so far, with 30 kills and 11 total blocks to her name. The Flames have had a mixed but active stretch, picking up wins over Central Michigan, Western Michigan, and a five-set thriller against Loyola, while dropping matches to Auburn, Northern Illinois, and DePaul. UIC returns to Credit Union 1 Arena on September 25th for their next home match.",
+   "blurb": "Elizabeth is seeing regular court time for UIC this season, contributing as a hitter and blocker in the matches she's played. The Flames had a busy stretch recently, picking up wins over Central Michigan, Western Michigan, and Loyola, while dropping matches to Auburn, Northern Illinois, and DePaul. Up next, the team is back home at Credit Union 1 Arena this Friday, September 25.",
    "_highs": {
     "kill": 3,
     "block": 5,
@@ -444,7 +444,7 @@
    },
    "matches_played": 11,
    "sets_played": 24,
-   "fetched_at": "2026-09-21T14:00-05:00",
+   "fetched_at": "2026-09-24T06:10-05:00",
    "stats_source": "model-read",
    "_notes": [
     "record from page: 4-8"
@@ -474,6 +474,11 @@
    "tz": "America/New_York",
    "college_season": "2026",
    "recent_matches": [
+    {
+     "date": "2026-09-22",
+     "opponent": "Wofford",
+     "result": "L 2-3"
+    },
     {
      "date": "2026-09-19",
      "opponent": "SIUE",
@@ -564,19 +569,6 @@
     }
    ],
    "upcoming": [
-    {
-     "date": "2026-09-22",
-     "time": "6:00 PM ET",
-     "time_ct": "5:00 PM CT",
-     "opponent": "Wofford",
-     "home_away": "home",
-     "location": "Paul Porter Arena, Boiling Springs, NC",
-     "result": null,
-     "box_url": null,
-     "player_line": null,
-     "stream_name": "Live stats",
-     "stream_url": "http://statb.us/b/669510"
-    },
     {
      "date": "2026-09-26",
      "time": "4:00 PM ET",
@@ -812,9 +804,9 @@
    "bio_url": "https://gwusports.com/sports/womens-volleyball/roster/gracyn-sanders/11699",
    "blurb": "Gracyn has appeared in five matches and nine sets for Gardner-Webb, hitting .333 with 10 kills on 21 swings and adding three block assists. The Runnin' Bulldogs are 6-4 heading into Big South play.",
    "_highs": {
-    "_last": "2026-09-18"
+    "_last": "2026-09-22"
    },
-   "fetched_at": "2026-09-21T14:00-05:00",
+   "fetched_at": "2026-09-24T06:10-05:00",
    "matches_played": 5,
    "sets_played": 9,
    "_notes": [
@@ -911,11 +903,11 @@
     },
     {
      "label": "Assists/set",
-     "value": "2.75"
+     "value": "2.20"
     },
     {
      "label": "Digs",
-     "value": 22
+     "value": 24
     },
     {
      "label": "Aces",
@@ -923,24 +915,24 @@
     }
    ],
    "stats": {
-    "mp": 9,
-    "sp": 20,
+    "mp": 10,
+    "sp": 25,
     "k": 2,
     "e": 4,
-    "ta": 8,
+    "ta": 9,
     "a": 55,
     "bhe": 0,
     "sa": 1,
-    "se": 8,
+    "se": 9,
     "srv": null,
-    "dig": 22,
+    "dig": 24,
     "re": 0,
     "bs": 0,
     "ba": 0,
     "be": 1
    },
    "team_record": {
-    "overall": "2-10",
+    "overall": "2-11",
     "conference": "0-0",
     "standing": "6th of 7 ECC",
     "standings_url": "https://eccsports.org/standings.aspx?path=wvball"
@@ -961,13 +953,13 @@
     "dig": 5,
     "_last": "2026-09-12"
    },
-   "matches_played": 9,
-   "sets_played": 20,
-   "blurb": "Breanna has been getting steady court time this season, running the offense as a freshman setter with 55 assists, 22 digs, and an ace so far. She's shown she can handle the ball under pressure and is settling into her role on the roster. The Redhawks are back in action Wednesday, September 23, as the fall schedule continues.",
-   "fetched_at": "2026-09-21T14:00-05:00",
+   "matches_played": 10,
+   "sets_played": 25,
+   "blurb": "Breanna has been seeing steady time as a freshman setter this fall, racking up 55 assists and 24 digs across her matches so far. The Redhawks' most recent outing was a hard-fought 2-3 road loss on September 23. Up next, Roberts Wesleyan opens Empire Collegiate Conference play on October 3 against Queens.",
+   "fetched_at": "2026-09-24T06:10-05:00",
    "stats_source": "model-read",
    "_notes": [
-    "record from page: 2-10"
+    "record from page: 2-11"
    ]
   },
   {
@@ -995,8 +987,20 @@
    "college_season": "2026",
    "recent_matches": [
     {
+     "date": "2026-09-22",
+     "opponent": "Ouachita Baptist",
+     "home_away": "away",
+     "result": "W 3-1"
+    },
+    {
      "date": "2026-09-18",
      "opponent": "Arkansas-Monticello",
+     "home_away": "away",
+     "result": "W 3-0"
+    },
+    {
+     "date": "2026-09-18",
+     "opponent": "UA Monticello",
      "home_away": "away",
      "result": "W 3-0"
     },
@@ -1074,7 +1078,7 @@
    "season_stats": [
     {
      "label": "Assists",
-     "value": 121
+     "value": 137
     },
     {
      "label": "Assists/set",
@@ -1082,33 +1086,33 @@
     },
     {
      "label": "Digs",
-     "value": 35
+     "value": 38
     },
     {
      "label": "Aces",
-     "value": 8
+     "value": 9
     }
    ],
    "stats": {
-    "mp": 11,
-    "sp": 30,
+    "mp": 12,
+    "sp": 34,
     "k": 1,
     "e": 1,
-    "ta": 5,
-    "a": 121,
+    "ta": 6,
+    "a": 137,
     "bhe": 0,
-    "sa": 8,
-    "se": 8,
+    "sa": 9,
+    "se": 11,
     "srv": null,
-    "dig": 35,
+    "dig": 38,
     "re": 2,
     "bs": 0,
     "ba": 0,
     "be": 0
    },
    "team_record": {
-    "overall": "9-6",
-    "conference": "3-0"
+    "overall": "10-6",
+    "conference": "4-0"
    },
    "photo_url": "https://arkansastechsports.com/images/2026/7/16/_2_Lambert__Kylie.jpg",
    "socials": {
@@ -1121,18 +1125,18 @@
    "class_year": "Fr.",
    "height": "5-8",
    "bio_url": "https://arkansastechsports.com/sports/womens-volleyball/roster/kylie-lambert/5939",
-   "matches_played": 11,
-   "sets_played": 30,
-   "blurb": "Kylie has been a steady presence running the offense as a freshman setter, playing in all 11 matches so far and racking up 121 assists along with 35 digs and 8 service aces. The Golden Suns have been rolling lately, winning three of their last four matches including sweeps and strong four-set wins over Henderson State, Southern Arkansas, and Arkansas-Monticello. Up next, the team has a break before returning to action in November, so keep an eye out for the next update on Kylie and the Suns.",
+   "matches_played": 12,
+   "sets_played": 34,
+   "blurb": "Kylie has been getting solid playing time as a freshman setter, appearing in a dozen matches so far and racking up 137 assists for the Golden Suns. The team has been rolling lately, winning three of its last four matches with victories over Southern Arkansas, UA Monticello, and Ouachita Baptist. They'll now have a break before their next action, which isn't scheduled until mid-November.",
    "_highs": {
     "assist": 8,
     "dig": 3,
-    "_last": "2026-09-18"
+    "_last": "2026-09-22"
    },
-   "fetched_at": "2026-09-21T14:00-05:00",
+   "fetched_at": "2026-09-24T06:10-05:00",
    "stats_source": "model-read",
    "_notes": [
-    "record from page: 9-6",
+    "record from page: 10-6",
     "pdf skipped (not a usable PDF)"
    ]
   },
@@ -1307,7 +1311,7 @@
    "_highs": {
     "_last": "2026-09-19"
    },
-   "fetched_at": "2026-09-21T14:00-05:00",
+   "fetched_at": "2026-09-24T06:10-05:00",
    "matches_played": 0,
    "sets_played": 0,
    "_notes": [
@@ -1460,19 +1464,6 @@
    ],
    "upcoming": [
     {
-     "date": "2026-09-22",
-     "time": "6:00 PM CT",
-     "time_ct": "6:00 PM CT",
-     "opponent": "Alabama-Huntsville",
-     "home_away": "home",
-     "location": "Nashville, Tenn. | Trojan Fieldhouse",
-     "result": null,
-     "box_url": null,
-     "player_line": null,
-     "stream_name": "LIVE STREAM $",
-     "stream_url": "https://flosports.link/4wL5G47"
-    },
-    {
      "date": "2026-09-25",
      "time": "6:00 PM CT",
      "time_ct": "6:00 PM CT",
@@ -1548,10 +1539,10 @@
     "be": 0
    },
    "team_record": {
-    "overall": "3-8",
+    "overall": "4-8",
     "standing": "9th of 10 GSC",
     "standings_url": "https://gscsports.org/standings.aspx?path=wvball",
-    "conference": "1-0"
+    "conference": "2-1"
    },
    "photo_url": "https://tnutrojans.com/images/2026/9/4/VB_Mary_Francl_HS_2026_tsaliboy_387.png",
    "socials": {
@@ -1568,12 +1559,12 @@
    "_highs": {
     "_last": "2026-09-19"
    },
-   "fetched_at": "2026-09-21T14:00-05:00",
+   "fetched_at": "2026-09-24T06:10-05:00",
    "matches_played": 0,
    "sets_played": 0,
    "stats_source": "model-read",
    "_notes": [
-    "record from page: 3-8",
+    "record from page: 4-8",
     "pdf skipped (not a usable PDF)"
    ]
   },
@@ -1683,11 +1674,11 @@
    "bio_url": "https://msumavericks.com/sports/womens-volleyball/roster/peyton-strout/14321",
    "matches_played": 1,
    "sets_played": 1,
-   "blurb": "Peyton has gotten into one match so far this season, though she hasn't recorded a stat line yet. The Mavericks have been battling through a busy stretch of matches recently. We'll keep watching for more playing time for Peyton as the season moves forward.",
+   "blurb": "Peyton has appeared in one match so far this season, getting on the court for a set but not yet recording any stats in the box score. The Mavericks have had a busy stretch, including a tough five-set loss to a ranked Fresno Pacific squad and a recent home loss to Wayne State. As the season continues, her family can look forward to more chances for her to see the court as the team works through conference play.",
    "_highs": {
     "_last": "2026-09-11"
    },
-   "fetched_at": "2026-09-21T14:00-05:00",
+   "fetched_at": "2026-09-24T06:10-05:00",
    "stats_source": "model-read",
    "_notes": [
     "record from page: 3-9",
@@ -1789,7 +1780,7 @@
    "sets_played": null,
    "model": "claude-sonnet-5",
    "class_year": "Freshman",
-   "fetched_at": "2026-09-21T14:00-05:00",
+   "fetched_at": "2026-09-24T06:10-05:00",
    "profile_tried": true,
    "bio_url": "https://www.mccscots.com/sports/wvball/2025-26/roster"
   },
@@ -1874,7 +1865,7 @@
    "_highs": {
     "_last": "2026-09-03"
    },
-   "fetched_at": "2026-09-21T14:00-05:00",
+   "fetched_at": "2026-09-24T06:10-05:00",
    "profile_tried": true,
    "class_year": "Freshman",
    "stats_source": null
@@ -1932,9 +1923,9 @@
    "matches_played": null,
    "sets_played": null,
    "model": "claude-sonnet-5",
-   "blurb": "Peyton got off to a strong start in her freshman season, leading the Spartans with 26 digs in a five-set win over Ellsworth Community College at the season-opening tournament in Rockford. That performance shows she's already earning real playing time at libero for Elgin. The team's next match is on the road at Lewis & Clark Community College.",
+   "blurb": "There isn't a published stat line yet showing Peyton in game action, so she hasn't appeared in a match this season so far. The Spartans have been competing in tournament play and conference matches this fall as the season progresses. Keep an eye on upcoming Elgin matches for updates on her playing time.",
    "_highs": {},
-   "fetched_at": "2026-09-21T14:00-05:00",
+   "fetched_at": "2026-09-24T06:10-05:00",
    "profile_tried": true,
    "jersey": 26,
    "position": "Defensive Specialist/Libero",
@@ -2176,6 +2167,24 @@
  ],
  "buzz": [
   {
+   "date": "2026-09-24",
+   "kind": "recap",
+   "title": "Openers, Milestones, and a Sweet Reunion Weekend",
+   "body": [
+    "This weekend brings conference play into full swing for several of the girls, with Anna opening OVC action and Elizabeth hosting a pair of MVC matches after a milestone night. Mary's Trojans look for more Gulf South wins, while up in Minnesota, Layla and Peyton Strout will share a court for the first time this season as rivals.",
+    "Anna — Morehead State hosts Lindenwood Fri 5 PM CT and Sat 1 PM CT on ESPN+; it's the Eagles' OVC opener after a tough non-conference stretch.",
+    "Elizabeth — UIC hosts Illinois State Fri 6 PM CT and Belmont Sat 2 PM CT, both streaming on ESPN+; she just picked up her 25th college kill last week.",
+    "Gracyn — Gardner-Webb hosts Winthrop Sat 3 PM CT at Paul Porter Arena; a Big South opener as the Runnin' Bulldogs look to keep their winning ways going.",
+    "Layla — Winona State hosts Concordia-St. Paul Thu 6 PM CT, then travels to Minnesota State Mankato Sat 2 PM CT on Midco Sports+; that match doubles as a reunion with Peyton Strout.",
+    "Mary — Trevecca hosts Union (Tenn.) Fri 6 PM CT and Christian Brothers Sat 2 PM CT on FloSports; home matches as the Trojans keep building in Gulf South play.",
+    "Peyton — Minnesota State hosts Winona State Sat 2 PM CT on Midco Sports+, a fun reunion match against Layla Merlin's Warriors."
+   ],
+   "spotlight": {
+    "name": "Elizabeth King",
+    "note": "She hit 25 college kills last week and now gets two straight home matches at Credit Union 1 Arena."
+   }
+  },
+  {
    "date": "2026-09-21",
    "kind": "recap",
    "title": "A Milestone Week, Two Sweeps, and Steady Progress",
@@ -2324,12 +2333,12 @@
   }
  ],
  "run": {
-  "date": "2026-09-21",
+  "date": "2026-09-24",
   "failures": 0,
   "model": "claude-sonnet-5",
   "note": "complete",
-  "input_tokens": 876089,
-  "output_tokens": 72787,
-  "calls": 33
+  "input_tokens": 416402,
+  "output_tokens": 42925,
+  "calls": 21
  }
 }
