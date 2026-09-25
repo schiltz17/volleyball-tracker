@@ -726,9 +726,9 @@ def main():
             log(f"Writing the {piece_kind}")
             week_miles = [m for m in milestones if m["date"] >= (today - timedelta(days=7)).isoformat()]
             piece = write_piece(piece_kind, players, today, week_miles, [r for r in reunions if (r["date"] or "") >= today.isoformat()])
-            post = {"date": today.isoformat(), "kind": "recap", "title": piece["title"], "body": piece["body"], "spotlight": piece.get("spotlight")}
+            post = {"date": today.isoformat(), "kind": "recap", "piece": piece_kind, "title": piece["title"], "body": piece["body"], "spotlight": piece.get("spotlight")}
             buzz = [b for b in buzz if not (b.get("kind") == "recap" and b.get("date") == today.isoformat())] + [post]
-            summary = {"headline": piece["title"], "body": piece["body"], "spotlight": piece.get("spotlight")}
+            summary = {"headline": piece["title"], "body": piece["body"], "spotlight": piece.get("spotlight"), "piece": piece_kind}
         except Exception as e:
             failures += 1; log(f"  writing FAILED: {e}")
     cutoff = (today - timedelta(days=75)).isoformat()

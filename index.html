@@ -247,7 +247,7 @@ function home(){
     </div></div>`;
   h+=staleBanner();
   const recap=(DATA.buzz||[]).filter(b=>b.kind==='recap').map(b=>({...b,d:pd(b.date)})).sort((a,b)=>b.d-a.d)[0];
-  if(recap){const isPrev=/preview/i.test(recap.title);const sents=(recap.body?.[0]||'').match(/[^.!?]+[.!?]+/g)||[];
+  if(recap){const isPrev=recap.piece==='preview'||(!recap.piece&&(/preview/i.test(recap.title)||recap.d.getDay()===4));const sents=(recap.body?.[0]||'').match(/[^.!?]+[.!?]+/g)||[];
     h+=`<div class="card note" style="margin-top:10px"><div class="ovl">${isPrev?'Thursday preview':'Monday recap'}</div><h3>${esc(recap.title.replace(/^Weekend (recap|preview): /i,'').replace(/^\w/,c=>c.toUpperCase()))}</h3><p>${esc(sents.slice(0,2).join(' ').trim())} <a href="#" onclick="show('buzz');return false">Read the ${isPrev?'preview':'recap'} ›</a></p></div>`}
   const miles=(DATA.milestones||[]).filter(m=>S.track.includes(m.player_id)&&byId[m.player_id]&&days(pd(m.date),today)<=7&&days(pd(m.date),today)>=0);
   if(miles.length){h+=`<h2>Milestones <span>this week</span></h2><div class="hs">`+miles.map(m=>{const p=byId[m.player_id];return`<div class="mile" onclick="profile('${p.id}')">${av(p,'sm')}<div class="t"><b>${esc(short(p))}</b>${esc(m.text)}</div></div>`}).join('')+`</div>`}
@@ -285,11 +285,11 @@ function games(){
 /* BUZZ */
 let bfilter='all';
 function buzz(){
-  const K={recap:'Recap',news:'In the news',coach:'Coaches',mile:'Milestone'};const keepX=$('#s-buzz .chips')?.scrollLeft||0;
+  const K={recap:'Recap',preview:'Preview',news:'In the news',coach:'Coaches',mile:'Milestone'};const kindOf=b=>b.kind==='recap'&&(b.piece==='preview'||(!b.piece&&(/preview/i.test(b.title||'')||pd(b.date)?.getDay()===4)))?'preview':b.kind;const keepX=$('#s-buzz .chips')?.scrollLeft||0;
   let h=`<div class="chips">${[['all','All'],['recap','Recaps'],['news','News'],['mile','Milestones']].map(f=>`<button class="${bfilter===f[0]?'on':''}" onclick="bfilter='${f[0]}';buzz()">${f[1]}</button>`).join('')}</div>`;
   const posts=[...(DATA.buzz||[]),...(DATA.milestones||[]).map(m=>({...m,kind:'mile',title:m.text}))].map(b=>({...b,d:pd(b.date)})).filter(b=>b.d&&(bfilter==='all'||b.kind===bfilter)).sort((a,b)=>b.d-a.d);
   if(!posts.length)h+=`<div class="card empty" style="margin-top:10px"><b>Nothing here yet</b>${bfilter==='mile'?'Firsts and career highs show up as the girls record them.':'News is gathered Monday and Thursday mornings.'}</div>`;
-  posts.forEach(b=>{const p=b.player_id?byId[b.player_id]:null;const isPrev=b.kind==='recap'&&/preview/i.test(b.title);
+  posts.forEach(b=>{const p=b.player_id?byId[b.player_id]:null;const isPrev=kindOf(b)==='preview';
     h+=`<div class="post"><div class="k ovl"><i class="${b.kind}">${isPrev?'Preview':K[b.kind]||b.kind}</i><span>${fday(b.d)}</span></div>`;
     if(b.kind==='mile'&&p)h+=`<div style="display:flex;align-items:center;gap:10px;margin-top:8px">${av(p,'sm')}<div><h3 style="margin:0">${esc(b.title)}</h3><div style="font-size:13px;color:var(--ink3)">${esc(short(p))} · ${esc(p.school_short)}</div></div></div>`;
     else{h+=`<h3 class="${b.kind==='recap'?'big':''}">${esc(b.title)}</h3>`;
@@ -387,7 +387,9 @@ function profile(id){const p=byId[id];if(!p)return;const pl=p.status==='playing'
 
 /* BOOT */
 function disambiguate(){const c={};P.forEach(p=>{const f=first(p.name);(c[f]=c[f]||[]).push(p)});Object.values(c).forEach(g=>{if(g.length>1)g.forEach(p=>NAMES[p.id]=`${first(p.name)} ${p.name.split(' ').pop()[0]}.`)})}
-function boot(d){
+let LAST_LOADED=0;
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&Date.now()-LAST_LOADED>5*60*1000){fetch('data.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(d=>{if(d&&d.updated_at!==(DATA||{}).updated_at){const cur=document.querySelector('.tabs button.on')?.dataset.s||'home';boot(d);if(cur!=='home')show(cur)}LAST_LOADED=Date.now()}).catch(()=>{})}});
+function boot(d){LAST_LOADED=Date.now();
   DATA=d||{};P=DATA.players||[];byId=Object.fromEntries(P.map(p=>[p.id,p]));disambiguate();
   const saved=LS.get()||{};const pl=playing().map(p=>p.id);
   const chosen=pl.includes(saved.my);S.chosen=chosen||!!saved.chosen;
