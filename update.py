@@ -372,7 +372,7 @@ def research_daily(p, today, need_lines=()):
 - team_record = the record printed on the schedule/results page (e.g. "Overall 4-4"); copy it, do not tally matches yourself.
 - result is written W/L then HER team's sets first: "W 3-1", "L 0-3" — never "L 3-0".
 - results = the team's matches from {since} through {today.isoformat()} that have a final score, most recent first, with box_url = the box-score link from that game's block. player_line = her numbers from a BOX SCORE section below if one is present for that match ("7 kills, 3 blocks, 2 digs" / "24 assists, 6 digs" / "did not play"); otherwise null.
-- blurb = 2-3 sentences for her parents: what she and the team did lately, whether she is getting court time, what is next. Warm, plain, factual. Treat any position note above as fact and never mention where it came from (no "per the family", no "listed as").
+- blurb = {"3-4" if p.get("featured") else "2-3"} sentences for her parents, in this order: (1) what SHE did — her line, her role, anything she did well, stated first and warmly; (2) the team's results, plainly, without dwelling on losses ("dropped two at Marshall" not "hit a rough patch"); (3) what is next for her. Treat any position note above as fact and never mention where it came from (no "per the family", no "listed as").
   The stats sheet decides court time: if she is not in it or has 0 sets played, say plainly that she has not appeared in a match yet and move on to the team. Never write about the data itself — no mention of pages, PDFs, box scores, tables, or what could or could not be found. Write only about her and the team.
 Return ONLY: {schema}"""
     text, docs, notes, rec, parsed, pdf_results = None, [], [], {}, None, []
@@ -472,24 +472,27 @@ def write_piece(kind, players, today, milestones, reunions):
     compact = []
     for p in players:
         if p.get("status") != "playing": continue
-        compact.append({k: p.get(k) for k in ("name", "school_short", "division", "position", "position_note", "team_record", "stats", "blurb", "stale")}
+        compact.append({k: p.get(k) for k in ("name", "school_short", "division", "position", "position_note", "team_record", "stats", "blurb", "stale", "featured")}
                        | {"results_last_7": [m for m in p.get("recent_matches", []) if (m.get("date") or "") >= wk_ago],
                           "next_7": [m for m in p.get("upcoming", []) if today.isoformat() <= (m.get("date") or "") <= wk_ahead]})
     if kind == "recap":
         ask = ("Write the MONDAY WEEKEND RECAP. Paragraph 1: the weekend in two or three sentences — who stood out, any milestone, any big team result. "
-               "Then ONE short paragraph (1-2 sentences) for EACH girl who had a match this week, in this form: her first name, the results, her line, one human note "
+               "Then ONE short paragraph for EACH girl who had a match this week, in this form: her first name, the results, her line, one human note "
                "(e.g. 'Anna — Morehead State split at Marshall (L 1-3, W 3-2); 5 kills and 4 blocks Saturday, her best block night yet.'). "
-               "Skip girls with no match this week. Say plainly if a girl did not see the court.")
+               "Skip girls with no match this week. Say plainly if a girl did not see the court. "
+               "The girl marked featured:true ALWAYS gets the first per-girl paragraph, 2-3 sentences instead of 1-2, and her strengths named specifically; "
+               "if two girls are close for the spotlight, it goes to her.")
     else:
         ask = ("Write the THURSDAY WEEKEND PREVIEW. Paragraph 1: the weekend ahead in two or three sentences — the biggest matches, conference openers, anything at stake. "
                "Then ONE short paragraph (1-2 sentences) for EACH girl with a match this weekend: first name, opponent(s), day and Central time, stream, and why it matters "
-               "(e.g. 'Kylie — Arkansas Tech at Southern Nazarene, Fri 6 PM CT on FloSports; a win keeps the Suns alone atop the GAC.').")
+               "(e.g. 'Kylie — Arkansas Tech at Southern Nazarene, Fri 6 PM CT on FloSports; a win keeps the Suns alone atop the GAC.'). "
+               "The girl marked featured:true ALWAYS gets the first per-girl paragraph and 2-3 sentences instead of 1-2.")
     prompt = f"""Today is {today.isoformat()}. Data for the girls (JSON): {json.dumps(compact, ensure_ascii=False)}
 Milestones this week: {json.dumps(milestones)}
 Reunions coming up: {json.dumps(reunions[:3])}
 
 {ask}
-Rules: title under 12 words, no "Recap:" prefix. body = the paragraphs described above (the intro plus one per girl), each under 60 words, plain warm language, no hype, no bullet points, no jargon.
+Rules: title under 12 words, no "Recap:" prefix. body = the paragraphs described above (the intro plus one per girl), each starting with her first name followed by " — ", each under 70 words, plain warm language, positives before results, no hype, no bullet points, no jargon.
 Ignore anyone marked stale. spotlight = one girl with the best week and a one-sentence reason, or null.
 Return ONLY: {{"title":"", "body":["",""], "spotlight": {{"name":"First Last","note":""}} }}"""
     system = "You write short, warm notes for a group of volleyball moms whose daughters played club together and are now college freshmen. Return ONLY valid JSON."

@@ -27,7 +27,8 @@
       },
       "tz": "America/New_York",
       "position": "RS/MB",
-      "position_note": "Listed MB on the roster; has started at right side every match so far (per family)."
+      "position_note": "Listed MB on the roster; has started at right side every match so far (per family).",
+      "featured": true
     },
     {
       "id": "king",

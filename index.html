@@ -247,6 +247,8 @@ function home(){
     </div></div>`;
   h+=staleBanner();
   const recap=(DATA.buzz||[]).filter(b=>b.kind==='recap').map(b=>({...b,d:pd(b.date)})).sort((a,b)=>b.d-a.d)[0];
+  if(recap){const fn=first(my.name);const mine=(recap.body||[]).find(par=>new RegExp('^'+fn+'\\s*[—–-]','i').test(par.trim()));
+    if(mine)h+=`<div class="card note" style="margin-top:10px;border-left:4px solid ${my.colors.primary}"><div class="ovl">${esc(fn)}'s week</div><p>${esc(mine.replace(/^[^—–-]*[—–-]\s*/,''))}</p></div>`}
   if(recap){const isPrev=recap.piece==='preview'||(!recap.piece&&(/preview/i.test(recap.title)||recap.d.getDay()===4));const sents=(recap.body?.[0]||'').match(/[^.!?]+[.!?]+/g)||[];
     h+=`<div class="card note" style="margin-top:10px"><div class="ovl">${isPrev?'Thursday preview':'Monday recap'}</div><h3>${esc(recap.title.replace(/^Weekend (recap|preview): /i,'').replace(/^\w/,c=>c.toUpperCase()))}</h3><p>${esc(sents.slice(0,2).join(' ').trim())} <a href="#" onclick="show('buzz');return false">Read the ${isPrev?'preview':'recap'} ›</a></p></div>`}
   const miles=(DATA.milestones||[]).filter(m=>S.track.includes(m.player_id)&&byId[m.player_id]&&days(pd(m.date),today)<=7&&days(pd(m.date),today)>=0);
