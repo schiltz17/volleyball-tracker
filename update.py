@@ -487,14 +487,33 @@ def via_reader(url):
     return "\n".join(l for l in lines if not re.fullmatch(r"[\s\-|:]*", l)), md
 
 
+def browser_get(url, timeout=60):
+    """Real headless Chromium (Playwright) for sites that block plain requests. Returns rendered HTML; raises if Playwright isn't installed or the page fails."""
+    import subprocess, sys as _sys
+    code = (
+        "import sys\n"
+        "from playwright.sync_api import sync_playwright\n"
+        "with sync_playwright() as p:\n"
+        "    b = p.chromium.launch(args=['--disable-blink-features=AutomationControlled'])\n"
+        "    ctx = b.new_context(user_agent=%r, locale='en-US', viewport={'width':1280,'height':900})\n"
+        "    pg = ctx.new_page(); pg.goto(sys.argv[1], wait_until='networkidle', timeout=%d); pg.wait_for_timeout(1500)\n"
+        "    sys.stdout.write(pg.content()); b.close()\n" % (UA, timeout * 1000))
+    r = subprocess.run([_sys.executable, "-c", code, url], capture_output=True, text=True, timeout=timeout + 30)
+    if r.returncode != 0 or len(r.stdout) < 500: raise RuntimeError("browser fetch failed: " + (r.stderr.strip().splitlines() or ["no output"])[-1][:120])
+    return r.stdout
+
+
 def first_working(cands, marker=None, notes=None):
     """Try candidate URLs in order; return (text, raw, url) for the first that loads and (if given) contains the marker. Falls back to a reader proxy."""
-    for attempt in ("direct", "reader"):
+    for attempt in ("direct", "reader", "browser"):
         for u in cands or []:
             try:
-                text, raw = page_text(u) if attempt == "direct" else via_reader(u)
+                if attempt == "direct": text, raw = page_text(u)
+                elif attempt == "reader": text, raw = via_reader(u)
+                else:
+                    raw = browser_get(u); b = Blocks(u); b.feed(raw); text = b.text()
                 if marker is None or marker.lower() in text.lower(): 
-                    if notes is not None and attempt == "reader": notes.append(f"{u.split('/')[2]} via reader proxy")
+                    if notes is not None and attempt != "direct": notes.append(f"{u.split('/')[2]} via {attempt}")
                     return text, raw, u
                 if notes is not None: notes.append(f"{u.split('/')[2]}: no '{marker}'")
             except Exception as e:
@@ -615,7 +634,10 @@ def gather_daily(p, today):
     if p.get("profile_url"):
         try:
             try: prof_text, _ = page_text(p["profile_url"])
-            except Exception: prof_text, _ = via_reader(p["profile_url"]); notes.append("profile via reader proxy")
+            except Exception:
+                try: prof_text, _ = via_reader(p["profile_url"]); notes.append("profile via reader")
+                except Exception:
+                    raw_ = browser_get(p["profile_url"]); b_ = Blocks(p["profile_url"]); b_.feed(raw_); prof_text = b_.text(); notes.append("profile via browser")
             prof = stats_from_presto_profile(prof_text)
             if prof:
                 html_stats = prof; notes.append(f"stats parsed from player profile: sp={prof['sp']} k={prof['k']} dig={prof['dig']}")
@@ -647,12 +669,23 @@ def gather_daily(p, today):
                          keep_lines(bx, [r"Player|\bSP\b", surname, p["school_short"].split()[0]], 1, 6000))
         except Exception as e:
             notes.append(f"box {m['date']} failed: {str(e)[:60]}")
+    # which list reconciles with the posted record? that one is the season truth (sheet preferred); the other only donates box-score links
+    def wl_of(lst): 
+        w = [fix_result(x["result"])[0] for x in lst if x.get("result")]; return f"{w.count('W')}-{w.count('L')}"
+    authoritative = None
+    if rec.get("overall"):
+        if pdf_results and wl_of(pdf_results) == rec["overall"]: authoritative = "sheet"
+        elif page_results and wl_of(page_results) == rec["overall"]: authoritative = "page"
+    if authoritative: notes.append(f"results reconcile with record via {authoritative}")
     # sheet results are authoritative for scores; page results supply box-score links and anything the sheet lacks
     for y in pdf_results:
         for x in page_results:
             if x["date"] == y["date"] and opp_key(x["opponent"])[:5] == opp_key(y["opponent"])[:5] and x.get("box_url") and not y.get("box_url"):
                 y["box_url"] = x["box_url"]
-    combined = pdf_results + [x for x in page_results if not any(x["date"] == y["date"] and opp_key(x["opponent"])[:5] == opp_key(y["opponent"])[:5] for y in pdf_results)]
+    if authoritative == "sheet": combined = pdf_results
+    elif authoritative == "page": combined = page_results
+    else: combined = pdf_results + [x for x in page_results if not any(x["date"] == y["date"] and opp_key(x["opponent"])[:5] == opp_key(y["opponent"])[:5] for y in pdf_results)]
+    for x in combined: x["_authoritative"] = bool(authoritative)
     return "\n\n".join(parts), docs, notes, rec, parsed, combined
 
 
@@ -732,10 +765,11 @@ Below is text pulled from her school's schedule/results page, her stats (PDF att
     if rec.get("overall"):          # the page's own record beats anything the model tallied
         out["team_record"] = {**(out.get("team_record") or {}), "overall": rec["overall"], **({"conference": rec["conference"]} if rec.get("conference") else {})}
     if pdf_results: out["results"] = apply_pdf_results(out.get("results"), pdf_results)   # the sheet's scores beat the model's; missed games get added
-    if pdf_results and rec.get("overall"):
-        wl = [fix_result(x["result"])[0] for x in pdf_results if x.get("result")]
-        out["results_authoritative"] = (f"{wl.count('W')}-{wl.count('L')}" == rec["overall"])
-        if out["results_authoritative"]: out["results"] = [x for x in out["results"] if any(x.get("date") == y["date"] and opp_key(x.get("opponent"))[:5] == opp_key(y["opponent"])[:5] for y in pdf_results)] or out["results"]
+    if pdf_results and all(x.get("_authoritative") for x in pdf_results):
+        out["results_authoritative"] = True
+        keep = {(y["date"], opp_key(y["opponent"])[:5]) for y in pdf_results}
+        out["results"] = [x for x in out["results"] if (x.get("date"), opp_key(x.get("opponent"))[:5]) in keep] or out["results"]
+    for x in out.get("results") or []: x.pop("_authoritative", None)
     for m in out.get("results") or []:
         if isinstance(m, dict) and m.get("result"): m["result"] = fix_result(m["result"])
     return out
