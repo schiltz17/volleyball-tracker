@@ -482,19 +482,20 @@ def page_text(url):
 
 def via_reader(url):
     """Last resort for sites that block datacenter traffic: a public reader proxy returns the page as markdown text."""
-    md = http_get("https://r.jina.ai/" + url, timeout=45)
+    md = http_get("https://r.jina.ai/" + url, timeout=20)
     lines = [re.sub(r"^\|\s*|\s*\|$", "", ln).replace(" | ", "\t") if ln.strip().startswith("|") else ln for ln in md.split("\n")]
     return "\n".join(l for l in lines if not re.fullmatch(r"[\s\-|:]*", l)), md
 
 
-def browser_get(url, timeout=60):
+def browser_get(url, timeout=30):
     """Real headless Chromium (Playwright) for sites that block plain requests. Returns rendered HTML; raises if Playwright isn't installed or the page fails."""
     import subprocess, sys as _sys
     code = (
         "import sys\n"
         "from playwright.sync_api import sync_playwright\n"
         "with sync_playwright() as p:\n"
-        "    b = p.chromium.launch(args=['--disable-blink-features=AutomationControlled'])\n"
+        "    try: b = p.chromium.launch(channel='chrome', args=['--disable-blink-features=AutomationControlled'])\n"
+        "    except Exception: b = p.chromium.launch(args=['--disable-blink-features=AutomationControlled'])\n"
         "    ctx = b.new_context(user_agent=%r, locale='en-US', viewport={'width':1280,'height':900})\n"
         "    pg = ctx.new_page(); pg.goto(sys.argv[1], wait_until='networkidle', timeout=%d); pg.wait_for_timeout(1500)\n"
         "    sys.stdout.write(pg.content()); b.close()\n" % (UA, timeout * 1000))
@@ -505,8 +506,13 @@ def browser_get(url, timeout=60):
 
 def first_working(cands, marker=None, notes=None):
     """Try candidate URLs in order; return (text, raw, url) for the first that loads and (if given) contains the marker. Falls back to a reader proxy."""
+    tried_hosts = set()
     for attempt in ("direct", "reader", "browser"):
         for u in cands or []:
+            if attempt == "browser":
+                h = urllib.parse.urlparse(u).netloc
+                if h in tried_hosts: continue
+                tried_hosts.add(h)
             try:
                 if attempt == "direct": text, raw = page_text(u)
                 elif attempt == "reader": text, raw = via_reader(u)
