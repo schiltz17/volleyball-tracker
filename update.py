@@ -518,6 +518,10 @@ def first_working(cands, marker=None, notes=None):
                 elif attempt == "reader": text, raw = via_reader(u)
                 else:
                     raw = browser_get(u); b = Blocks(u); b.feed(raw); text = b.text()
+                    if DRY_RUN:
+                        os.makedirs(os.path.join(HERE, "dry-run-pages"), exist_ok=True)
+                        fn = re.sub(r"[^a-z0-9]+", "_", u.lower())[:120] + ".html"
+                        open(os.path.join(HERE, "dry-run-pages", fn), "w", encoding="utf-8").write(raw)
                 if marker is None or marker.lower() in text.lower(): 
                     if notes is not None and attempt != "direct": notes.append(f"{u.split('/')[2]} via {attempt}")
                     return text, raw, u
@@ -592,11 +596,14 @@ def gather_daily(p, today):
         page_results, _up, synth = events_from_sidearm_next(sched_raw, p.get("schedule_url") or p.get("site") or "")
         if synth: game_lines = synth; parts[0] = "=== SCHEDULE / RESULTS PAGE (each line is one game; [href ...] are that game's links) ===\n" + "\n".join(synth)[:30000]
         if page_results: notes.append("results from event articles (newer Sidearm layout)")
-    seen_keys, dedup = set(), []
-    for r in page_results:                                   # some layouts render each game twice (list + table views)
-        k = (r["date"], opp_key(r["opponent"])[:8], r["result"])
-        if k not in seen_keys: seen_keys.add(k); dedup.append(r)
-    page_results = dedup
+    from collections import Counter
+    keys = [(r["date"], opp_key(r["opponent"])[:8], r["result"]) for r in page_results]
+    counts = Counter(keys)
+    if page_results and sum(1 for k in counts if counts[k] == 2) >= 0.8 * len(counts):   # layout renders every game twice (list + table views)
+        seen_keys, dedup = set(), []
+        for r, k in zip(page_results, keys):
+            if k not in seen_keys: seen_keys.add(k); dedup.append(r)
+        page_results = dedup
     attach_box_links(sorted(page_results, key=lambda r: r["date"]), sched_raw, p.get("schedule_url") or p.get("site") or "")
     with_box = sum(1 for r in page_results if r.get("box_url"))
     if page_results and with_box / len(page_results) >= 0.8:      # a real game on these sites has a box score; the rest are exhibitions
@@ -644,6 +651,9 @@ def gather_daily(p, today):
                 try: prof_text, _ = via_reader(p["profile_url"]); notes.append("profile via reader")
                 except Exception:
                     raw_ = browser_get(p["profile_url"]); b_ = Blocks(p["profile_url"]); b_.feed(raw_); prof_text = b_.text(); notes.append("profile via browser")
+                    if DRY_RUN:
+                        os.makedirs(os.path.join(HERE, "dry-run-pages"), exist_ok=True)
+                        open(os.path.join(HERE, "dry-run-pages", re.sub(r"[^a-z0-9]+", "_", p["profile_url"].lower())[:120] + ".html"), "w", encoding="utf-8").write(raw_)
             prof = stats_from_presto_profile(prof_text)
             if prof:
                 html_stats = prof; notes.append(f"stats parsed from player profile: sp={prof['sp']} k={prof['k']} dig={prof['dig']}")
