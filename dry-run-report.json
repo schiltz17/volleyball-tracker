@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-07T16:43-05:00",
+ "generated": "2026-10-07T16:51-05:00",
  "all_green": false,
  "players": [
   {
@@ -30,26 +30,21 @@
   {
    "player": "Elizabeth King",
    "record": "5-11",
-   "parsed_wl": "5-11",
-   "reconciles": true,
-   "results": 16,
-   "box_links": 15,
+   "parsed_wl": "9-13",
+   "reconciles": false,
+   "results": 22,
+   "box_links": 21,
    "upcoming": 12,
    "next": "2026-10-09",
    "stats_source": "sheet-parsed",
-   "sp": 29,
-   "k": 32,
+   "sp": 0,
+   "k": 0,
    "a": 0,
-   "dig": 9,
+   "dig": 0,
    "photo": true,
    "error": null,
    "notes": [
-    "record from page: 5-11",
-    "16 results parsed from the schedule page",
-    "16 results on the sheet",
-    "stats parsed from PDF: sp=29 k=32 a=0 dig=9",
-    "HTML table agrees with PDF",
-    "results reconcile with record via sheet"
+    "fetch failed (Remote end closed connection without response) — used search"
    ]
   },
   {
@@ -305,8 +300,7 @@
     "www.region4sports.com (reader): HTTP Error 403: Forbidden",
     "elginspartans.com: no 'Wurtz'",
     "www.region4sports.com (browser): browser fetch failed:   - navigating to ",
-    "no stats source had her name",
-    "profile via browser"
+    "no stats source had her name"
    ]
   }
  ]
