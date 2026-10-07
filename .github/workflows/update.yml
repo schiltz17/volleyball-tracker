@@ -28,8 +28,10 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install PDF reader
-        run: pip install --quiet pypdf
+      - name: Install PDF reader and headless browser
+        run: |
+          pip install --quiet pypdf playwright
+          python -m playwright install --with-deps chromium
 
       - name: Run updater
         env:
