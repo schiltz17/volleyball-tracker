@@ -193,21 +193,26 @@ def results_from_schedule_lines(lines, year, home_city=None):
     """Completed games straight from a Sidearm schedule page's game lines: 'Sep 18 (Fri) 5:00 PM | Marshall | ... L, 3-0 ... [href .../boxscore/6819]'."""
     out = []
     for ln in lines:
-        d = re.search(r"\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\.?\s+(\d{1,2})\b", ln)
+        d = re.search(r"\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\.?[/ ]\s*(\d{1,2})\b", ln)
         r = re.search(r"\b([WL]),?\s*(\d)\s*-\s*(\d)\b", ln)
+        if not r and re.search(r"\bFinal\b", ln):                       # Presto style: "Final | 3 | Opponent | 1 | McHenry"
+            r2 = re.search(r"\b([0-3])\b[^|\d]{0,60}\|[^|]*\|?\s*\b([0-3])\b", ln)
+            if r2: r = re.match(r"([WL]),?\s*(\d)\s*-\s*(\d)", f"? {r2.group(1)}-{r2.group(2)}")
         if not d or not r: continue
         if re.search(r"exhibition|scrimmage", ln, re.I): continue
         date = f"{year}-{MONTHS[d.group(1)]:02d}-{int(d.group(2)):02d}"
         box = re.search(r"\[href (\S*boxscore\S*)\]", ln, re.I)
         if home_city and home_city.split(",")[0].lower() in ln.lower(): ha = "home"
-        elif re.search(r"\bvs\.?\b", ln[:250]): ha = "neutral"
+        elif re.search(r"\bat\b|@", ln[:250]): ha = "away"
+        elif re.search(r"\bvs\.?\b", ln[:250]): ha = "home"
         else: ha = "away"
         # opponent = the text right after the date/time chunk, before the first separator that follows it
         after = ln[d.end():]
         after = re.sub(r"^[^|]*?(AM|PM|TBA)\b\s*", "", after)            # drop the time
         after = re.sub(r"\[(href|img) [^\]]*\]", " ", after)               # drop tags
         after = re.sub(r"^\s*(\|\s*)*(OVC|Big South|MVC|NSIC|GAC|GSC|ECC|ISCC)?\s*\*?\s*(\|\s*)*(No\.\s*\d+\s*)?(vs\.?|at)?\s*", "", after, flags=re.I)
-        opp = re.split(r"\s*\|\s*", after.strip())[0].strip()
+        opp = re.split(r"\s*\|\s*|\t+", after.strip())[0].strip()
+        opp = re.sub(r"\s*[WL],?\s*\d\s*-\s*\d.*$", "", opp).strip()
         opp = re.sub(r"\s+(Greek Night|Family Weekend|Student-Athlete Day|.*Day|.*Night|CAB Collab)$", "", opp)
         if not opp or len(opp) > 40: continue
         out.append({"date": date, "opponent": opp, "home_away": ha, "result": f"{r.group(1)} {r.group(2)}-{r.group(3)}", "box_url": box.group(1) if box else None, "player_line": None})
@@ -276,6 +281,18 @@ def page_text(url):
     raw = http_get(url); b = Blocks(url); b.feed(raw); return b.text(), raw
 
 
+def first_working(cands, marker=None, notes=None):
+    """Try candidate URLs in order; return (text, raw, url) for the first that loads and (if given) contains the marker."""
+    for u in cands or []:
+        try:
+            text, raw = page_text(u)
+            if marker is None or marker.lower() in text.lower(): return text, raw, u
+            if notes is not None: notes.append(f"{u.split('/')[2]}: no '{marker}'")
+        except Exception as e:
+            if notes is not None: notes.append(f"{u.split('/')[2]}: {str(e)[:40]}")
+    return None, "", None
+
+
 def keep_lines(text, patterns, context=0, max_chars=24000):
     """Keep lines matching any pattern (plus neighbours); fall back to the head of the page if nothing matches."""
     lines = text.split("\n"); rx = [re.compile(p, re.I) for p in patterns]; keep = set()
@@ -297,7 +314,11 @@ def find_pdf(raw_html, base):
 
 def fetch_pdf(url, max_bytes=3_000_000):
     b = http_get(url, binary=True)
-    if not b.startswith(b"%PDF") or len(b) > max_bytes: raise ValueError("not a usable PDF")
+    if b[:2] == b"\x1f\x8b":
+        import gzip; b = gzip.decompress(b)
+    b = b.lstrip()
+    if not b.startswith(b"%PDF") or len(b) > max_bytes:
+        raise ValueError(f"not a usable PDF (starts {b[:12]!r}, {len(b)} bytes)")
     return b
 
 
@@ -313,17 +334,31 @@ def gather_daily(p, today):
     parts, docs, notes, pdf_results, page_results = [], [], [], [], []
     surname = p["name"].split()[-1]
     # schedule page: game blocks with box score links
-    sched_text, _ = page_text(p["schedule_url"])
+    if p.get("schedule_candidates"):
+        sched_text, _, used = first_working(p["schedule_candidates"], None, notes)
+        if sched_text is None: raise RuntimeError("no schedule source answered")
+        notes.append(f"schedule from {used.split('/')[2]}")
+    else:
+        sched_text, _ = page_text(p["schedule_url"])
     rec = record_from(sched_text)
     if rec["overall"]: notes.append(f"record from page: {rec['overall']}")
-    game_lines = [ln for ln in sched_text.split("\n") if re.search(r"\b(Aug|Sep|Oct|Nov|Dec)\b\.?\s*\d{1,2}|\d{1,2}/\d{1,2}(/\d{2,4})?", ln)
+    game_lines = [ln for ln in sched_text.split("\n") if re.search(r"\b(Aug|Sep|Oct|Nov|Dec)\b\.?/?\s*\d{1,2}|\d{1,2}/\d{1,2}(/\d{2,4})?", ln)
                   and re.search(r"\b(vs\.?|at|Final|[WL],?\s*\d-\d|\d\s*-\s*\d|PM|AM|TBA)\b", ln, re.I)]
     parts.append("=== SCHEDULE / RESULTS PAGE (each line is one game; [href ...] are that game's links) ===\n" + "\n".join(game_lines)[:30000])
     page_results = results_from_schedule_lines(game_lines, today.year, p.get("city"))
     if page_results: notes.append(f"{len(page_results)} results parsed from the schedule page")
+    else:
+        sample = [ln[:160] for ln in game_lines[:3]] or [ln[:160] for ln in sched_text.split("\n") if re.search(r"\b(Sep|Oct)\b", ln)][:3]
+        notes.append("no results parsed; sample lines: " + " || ".join(sample))
     # stats: cumulative PDF if the page links one, else the trimmed HTML table
-    stats_text, stats_raw = page_text(p["stats_url"])
-    pdf = find_pdf(stats_raw, p["stats_url"])
+    if p.get("stats_candidates"):
+        stats_text, stats_raw, used = first_working(p["stats_candidates"], surname, notes)
+        if stats_text is None: stats_text, stats_raw = "", ""; notes.append("no stats source had her name")
+        else: notes.append(f"stats from {used.split('/')[2]}")
+        pdf = find_pdf(stats_raw, used) if used else None
+    else:
+        stats_text, stats_raw = page_text(p["stats_url"])
+        pdf = find_pdf(stats_raw, p["stats_url"])
     parsed = None
     if pdf:
         try:
@@ -358,6 +393,30 @@ def gather_daily(p, today):
 
 
 # ---------------------------------------------------------------- research calls
+INFLATED = re.compile(r"\b(steady part|key (part|piece|contributor)|anchor|staple|mainstay|regular (part|fixture)|integral|cornerstone|go-to|leader on|leading the)\b", re.I)
+
+
+def role_facts(p, today, season_results=None):
+    """Her share of the team's sets and whether she played lately — numbers the writer must match.
+    season_results: the full-season results list from the stats sheet when available (the stored list may only go back a few weeks)."""
+    st = p.get("stats") or {}
+    sp = st.get("sp") or 0
+    team_sets = 0
+    pool = season_results if season_results and len(season_results) >= len(p.get("recent_matches") or []) else (p.get("recent_matches") or [])
+    for m in pool:
+        r = re.search(r"(\d)\s*-\s*(\d)", m.get("result") or "")
+        if r: team_sets += int(r.group(1)) + int(r.group(2))
+    team_sets = max(team_sets, sp)
+    share = (sp / team_sets) if team_sets else 0
+    word = "has not appeared" if sp == 0 else "limited minutes" if share < 0.15 else "rotational" if share < 0.5 else "regular"
+    wk = (today - timedelta(days=7)).isoformat()
+    played_wk = any((m.get("date") or "") >= wk and m.get("result") and m.get("player_line") and "did not play" not in (m.get("player_line") or "").lower()
+                    for m in p.get("recent_matches") or [])
+    team_played_wk = any((m.get("date") or "") >= wk and m.get("result") for m in p.get("recent_matches") or [])
+    return {"sets_played": sp, "team_sets": team_sets, "share": round(share, 2), "role_word": word,
+            "played_this_week": played_wk, "team_played_this_week": team_played_wk}
+
+
 def research_daily(p, today, need_lines=()):
     since = (today - timedelta(days=14)).isoformat()
     ident = f"#{p['jersey']} " if p.get("jersey") else ""
@@ -367,21 +426,24 @@ def research_daily(p, today, need_lines=()):
               ' "stats": {"mp":0,"sp":0,"k":0,"e":0,"ta":0,"a":0,"bhe":0,"sa":0,"se":0,"srv":null,"dig":0,"re":null,"bs":0,"ba":0,"be":0},\n'
               ' "results": [{"date":"YYYY-MM-DD","opponent":"","home_away":"home","result":"W 3-1","box_url":null,"player_line":null}],\n'
               ' "blurb": ""}')
+    text, docs, notes, rec, parsed, pdf_results = None, [], [], {}, None, []
+    if not p.get("fetch_note"):
+        try: text, docs, notes, rec, parsed, pdf_results = gather_daily(p, today)
+        except Exception as e: notes, rec, parsed, pdf_results = [f"fetch failed ({str(e)[:80]}) — used search"], {}, None, []
+    rf = role_facts({**p, "stats": parsed or p.get("stats")}, today, pdf_results)
     rules = f"""Rules:
 - stats: if a section "HER SEASON STAT LINE" is present, copy it exactly. Otherwise take HER single row from the stats table (match by jersey number AND last name; never add rows together; if two rows could be her, return null stats). Integers; null where a column is not published.
 - team_record = the record printed on the schedule/results page (e.g. "Overall 4-4"); copy it, do not tally matches yourself.
 - result is written W/L then HER team's sets first: "W 3-1", "L 0-3" — never "L 3-0".
 - results = the team's matches from {since} through {today.isoformat()} that have a final score, most recent first, with box_url = the box-score link from that game's block. player_line = her numbers from a BOX SCORE section below if one is present for that match ("7 kills, 3 blocks, 2 digs" / "24 assists, 6 digs" / "did not play"); otherwise null.
-- blurb = {"3-4" if p.get("featured") else "2-3"} sentences for her parents, in this order: (1) what SHE did — her line, her role, anything she did well, stated first and warmly; (2) the team's results, plainly, without dwelling on losses ("dropped two at Marshall" not "hit a rough patch"); (3) what is next for her. Treat any position note above as fact and never mention where it came from (no "per the family", no "listed as").
+- blurb = {"3-4" if p.get("featured") and rf.get("played_this_week") else "2-3"} sentences for her parents. Court-time facts (from code, not negotiable): sets played {rf['sets_played']} of the team's {rf['team_sets']} = {int(rf['share']*100)}% → describe her role as "{rf['role_word']}"; played this week: {rf['played_this_week']}; team played this week: {rf['team_played_this_week']}.
+  Order: (1) if the team played and she did not, say so plainly in the first sentence, then what she did last time she played; otherwise what SHE did this week — her line, stated first and warmly; (2) the team's results, plainly, without dwelling on losses ("dropped two at Marshall" not "hit a rough patch"); (3) what is next for her.
+  Never describe her role with words bigger than the percentage supports — no "steady part of the rotation", "key contributor", "anchor" for a rotational or limited-minutes player. Treat any position note above as fact and never mention where it came from (no "per the family", no "listed as").
   The stats sheet decides court time: if she is not in it or has 0 sets played, say plainly that she has not appeared in a match yet and move on to the team. Never write about the data itself — no mention of pages, PDFs, box scores, tables, or what could or could not be found. Write only about her and the team.
 Return ONLY: {schema}"""
-    text, docs, notes, rec, parsed, pdf_results = None, [], [], {}, None, []
-    if not p.get("fetch_note"):
-        try: text, docs, notes, rec, parsed, pdf_results = gather_daily(p, today)
-        except Exception as e: notes, rec, parsed, pdf_results = [f"fetch failed ({str(e)[:80]}) — used search"], {}, None, []
     if text is None or len(text) < 200:      # blocked or empty site: one search-only call
         prompt = f"""Today is {today.isoformat()}. Player: {who}
-Her school's site blocks automated reading. Use web_search (up to 2 searches: "{p['school']} volleyball {p['name'].split()[-1]}", "{p['school']} volleyball results 2026", "{p['school']} volleyball stats") and read the result snippets only.
+Her school's site blocks automated reading, so there is no stats table here. Rules override: stats = null for every field unless a search snippet shows her actual season line; never write zeros for lack of information; and never say she has not played — if you cannot tell, say nothing about her court time and describe the team. Use web_search (up to 3 searches: "{p['school']} volleyball {p['name'].split()[-1]}", "{p['school']} volleyball results 2026", "{p['school']} volleyball stats") and read the result snippets only.
 {rules}"""
         out = call_claude(prompt, [{**SEARCH, "max_uses": 3}], max_tokens=3000, model=p.get("model")); out["_notes"] = notes; return out
     prompt = f"""Today is {today.isoformat()}. Player: {who}
@@ -397,6 +459,10 @@ Below is text pulled from her school's schedule/results page, her stats (PDF att
             notes.append("API rejected the PDF — read the HTML table instead"); out = call_claude(prompt, None, max_tokens=4500, model=p.get("model"))
         else: raise
     out["_notes"] = notes
+    rf2 = role_facts({**p, "stats": parsed or out.get("stats") or p.get("stats")}, today, pdf_results)
+    if rf2["share"] < 0.5 and INFLATED.search(out.get("blurb") or ""):
+        notes.append("blurb inflated her role — trimmed")
+        out["blurb"] = " ".join(x for x in re.split(r"(?<=[.!?])\s+", out["blurb"]) if not INFLATED.search(x)) or out["blurb"]
     out["stats_source"] = "sheet-parsed" if parsed else "model-read"
     if parsed: out["stats"] = parsed                     # code-parsed line overrides whatever the model wrote
     if rec.get("overall"):          # the page's own record beats anything the model tallied
@@ -413,7 +479,9 @@ def research_weekly(p, today):
              '"standing": "3rd of 11 OVC or null", "standings_url": null}')
     sched_text, raw = None, ""
     if not p.get("fetch_note"):
-        try: sched_text, raw = page_text(p["schedule_url"])
+        try:
+            if p.get("schedule_candidates"): sched_text, raw, _ = first_working(p["schedule_candidates"])
+            else: sched_text, raw = page_text(p["schedule_url"])
         except Exception as e: log(f"    schedule fetch failed ({str(e)[:60]}) — using search")
     if not sched_text or len(sched_text) < 200:
         prompt = f"""Today is {today.isoformat()}. Team: {p['school']} volleyball ({p['conference']}). Its site blocks automated reading; use web_search (2 searches) for the remaining 2026 schedule and the conference standings. Times in Central.
@@ -438,7 +506,9 @@ def research_profile(p):
     shape = '{"jersey":null,"position":null,"class_year":null,"height":null,"hometown_hs":"Hometown, ST / High School","bio_url":null,"photo_url":null}'
     text = None
     if not p.get("fetch_note"):
-        try: text, _ = page_text(p["roster_url"])
+        try:
+            if p.get("roster_candidates"): text, _, _ = first_working(p["roster_candidates"], p["name"].split()[-1])
+            else: text, _ = page_text(p["roster_url"])
         except Exception as e: log(f"    roster fetch failed ({str(e)[:60]}) — using search")
     if not text or p["name"].split()[-1].lower() not in text.lower():
         prompt = f"""Player: {p['name']}, {p['school']} volleyball, freshman. Her school's roster page blocks automated reading; use web_search (2 searches) for her roster entry.
@@ -472,7 +542,9 @@ def write_piece(kind, players, today, milestones, reunions):
     compact = []
     for p in players:
         if p.get("status") != "playing": continue
-        compact.append({k: p.get(k) for k in ("name", "school_short", "division", "position", "position_note", "team_record", "stats", "blurb", "stale", "featured")}
+        played_this_week = any((m.get("date") or "") >= wk_ago and m.get("result") for m in p.get("recent_matches", []))
+        compact.append({k: p.get(k) for k in ("name", "school_short", "division", "position", "position_note", "team_record", "stats", "blurb", "stale")}
+                       | {"featured": bool(p.get("featured")) and played_this_week}
                        | {"results_last_7": [m for m in p.get("recent_matches", []) if (m.get("date") or "") >= wk_ago],
                           "next_7": [m for m in p.get("upcoming", []) if today.isoformat() <= (m.get("date") or "") <= wk_ahead]})
     if kind == "recap":
@@ -480,13 +552,13 @@ def write_piece(kind, players, today, milestones, reunions):
                "Then ONE short paragraph for EACH girl who had a match this week, in this form: her first name, the results, her line, one human note "
                "(e.g. 'Anna — Morehead State split at Marshall (L 1-3, W 3-2); 5 kills and 4 blocks Saturday, her best block night yet.'). "
                "Skip girls with no match this week. Say plainly if a girl did not see the court. "
-               "The girl marked featured:true ALWAYS gets the first per-girl paragraph, 2-3 sentences instead of 1-2, and her strengths named specifically; "
-               "if two girls are close for the spotlight, it goes to her.")
+               "The girl marked featured:true gets the first per-girl paragraph and 2-3 sentences ONLY IF she played this week; if she did not play, one plain sentence and no more. "
+               "The spotlight is earned: it goes to whoever had the best actual line this week, and never to a girl who did not play.")
     else:
         ask = ("Write the THURSDAY WEEKEND PREVIEW. Paragraph 1: the weekend ahead in two or three sentences — the biggest matches, conference openers, anything at stake. "
                "Then ONE short paragraph (1-2 sentences) for EACH girl with a match this weekend: first name, opponent(s), day and Central time, stream, and why it matters "
                "(e.g. 'Kylie — Arkansas Tech at Southern Nazarene, Fri 6 PM CT on FloSports; a win keeps the Suns alone atop the GAC.'). "
-               "The girl marked featured:true ALWAYS gets the first per-girl paragraph and 2-3 sentences instead of 1-2.")
+               "The girl marked featured:true gets the first per-girl paragraph and 2-3 sentences if she has a match this weekend; otherwise she is not singled out.")
     prompt = f"""Today is {today.isoformat()}. Data for the girls (JSON): {json.dumps(compact, ensure_ascii=False)}
 Milestones this week: {json.dumps(milestones)}
 Reunions coming up: {json.dumps(reunions[:3])}
@@ -496,7 +568,13 @@ Rules: title under 12 words, no "Recap:" prefix. body = the paragraphs described
 Ignore anyone marked stale. spotlight = one girl with the best week and a one-sentence reason, or null.
 Return ONLY: {{"title":"", "body":["",""], "spotlight": {{"name":"First Last","note":""}} }}"""
     system = "You write short, warm notes for a group of volleyball moms whose daughters played club together and are now college freshmen. Return ONLY valid JSON."
-    return call_claude(prompt, None, max_tokens=2500, system=system, model=WRITER_MODEL, exempt=True)
+    out = call_claude(prompt, None, max_tokens=2500, system=system, model=WRITER_MODEL, exempt=True)
+    sp = out.get("spotlight") or {}
+    if sp.get("name"):
+        fn = sp["name"].split()[0].lower()
+        earned = any(p["name"].split()[0].lower() == fn and any((m.get("date") or "") >= wk_ago and m.get("result") for m in p.get("recent_matches", [])) for p in players)
+        if not earned: out["spotlight"] = None
+    return out
 
 
 # ---------------------------------------------------------------- normalize model output

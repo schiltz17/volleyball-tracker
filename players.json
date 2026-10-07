@@ -215,7 +215,18 @@
         "secondary": "#1F4E9A"
       },
       "tz": "America/Chicago",
-      "fetch_note": "This site blocks automated fetching — go straight to web_search for the roster, results, and stats (search the school name + 'volleyball' + the player's name; opponent recaps and the ISCC conference site also carry results)."
+      "schedule_candidates": [
+        "https://www.region4sports.com/sports/wvball/2026-27/teams/mchenrycountycollege",
+        "https://www.mccscots.com/sports/wvball/2026-27/schedule"
+      ],
+      "stats_candidates": [
+        "https://www.region4sports.com/sports/wvball/2026-27/teams/mchenrycountycollege?view=lineup",
+        "https://www.mccscots.com/sports/wvball/2026-27/teams/mchenrycountycollege?view=lineup"
+      ],
+      "roster_candidates": [
+        "https://www.region4sports.com/sports/wvball/2026-27/teams/mchenrycountycollege?view=roster",
+        "https://www.mccscots.com/sports/wvball/2026-27/roster"
+      ]
     },
     {
       "id": "mitchell",
@@ -239,7 +250,18 @@
         "secondary": "#1F4E9A"
       },
       "tz": "America/Chicago",
-      "fetch_note": "This site blocks automated fetching — go straight to web_search for the roster, results, and stats (search the school name + 'volleyball' + the player's name; opponent recaps and the ISCC conference site also carry results)."
+      "schedule_candidates": [
+        "https://www.region4sports.com/sports/wvball/2026-27/teams/mchenrycountycollege",
+        "https://www.mccscots.com/sports/wvball/2026-27/schedule"
+      ],
+      "stats_candidates": [
+        "https://www.region4sports.com/sports/wvball/2026-27/teams/mchenrycountycollege?view=lineup",
+        "https://www.mccscots.com/sports/wvball/2026-27/teams/mchenrycountycollege?view=lineup"
+      ],
+      "roster_candidates": [
+        "https://www.region4sports.com/sports/wvball/2026-27/teams/mchenrycountycollege?view=roster",
+        "https://www.mccscots.com/sports/wvball/2026-27/roster"
+      ]
     },
     {
       "id": "wurtz",
@@ -254,15 +276,29 @@
       "conference": "Illinois Skyway Collegiate Conference",
       "city": "Elgin, IL",
       "hometown_hs": "",
-      "site": "https://www.eccathletics.com/sports/wvball",
-      "roster_url": "https://www.eccathletics.com/sports/wvball/2026-27/roster",
-      "schedule_url": "https://www.eccathletics.com/sports/wvball/2026-27/schedule",
-      "stats_url": "https://www.eccathletics.com/sports/wvball/2026-27/teams/elgin",
+      "site": "https://elginspartans.com/sports/wvball",
+      "roster_url": "https://elginspartans.com/sports/wvball/2026-27/roster",
+      "schedule_url": "https://elginspartans.com/sports/wvball/2026-27/schedule",
+      "stats_url": "https://elginspartans.com/sports/wvball/2026-27/teams/elgin?view=lineup",
       "colors": {
         "primary": "#1B4F9C",
         "secondary": "#F2B01E"
       },
-      "tz": "America/Chicago"
+      "tz": "America/Chicago",
+      "schedule_candidates": [
+        "https://elginspartans.com/sports/wvball/2026-27/schedule",
+        "https://www.region4sports.com/sports/wvball/2026-27/teams/elgincc",
+        "https://www.region4sports.com/sports/wvball/2026-27/teams/elgincommunitycollege"
+      ],
+      "stats_candidates": [
+        "https://elginspartans.com/sports/wvball/2026-27/teams/elgin?view=lineup",
+        "https://elginspartans.com/sports/wvball/2026-27/teams/elgincommunitycollege?view=lineup",
+        "https://www.region4sports.com/sports/wvball/2026-27/teams/elgincc?view=lineup",
+        "https://www.region4sports.com/sports/wvball/2026-27/teams/elgincommunitycollege?view=lineup"
+      ],
+      "roster_candidates": [
+        "https://elginspartans.com/sports/wvball/2026-27/roster"
+      ]
     },
     {
       "id": "schatz",

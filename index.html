@@ -164,6 +164,18 @@ table.st tr.dash td{color:var(--ink4)}
 .badge b{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:#E2E5EB;color:#fff;font-size:15px;flex:0 0 26px}
 .badge.got{color:var(--ink)}.badge.got b{background:var(--c1)}
 .badge small{display:block;font-size:12px;color:var(--ink3)}
+
+.gate{position:fixed;inset:0;z-index:50;background:var(--bg,#F3F4F7);display:none;align-items:center;justify-content:center;padding:24px}
+.gate.on{display:flex}
+.gate .box{width:100%;max-width:380px;background:#fff;border-radius:20px;padding:22px 20px;box-shadow:0 10px 40px rgba(0,0,0,.12)}
+.gate h2{margin:0 0 6px;font-size:22px}.gate p{margin:0 0 14px;color:#4A5364;font-size:15px}
+.gate input{width:100%;box-sizing:border-box;font-size:18px;padding:12px 14px;border:2px solid #E4E7EE;border-radius:12px;margin-bottom:10px}
+.gate input:focus{outline:none;border-color:#111827}
+.gate .err{color:#C8322B;font-size:14px;min-height:18px;margin-bottom:6px}
+.gate button{width:100%;border:0;background:#111827;color:#fff;padding:14px;border-radius:14px;font-size:17px;font-weight:700}
+.gate .picks{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.gate .pick{border:2px solid #E4E7EE;border-radius:12px;padding:8px 10px;font-size:14px;display:flex;gap:8px;align-items:center;cursor:pointer}
+.gate .pick.on{border-color:#111827;background:#F5F6F9}
 </style>
 <script>window.goatcounter={no_onload:true,no_events:true}</script>
 <script data-goatcounter="https://schiltz17.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
@@ -185,6 +197,7 @@ table.st tr.dash td{color:var(--ink4)}
   <button data-s="stats"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-6M22 20H2"/></svg>Stats</button>
   <button data-s="team"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><circle cx="17" cy="9" r="2.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M15 20a5 5 0 0 1 7 0"/></svg>Team</button>
 </div></div>
+<div class="gate" id="gate"><div class="box" id="gateBox"></div></div>
 <div class="sheet" id="sheet" onclick="if(event.target===this)closeSettings()"><div class="in" id="sheetIn"></div></div>
 
 <script>
@@ -207,15 +220,28 @@ const short=p=>NAMES[p.id]||first(p.name);
 /* settings (saved on this phone) */
 const LS={get(){try{return JSON.parse(localStorage.getItem('wayn'))}catch(e){return null}},set(v){try{localStorage.setItem('wayn',JSON.stringify(v))}catch(e){}}};
 let S={my:null,track:null};
+const GATE_HASH="bd0853589c4ab2d1cc7708c301cacd2d8f3a125572340c65a59bdb4527312040";
+async function sha(s){if(window.crypto&&crypto.subtle){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}return null}
+const slug=s=>(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,24);
+function showGate(step,err){
+  const g=$('#gate');g.classList.add('on');
+  if(step==='code'){$('#gateBox').innerHTML=`<h2>Top Flight 18 Elite</h2><p>Enter the code from your invite text.</p><input id="gc" placeholder="Code" autocapitalize="characters" autocomplete="off"><div class="err">${err||''}</div><button onclick="checkCode()">Continue</button>`;setTimeout(()=>$('#gc')?.focus(),50);}
+  else{$('#gateBox').innerHTML=`<h2>Who are you?</h2><p>Pick your player and tell us who you are (e.g. “Bre's mom”). This stays on your phone and helps Joel see who's using the app.</p><div class="picks">${playing().map(p=>`<div class="pick ${S.my===p.id?'on':''}" onclick="S.my='${p.id}';showGate('who')">${av(p,'xs')}${esc(first(p.name))}</div>`).join('')}</div><input id="gw" placeholder="Your name (e.g. Bre's mom)" value="${esc(S.who||'')}"><div class="err">${err||''}</div><button onclick="finishGate()">Let's go</button>`;}
+}
+async function checkCode(){const v=($('#gc').value||'').trim().toUpperCase();const hx=await sha(v);
+  if(hx===GATE_HASH||(!hx&&v==='FLIGHT18')){S.gate=true;save();track('/gate/ok','Code accepted');showGate('who')}else{track('/gate/fail','Bad code');showGate('code',"That code didn't work. Check the text from Joel.")}}
+function finishGate(){const w=($('#gw').value||'').trim();if(!S.my){showGate('who','Pick your player first.');return}if(w.length<2){showGate('who','Add your name so we know who you are.');return}
+  S.who=w;S.chosen=true;save();$('#gate').classList.remove('on');home();track('/open/'+S.my+'/'+slug(S.who),'Open · '+(byId[S.my]?.name||'')+' · '+S.who)}
 const save=()=>LS.set(S);
 const playing=()=>P.filter(p=>p.status==='playing');
 const tracked=()=>playing().filter(p=>S.track.includes(p.id));
 function openSettings(firstTime){
   const row=(p,input)=>`<label class="opt">${av(p,'sm')}<span class="n">${esc(p.name)}<small>${esc(p.school_short)}</small></span>${input}</label>`;
   $('#sheetIn').innerHTML=`<div class="grab"></div><h3>${firstTime?"Welcome — who's your player?":"My player"}</h3><p>${firstTime?"Pick your daughter and she'll be at the top of your Home screen. You can change this anytime with the gear icon.":"She goes at the top of your Home screen."}</p>`
-  +playing().map(p=>row(p,`<input type="radio" name="my" value="${p.id}" ${S.my===p.id?'checked':''} onchange="S.my=this.value;S.chosen=true;save();home();track('/open/'+S.my,'Open · '+(byId[S.my]?.name||''))">`)).join('')
+  +playing().map(p=>row(p,`<input type="radio" name="my" value="${p.id}" ${S.my===p.id?'checked':''} onchange="S.my=this.value;S.chosen=true;save();home();track('/open/'+S.my+'/'+slug(S.who),'Open · '+(byId[S.my]?.name||'')+' · '+S.who)">`)).join('')
   +`<h3 style="margin-top:20px">Track</h3><p>Unchecked girls stay on Stats and Team but leave your Home and Games.</p>`
   +playing().map(p=>row(p,`<input type="checkbox" value="${p.id}" ${S.track.includes(p.id)?'checked':''} onchange="S.track=this.checked?[...S.track,'${p.id}']:S.track.filter(x=>x!=='${p.id}');save();home();games();team()">`)).join('')
+  +`<h3 style="margin-top:20px">You</h3><p>How you show up in the usage report.</p><input id="whoEdit" value="${esc(S.who||'')}" style="width:100%;box-sizing:border-box;font-size:16px;padding:10px 12px;border:2px solid #E4E7EE;border-radius:10px" onchange="S.who=this.value.trim();save()">`
   +`<button class="done" onclick="closeSettings()">Done</button><p class="fine">Saved on this phone only. No accounts.</p>`;
   $('#sheet').classList.add('on');
 }
@@ -400,7 +426,10 @@ function boot(d){LAST_LOADED=Date.now();
   if(saved.track&&Array.isArray(saved.track))pl.forEach(id=>{if(!saved.track.includes(id)&&!(saved.known||[]).includes(id))S.track.push(id)});
   S.known=pl.slice();save();
   home();games();buzz();stats();team();
-  if(S.chosen)track('/open/'+S.my,'Open · '+(byId[S.my]?.name||''));else{track('/open/first-visit','First visit');setTimeout(()=>openSettings(true),400)}
+  S.gate=!!saved.gate;S.who=saved.who||'';
+  if(!S.gate){track('/open/gate','Needs code');showGate('code');return}
+  if(!S.chosen||!S.who){showGate('who');return}
+  track('/open/'+S.my+'/'+slug(S.who),'Open · '+(byId[S.my]?.name||'')+' · '+S.who);
 }
 function track(path,title){try{const f=()=>window.goatcounter&&window.goatcounter.count&&window.goatcounter.count({path,title,event:false});window.goatcounter?.count?f():setTimeout(f,1500)}catch(e){}}
 fetch('data.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error(r.status);return r.json()}).then(boot).catch(e=>{
