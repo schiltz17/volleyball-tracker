@@ -28,16 +28,16 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install PDF reader and headless browser
-        run: |
-          pip install --quiet pypdf playwright
-          python -m playwright install --with-deps chromium
+      - name: Install PDF reader and browser driver
+        timeout-minutes: 5
+        run: pip install --quiet pypdf playwright   # drives the Chrome already on the runner; no system packages
 
       - name: Run updater
+        timeout-minutes: 40
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           TRACKER_DRY_RUN: ${{ inputs.dry_run }}
-        run: timeout 45m python update.py || echo "::warning::updater stopped early (timeout or error) — committing what finished"
+        run: timeout 38m python update.py || echo "::warning::updater stopped early (timeout or error) — committing what finished"
 
       - name: Commit data.json
         if: always()
