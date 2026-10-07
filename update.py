@@ -28,6 +28,7 @@ WRITER_MODEL = os.environ.get("TRACKER_WRITER_MODEL", "claude-sonnet-5")   # Mon
 HERE = os.path.dirname(os.path.abspath(__file__))
 PLAYERS_FILE, DATA_FILE = os.path.join(HERE, "players.json"), os.path.join(HERE, "data.json")
 
+DRY_RUN = os.environ.get("TRACKER_DRY_RUN", "") in ("1", "true", "True")   # fetch + parse everything live, call no model, write a report, leave data.json alone
 TOKEN_BUDGET = int(os.environ.get("TRACKER_TOKEN_BUDGET", "900000"))   # input tokens per run; optional work stops at 70%, everything at 100%
 WORKERS = int(os.environ.get("TRACKER_WORKERS", "4"))
 CALL_TIMEOUT = 240
@@ -58,6 +59,9 @@ class BudgetExceeded(RuntimeError): pass
 # ---------------------------------------------------------------- API
 def call_claude(prompt, tools=None, max_tokens=5000, system=SYSTEM, model=None, docs=None, exempt=False):
     """One retry on any failure (network, HTTP, bad JSON). Refuses to start once the run budget is spent (unless exempt)."""
+    if DRY_RUN:
+        return {"title": "dry run", "body": [], "spotlight": None, "items": [], "schedule": [], "standing": None, "standings_url": None,
+                "team_record": {}, "stats": {}, "results": [], "blurb": ""}
     if spent() >= 1.0 and not exempt: raise BudgetExceeded(f"run token budget spent ({USAGE['in']:,} input tokens)")
     for attempt in (1, 2):
         try:
@@ -129,7 +133,7 @@ def stats_from_cume(text, name, jersey=None):
     last, first = name.split()[-1], name.split()[0]
     flat = re.sub(r"[ \t]+", " ", text) + "\n"
     # row = optional jersey, "Last, First", then 21 numeric tokens (numbers, .333, -.250, 0)
-    pat = re.compile(rf"(?:^|\n)\s*(\d{{1,2}})?\s*{re.escape(last)},\s*{re.escape(first)}\b[^\n\d-]*((?:-?\.?\d+(?:\.\d+)?\s+){{20,22}})", re.I)
+    pat = re.compile(rf"(?:^|\n)\s*(\d{{1,2}})?\s*{re.escape(last)}\s*,\s*{re.escape(first)}\b[^\n\d-]*((?:-?\.?\d+(?:\.\d+)?\s+){{20,22}})", re.I)
     rows = [(m.group(1), m.group(2).split()) for m in pat.finditer(flat)]
     if jersey: rows = [r for r in rows if not r[0] or str(r[0]) == str(jersey)] or rows
     if not rows: return None
@@ -339,7 +343,7 @@ def stats_from_html_tables(text, name, jersey=None):
     last, first = name.split()[-1].lower(), name.split()[0].lower()
     found, header, hi, in_conf = {}, None, None, False
     def is_her(c):
-        c = re.sub(r"\s+", " ", c.lower())
+        c = re.sub(r"\s*,\s*", ", ", re.sub(r"\s+", " ", c.lower()))
         return c.startswith(last + ",") or c == f"{first} {last}" or c.endswith(f"{last}, {first}") or f"{last}, {first}" in c
     for ln in text.split("\n"):
         plain = re.sub(r"\[(href|img) [^\]]*\]", "", ln)
@@ -476,15 +480,25 @@ def page_text(url):
     raw = http_get(url); b = Blocks(url); b.feed(raw); return b.text(), raw
 
 
+def via_reader(url):
+    """Last resort for sites that block datacenter traffic: a public reader proxy returns the page as markdown text."""
+    md = http_get("https://r.jina.ai/" + url, timeout=45)
+    lines = [re.sub(r"^\|\s*|\s*\|$", "", ln).replace(" | ", "\t") if ln.strip().startswith("|") else ln for ln in md.split("\n")]
+    return "\n".join(l for l in lines if not re.fullmatch(r"[\s\-|:]*", l)), md
+
+
 def first_working(cands, marker=None, notes=None):
-    """Try candidate URLs in order; return (text, raw, url) for the first that loads and (if given) contains the marker."""
-    for u in cands or []:
-        try:
-            text, raw = page_text(u)
-            if marker is None or marker.lower() in text.lower(): return text, raw, u
-            if notes is not None: notes.append(f"{u.split('/')[2]}: no '{marker}'")
-        except Exception as e:
-            if notes is not None: notes.append(f"{u.split('/')[2]}: {str(e)[:40]}")
+    """Try candidate URLs in order; return (text, raw, url) for the first that loads and (if given) contains the marker. Falls back to a reader proxy."""
+    for attempt in ("direct", "reader"):
+        for u in cands or []:
+            try:
+                text, raw = page_text(u) if attempt == "direct" else via_reader(u)
+                if marker is None or marker.lower() in text.lower(): 
+                    if notes is not None and attempt == "reader": notes.append(f"{u.split('/')[2]} via reader proxy")
+                    return text, raw, u
+                if notes is not None: notes.append(f"{u.split('/')[2]}: no '{marker}'")
+            except Exception as e:
+                if notes is not None: notes.append(f"{u.split('/')[2]} ({attempt}): {str(e)[:40]}")
     return None, "", None
 
 
@@ -517,7 +531,8 @@ def fetch_pdf(url, max_bytes=3_000_000, hops=1):
     if b.startswith(b"%PDF") and len(b) <= max_bytes: return b
     if hops and b[:200].lower().lstrip().startswith((b"<!doctype", b"<html")):
         html = b.decode("utf-8", "replace")
-        real = (re.search(r"""(https?://[^"'\s]+(?:cume|overall|season)[^"'\s]*\.pdf[^"'\s]*)""", html, re.I)
+        real = (re.search(r"""(https?://[^"'\s]+(?<!conf)cume\.pdf[^"'\s]*)""", html, re.I)
+                or re.search(r"""(https?://[^"'\s]+(?:cume|overall|season)[^"'\s]*\.pdf[^"'\s]*)""", html, re.I)
                 or re.search(r"""(https?://[^"'\s]*amazonaws\.com/[^"'\s]+\.pdf[^"'\s]*)""", html, re.I)
                 or re.search(r"""(?:src|href)=["']([^"']+\.pdf[^"']*)["']""", html, re.I))
         if real: return fetch_pdf(urllib.request.urljoin(url, real.group(1)), max_bytes, hops - 1)
@@ -566,14 +581,18 @@ def gather_daily(p, today):
         sample = [ln[:160] for ln in game_lines[:3]] or [ln[:160] for ln in sched_text.split("\n") if re.search(r"\b(Sep|Oct)\b", ln)][:3]
         notes.append("no results parsed; sample lines: " + " || ".join(sample))
     # stats: cumulative PDF if the page links one, else the trimmed HTML table
-    if p.get("stats_candidates"):
-        stats_text, stats_raw, used = first_working(p["stats_candidates"], surname, notes)
-        if stats_text is None: stats_text, stats_raw = "", ""; notes.append("no stats source had her name")
-        else: notes.append(f"stats from {used.split('/')[2]}")
-        pdf = find_pdf(stats_raw, used) if used else None
-    else:
-        stats_text, stats_raw = page_text(p["stats_url"])
-        pdf = find_pdf(stats_raw, p["stats_url"])
+    stats_text, stats_raw, pdf = "", "", None
+    try:
+        if p.get("stats_candidates"):
+            stats_text, stats_raw, used = first_working(p["stats_candidates"], surname, notes)
+            if stats_text is None: stats_text, stats_raw = "", ""; notes.append("no stats source had her name")
+            else: notes.append(f"stats from {used.split('/')[2]}")
+            pdf = find_pdf(stats_raw, used) if used else None
+        else:
+            stats_text, stats_raw = page_text(p["stats_url"])
+            pdf = find_pdf(stats_raw, p["stats_url"])
+    except Exception as e:
+        notes.append(f"stats page failed ({str(e)[:50]}) — results/schedule still parsed")        # a stats outage must not take the schedule down with it
     parsed = None
     if pdf:
         try:
@@ -586,7 +605,7 @@ def gather_daily(p, today):
             if parsed:
                 parsed["mp"] = mp_from_html_rows(stats_text.split("\n"), parsed)
                 notes.append(f"stats parsed from PDF: sp={parsed['sp']} k={parsed['k']} a={parsed['a']} dig={parsed['dig']}")
-            elif txt and re.search(rf"\b{re.escape(surname)},", txt, re.I) is None:
+            elif txt and re.search(rf"\b{re.escape(surname)}\s*,", txt, re.I) is None:
                 parsed = {k: (0 if k not in ("srv", "re", "mp") else None) for k in STAT_KEYS}; notes.append("not on the stats sheet — zeros")
             else:
                 docs.append(("Season cumulative stats PDF", pdf_bytes)); notes.append("PDF row not parsed — PDF attached for reading" if txt else "PDF text extraction failed — PDF attached for reading")
@@ -595,7 +614,8 @@ def gather_daily(p, today):
     html_stats = stats_from_html_tables(stats_text, p["name"], p.get("jersey")) if stats_text else None
     if p.get("profile_url"):
         try:
-            prof_text, _ = page_text(p["profile_url"])
+            try: prof_text, _ = page_text(p["profile_url"])
+            except Exception: prof_text, _ = via_reader(p["profile_url"]); notes.append("profile via reader proxy")
             prof = stats_from_presto_profile(prof_text)
             if prof:
                 html_stats = prof; notes.append(f"stats parsed from player profile: sp={prof['sp']} k={prof['k']} dig={prof['dig']}")
@@ -606,7 +626,12 @@ def gather_daily(p, today):
         parsed = html_stats; notes.append(f"stats parsed from HTML table: sp={parsed['sp']} k={parsed['k']} a={parsed['a']} dig={parsed['dig']}")
     elif html_stats and parsed:
         diffs = [k for k in ("sp", "k", "a", "dig", "ba") if html_stats.get(k) is not None and parsed.get(k) is not None and html_stats[k] != parsed[k]]
-        notes.append("HTML table agrees with PDF" if not diffs else f"HTML table disagrees with PDF on {diffs} — PDF kept")
+        rec_games = sum(int(x) for x in rec["overall"].split("-")) if rec.get("overall") else None
+        pdf_partial = bool(pdf_results) and rec_games and len(pdf_results) < 0.7 * rec_games
+        if not diffs: notes.append("HTML table agrees with PDF")
+        elif pdf_partial or (html_stats.get("sp") or 0) > (parsed.get("sp") or 0):
+            notes.append(f"PDF looks partial ({len(pdf_results)} games vs {rec_games} on record) — HTML table kept"); parsed = html_stats
+        else: notes.append(f"HTML table disagrees with PDF on {diffs} — PDF kept")
         if parsed.get("mp") is None and html_stats.get("mp") is not None: parsed["mp"] = html_stats["mp"]
     if parsed:
         parts.append(f"=== HER SEASON STAT LINE (authoritative, already extracted from the official stats sheet) ===\n{json.dumps(parsed)}")
@@ -707,6 +732,10 @@ Below is text pulled from her school's schedule/results page, her stats (PDF att
     if rec.get("overall"):          # the page's own record beats anything the model tallied
         out["team_record"] = {**(out.get("team_record") or {}), "overall": rec["overall"], **({"conference": rec["conference"]} if rec.get("conference") else {})}
     if pdf_results: out["results"] = apply_pdf_results(out.get("results"), pdf_results)   # the sheet's scores beat the model's; missed games get added
+    if pdf_results and rec.get("overall"):
+        wl = [fix_result(x["result"])[0] for x in pdf_results if x.get("result")]
+        out["results_authoritative"] = (f"{wl.count('W')}-{wl.count('L')}" == rec["overall"])
+        if out["results_authoritative"]: out["results"] = [x for x in out["results"] if any(x.get("date") == y["date"] and opp_key(x.get("opponent"))[:5] == opp_key(y["opponent"])[:5] for y in pdf_results)] or out["results"]
     for m in out.get("results") or []:
         if isinstance(m, dict) and m.get("result"): m["result"] = fix_result(m["result"])
     return out
@@ -965,7 +994,17 @@ def process_player(c, cfg, prev, prev_players, today, now, flags):
             new_stats = {k: (int(float(d["stats"][k])) if str(d["stats"].get(k, "")).replace(".", "").isdigit() else None) for k in STAT_KEYS}
             if any(v is not None for v in new_stats.values()): p["stats"] = new_stats; p["stats_source"] = d.get("stats_source")
             elif old.get("stats"): log(f"  stats came back empty — keeping last good line for {p['name']}")
-        p["recent_matches"] = merge_matches(old.get("recent_matches"), clean_matches(d.get("results")))
+        new_results = clean_matches(d.get("results"))
+        if d.get("results_authoritative"):
+            carry = {(m.get("date"), opp_key(m.get("opponent"))[:5]): m for m in old.get("recent_matches", [])}
+            for m in new_results:
+                o = carry.get((m.get("date"), opp_key(m.get("opponent"))[:5]))
+                if o:
+                    if not m.get("player_line") and o.get("player_line"): m["player_line"] = o["player_line"]
+                    if not m.get("box_url") and o.get("box_url"): m["box_url"] = o["box_url"]
+            p["recent_matches"] = sorted(new_results, key=lambda m: m.get("date") or "", reverse=True)
+        else:
+            p["recent_matches"] = merge_matches(old.get("recent_matches"), new_results)
         if d.get("blurb") and not (isinstance(d.get("stats"), dict) and not any(v is not None for v in new_stats.values()) and old.get("blurb")):
             p["blurb"] = as_text(d["blurb"])
         played = {(m.get("date"), opp_key(m.get("opponent"))) for m in p["recent_matches"] if m.get("result")}
@@ -1005,13 +1044,34 @@ def assemble(cfg, prev, players_by_id, milestones, reunions, buzz, summary, now,
                     "input_tokens": USAGE["in"], "output_tokens": USAGE["out"], "calls": USAGE["calls"]}}
 
 
+def dry_report(data):
+    """Per-girl verification: did code get her stats, do parsed results reconcile with the posted record, is her schedule there, which sources answered."""
+    rows = []
+    for p in data["players"]:
+        if p.get("status") != "playing": continue
+        rm = p.get("recent_matches") or []; st = p.get("stats") or {}
+        wl = [m["result"][0] for m in rm if m.get("result")]
+        rec = (p.get("team_record") or {}).get("overall")
+        rows.append({"player": p["name"], "record": rec, "parsed_wl": f"{wl.count('W')}-{wl.count('L')}", "reconciles": rec == f"{wl.count('W')}-{wl.count('L')}",
+                     "results": len(rm), "box_links": sum(1 for m in rm if m.get("box_url")), "upcoming": len(p.get("upcoming") or []),
+                     "next": (p.get("upcoming") or [{}])[0].get("date"), "stats_source": p.get("stats_source"),
+                     "sp": st.get("sp"), "k": st.get("k"), "a": st.get("a"), "dig": st.get("dig"), "photo": bool(p.get("photo_url")),
+                     "error": p.get("error"), "notes": p.get("_notes")})
+    ok = all(r["reconciles"] and r["stats_source"] for r in rows)
+    return {"generated": data["updated_at"], "all_green": ok, "players": rows}
+
+
 def save(data):
+    if DRY_RUN:
+        rep_ = dry_report(data)
+        json.dump(rep_, open(os.path.join(HERE, "dry-run-report.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+        return
     tmp = DATA_FILE + ".tmp"
     json.dump(data, open(tmp, "w", encoding="utf-8"), ensure_ascii=False, indent=1); os.replace(tmp, DATA_FILE)
 
 
 def main():
-    if not API_KEY: sys.exit("ANTHROPIC_API_KEY is not set")
+    if not API_KEY and not DRY_RUN: sys.exit("ANTHROPIC_API_KEY is not set")
     cfg = json.load(open(PLAYERS_FILE, encoding="utf-8"))
     tz = ZoneInfo(cfg.get("home_tz", "America/Chicago"))
     now = datetime.now(tz); today = now.date()
@@ -1022,7 +1082,7 @@ def main():
     prev_players = {p["id"]: p for p in prev.get("players", [])}
     first_run = not prev_players or prev.get("run", {}).get("model") in (None, "bootstrap", "sample")
     no_news_yet = not any(b.get("kind") in ("news", "coach") for b in prev.get("buzz", []))
-    forced = os.environ.get("TRACKER_FULL") == "1"
+    forced = os.environ.get("TRACKER_FULL") == "1" or DRY_RUN
     flags = {"first_run": first_run,
              "reseed": not any(m.get("v") == 2 for m in prev.get("milestones", [])),
              "schedules_day": forced or first_run or today.weekday() == 0,                    # schedules/standings: Monday (plus any girl missing hers)
@@ -1060,7 +1120,7 @@ def main():
     players = [players_by_id[c["id"]] for c in cfg["players"] if c["id"] in players_by_id]
     milestones = sorted(milestones, key=lambda m: m["date"], reverse=True)[:80]
     reunions = compute_reunions(players)
-    if writing_day:
+    if writing_day and not DRY_RUN:
         try:
             log(f"Writing the {piece_kind}")
             week_miles = [m for m in milestones if m["date"] >= (today - timedelta(days=7)).isoformat()]
@@ -1074,6 +1134,10 @@ def main():
     buzz = sorted([b for b in buzz if (b.get("date") or "") >= cutoff], key=lambda b: b["date"], reverse=True)
     save(assemble(cfg, prev, players_by_id, milestones, reunions, buzz, summary, now, today, failures, "complete"))
     log(f"Done · {len(players)} players · {failures} failure(s) · {USAGE['calls']} calls · {USAGE['in']:,} in / {USAGE['out']:,} out tokens ({spent():.0%} of budget)")
+    if DRY_RUN:
+        r = dry_report(assemble(cfg, prev, players_by_id, milestones, reunions, buzz, summary, now, today, failures, "dry run"))
+        log("DRY RUN REPORT · all_green=%s" % r["all_green"])
+        for x in r["players"]: log(f"  {x['player']:20} record={x['record']} parsed={x['parsed_wl']} {'OK ' if x['reconciles'] else 'XX '} box={x['box_links']}/{x['results']} upcoming={x['upcoming']} stats={x['stats_source']} sp={x['sp']} k={x['k']} a={x['a']} dig={x['dig']} {('ERR '+str(x['error'])[:60]) if x['error'] else ''}")
 
 
 if __name__ == "__main__":
