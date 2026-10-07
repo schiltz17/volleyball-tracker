@@ -1090,6 +1090,12 @@ def process_player(c, cfg, prev, prev_players, today, now, flags):
         p["fetched_at"] = now.isoformat(timespec="minutes")
     except Exception as e:
         failed = True; log(f"  FAILED {p['name']}: {str(e)[:160]}"); p["stale"] = True; p["error"] = str(e)[:200]
+    if any("no schedule source answered" in n or "fetch failed" in n for n in (p.get("_notes") or [])) and not p.get("stats_source"):
+        # the school's site refused every route (CAPTCHA / bot wall): show unknown, never stale zeros, and say why
+        p["stats"] = None; p["stats_source"] = "unavailable"
+        link = p.get("profile_url") or p.get("site") or ""
+        p["blurb"] = (f"{p['name'].split()[0]}'s school site doesn't allow automated stat updates, so her numbers aren't tracked here yet. "
+                      + (f"Her player page has the latest: {link}" if link else ""))
     p["matches_played"], p["sets_played"] = (p["stats"] or {}).get("mp"), (p["stats"] or {}).get("sp")
     p["season_stats"] = season_stats_list(p["stats"])
     return p, miles, items, reseeded, failed
