@@ -41,5 +41,9 @@ jobs:
             echo "No changes."
           else
             git commit -m "Update $(date -u +%Y-%m-%d)"
-            git push
+            for i in 1 2 3 4 5; do
+              git pull --rebase --quiet || true
+              git push && break
+              echo "push failed (attempt $i) — retrying in 30s"; sleep 30
+            done
           fi
