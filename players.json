@@ -226,7 +226,9 @@
       "roster_candidates": [
         "https://www.region4sports.com/sports/wvball/2026-27/teams/mchenrycountycollege?view=roster",
         "https://www.mccscots.com/sports/wvball/2026-27/roster"
-      ]
+      ],
+      "profile_url": "https://www.mccscots.com/sports/wvball/2026-27/players/catherinecallahanyokg",
+      "jersey": "15"
     },
     {
       "id": "mitchell",
@@ -261,7 +263,9 @@
       "roster_candidates": [
         "https://www.region4sports.com/sports/wvball/2026-27/teams/mchenrycountycollege?view=roster",
         "https://www.mccscots.com/sports/wvball/2026-27/roster"
-      ]
+      ],
+      "profile_url": "https://www.mccscots.com/sports/wvball/2026-27/players/madisonmitchellaeqz",
+      "jersey": "2"
     },
     {
       "id": "wurtz",
@@ -298,7 +302,9 @@
       ],
       "roster_candidates": [
         "https://elginspartans.com/sports/wvball/2026-27/roster"
-      ]
+      ],
+      "profile_url": "https://elginspartans.com/sports/wvball/2026-27/bios/wurtz_peyton_5q0p",
+      "jersey": "2"
     },
     {
       "id": "schatz",

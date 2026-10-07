@@ -15,7 +15,7 @@ Env:  ANTHROPIC_API_KEY (required) · TRACKER_MODEL (Haiku, daily stat pulls) ·
       TRACKER_FULL=1 forces the Mon/Thu work to run today (the first run does this automatically)
 """
 
-import base64, json, os, re, sys, time, threading, urllib.request, urllib.error
+import base64, json, os, re, sys, time, threading, urllib.request, urllib.error, urllib.parse
 from html.parser import HTMLParser
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta
@@ -167,7 +167,7 @@ def results_from_cume(text):
 def apply_pdf_results(results, pdf_results):
     """Overwrite the model's W/L and score with the sheet's (matched by date, + opponent's first word when a date has two matches), and add any sheet result the model missed."""
     results = [r for r in (results if isinstance(results, list) else []) if isinstance(r, dict)]
-    first = lambda o: ((o or "").lower().split() or [""])[0]
+    first = lambda o: re.sub(r"[^a-z0-9]", "", ((o or "").lower().split() or [""])[0])
     for x in pdf_results:
         same_day = [r for r in results if r.get("date") == x["date"]]
         pdf_same_day = [y for y in pdf_results if y["date"] == x["date"]]
@@ -189,33 +189,212 @@ def apply_pdf_results(results, pdf_results):
 MONTHS = {m: i for i, m in enumerate(["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], 1)}
 
 
-def results_from_schedule_lines(lines, year, home_city=None):
+def results_from_schedule_lines(lines, year, home_city=None, home_host=None):
     """Completed games straight from a Sidearm schedule page's game lines: 'Sep 18 (Fri) 5:00 PM | Marshall | ... L, 3-0 ... [href .../boxscore/6819]'."""
     out = []
     for ln in lines:
-        d = re.search(r"\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\.?[/ ]\s*(\d{1,2})\b", ln)
-        r = re.search(r"\b([WL]),?\s*(\d)\s*-\s*(\d)\b", ln)
+        d = re.search(r"\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\.?[/ ]?\s*\|?\s*(\d{1,2})\b", ln)
+        r = re.search(r"\b([WL]),?\s*\|?\s*(\d)\s*-\s*(\d)\b", ln)
         if not r and re.search(r"\bFinal\b", ln):                       # Presto style: "Final | 3 | Opponent | 1 | McHenry"
             r2 = re.search(r"\b([0-3])\b[^|\d]{0,60}\|[^|]*\|?\s*\b([0-3])\b", ln)
             if r2: r = re.match(r"([WL]),?\s*(\d)\s*-\s*(\d)", f"? {r2.group(1)}-{r2.group(2)}")
         if not d or not r: continue
-        if re.search(r"exhibition|scrimmage", ln, re.I): continue
+        if re.search(r"exhibition|scrimmage|preseason|[-_]EXH[-_.]", ln, re.I): continue
         date = f"{year}-{MONTHS[d.group(1)]:02d}-{int(d.group(2)):02d}"
         box = re.search(r"\[href (\S*boxscore\S*)\]", ln, re.I)
-        if home_city and home_city.split(",")[0].lower() in ln.lower(): ha = "home"
-        elif re.search(r"\bat\b|@", ln[:250]): ha = "away"
-        elif re.search(r"\bvs\.?\b", ln[:250]): ha = "home"
+        plain = re.sub(r"\[(href|img) [^\]]*\]", " ", ln)                      # judge home/away on visible text only, never on URLs
+        if home_city and re.search(r"\b" + re.escape(home_city.split(",")[0]) + r"\b", plain, re.I): ha = "home"
+        elif re.search(r"\bvs\.?\b", plain[:250]) and "@" in plain[:300]: ha = "neutral"
+        elif re.search(r"\bat\b|@", plain[:250]): ha = "away"
+        elif re.search(r"\bvs\.?\b", plain[:250]): ha = "home"
         else: ha = "away"
-        # opponent = the text right after the date/time chunk, before the first separator that follows it
-        after = ln[d.end():]
-        after = re.sub(r"^[^|]*?(AM|PM|TBA)\b\s*", "", after)            # drop the time
-        after = re.sub(r"\[(href|img) [^\]]*\]", " ", after)               # drop tags
-        after = re.sub(r"^\s*(\|\s*)*(OVC|Big South|MVC|NSIC|GAC|GSC|ECC|ISCC)?\s*\*?\s*(\|\s*)*(No\.\s*\d+\s*)?(vs\.?|at)?\s*", "", after, flags=re.I)
-        opp = re.split(r"\s*\|\s*|\t+", after.strip())[0].strip()
-        opp = re.sub(r"\s*[WL],?\s*\d\s*-\s*\d.*$", "", opp).strip()
-        opp = re.sub(r"\s+(Greek Night|Family Weekend|Student-Athlete Day|.*Day|.*Night|CAB Collab)$", "", opp)
-        if not opp or len(opp) > 40: continue
+        # opponent: split the line into parts; prefer the part that links out to another school's site; else the first plausible name
+        parts = [x.strip() for x in re.split(r"\s*\|\s*|\t+", ln) if x.strip()]
+        own_host = (home_host or "").lower()
+        junk = re.compile(r"^(Final|Live Stats?|Box Score( \(PDF\))?|Recap|Watch|Listen|Tickets|History|Stats|Gallery|Video|Photos|ESPN\+?|Flo\w*|vs\.?|at|@.*|/|\(?\w{3}\)?)$|"
+                          r"^(OVC|MVC|Big South|NSIC|GAC|GSC|ECC|ISCC)\b|^\d|^\[img|^[WL],?$|\d\s*-\s*\d|\b(AM|PM|TBA|a\.m\.|p\.m\.)\b|,\s*[A-Z][a-z]{1,3}\.?$|,\s*[A-Z]{2}$|Arena|Center|Pavilion|Gym|Fieldhouse|Stadium", re.I)
+        opp, fallback = None, None
+        for part in parts:
+            clean = re.sub(r"\[(href|img) [^\]]*\]", "", part).strip(" *")
+            if not clean or junk.search(clean) or re.search(r"\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\b", clean): continue
+            hrefs = re.findall(r"\[href (\S+)\]", part)
+            ext = [h for h in hrefs if own_host and own_host not in h and not re.search(r"espn|flo|hudl|youtube|twitter|x\.com|instagram|facebook", h, re.I)]
+            if ext and not opp: opp = clean
+            if fallback is None: fallback = clean
+        opp = re.sub(r"^(vs\.?|at|@)\s+", "", (opp or fallback or ""), flags=re.I)
+        opp = re.sub(r"\s*\([^)]*\)\s*", " ", opp).strip()                                   # drop "(Hall of Fame Challenge at Malone)"
+        opp = re.sub(r"\s+(Greek Night|Family Weekend|Student-Athlete Day|.*Day|.*Night|CAB Collab|Senior .*)$", "", opp).strip()
+        if not opp or len(opp) > 60: continue
         out.append({"date": date, "opponent": opp, "home_away": ha, "result": f"{r.group(1)} {r.group(2)}-{r.group(3)}", "box_url": box.group(1) if box else None, "player_line": None})
+    return out
+
+
+MONTH_FULL = {m: i for i, m in enumerate(["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"], 1)}
+
+
+def events_from_sidearm_next(raw_html, base):
+    """Newer Sidearm pages render each game as an <article> with a plain-English summary. Returns (results, upcoming, synthesized_lines)."""
+    results, upcoming, lines = [], [], []
+    for art in re.findall(r"<article.*?</article>", raw_html, re.S):
+        text = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", re.sub(r"<!--.*?-->", "", art))).strip()
+        m = re.search(r"(Completed|Upcoming) Event:\s*\w+\s+(versus|at|vs\.?)\s+(.+?)\s+on\s+([A-Z][a-z]{2,8})\.?\s+(\d{1,2}),\s+(\d{4})(?:\s+at\s+([\d:]+\s*[AP]M))?", text)
+        if not m: continue
+        kind, prep, opp, mon, day, yr, tm = m.groups()
+        mi = MONTH_FULL.get(mon.lower()) or MONTHS.get(mon[:3].title())
+        if not mi: continue
+        date = f"{yr}-{mi:02d}-{int(day):02d}"
+        ha = "away" if prep == "at" else "home"
+        if re.search(r"\bneutral\b", art, re.I): ha = "neutral"
+        box = re.search(r'href="([^"]*boxscore[^"]*)"', art, re.I)
+        stream = re.search(r'href="(https?://[^"]*(?:espn|flosports|flo\.|hudl|nsicnetwork|youtube)[^"]*)"', art, re.I)
+        if kind == "Completed":
+            r = re.search(r"\b(Win|Loss)\b\s*,?\s*(\d)\s*,?\s*to\s*,?\s*(\d)", text)
+            if not r: continue
+            res = f"{'W' if r.group(1) == 'Win' else 'L'} {r.group(2)}-{r.group(3)}"
+            results.append({"date": date, "opponent": opp.strip(), "home_away": ha, "result": res, "box_url": urllib.request.urljoin(base, box.group(1)) if box else None, "player_line": None})
+            lines.append(f"{mon[:3]} {int(day)} | {prep} {opp.strip()} | {res} | [href {results[-1]['box_url'] or ''}] Box Score")
+        else:
+            upcoming.append({"date": date, "time": tm, "opponent": opp.strip(), "home_away": ha, "stream_name": ("ESPN+" if stream and "espn" in stream.group(1).lower() else "stream") if stream else None, "stream_url": stream.group(1) if stream else None})
+            lines.append(f"{mon[:3]} {int(day)} | {tm or 'TBA'} | {prep} {opp.strip()}" + (f" | [href {stream.group(1)}] Watch" if stream else ""))
+    return results, upcoming, lines
+
+
+TZ_ABBR = {"ET": "America/New_York", "EST": "America/New_York", "EDT": "America/New_York", "CT": "America/Chicago", "CST": "America/Chicago", "CDT": "America/Chicago",
+           "MT": "America/Denver", "MST": "America/Denver", "MDT": "America/Denver", "PT": "America/Los_Angeles", "PST": "America/Los_Angeles", "PDT": "America/Los_Angeles"}
+
+
+def to_central(time_text, date_iso, school_tz):
+    """'5:00 PM' / '6 PM' / '12:30 p.m. CT' / '2:30pm EST / 1:30pm CST' -> ('5:00 PM', '4:00 PM CT'). Returns (as_listed, central) or (None, None)."""
+    if not time_text: return None, None
+    m = re.search(r"(\d{1,2})(?::(\d{2}))?\s*([AaPp])\.?\s*[Mm]\.?\s*(ET|EST|EDT|CT|CST|CDT|MT|MST|MDT|PT|PST|PDT)?", time_text)
+    if not m: return time_text.strip(), None
+    h, mi, ap, abbr = int(m.group(1)), int(m.group(2) or 0), m.group(3).upper(), (m.group(4) or "").upper()
+    h = (h % 12) + (12 if ap == "P" else 0)
+    listed = f"{(h - 1) % 12 + 1}:{mi:02d} {ap}M" + (f" {abbr}" if abbr else "")
+    try:
+        y, mo, d = (int(x) for x in date_iso.split("-"))
+        src = ZoneInfo(TZ_ABBR.get(abbr, school_tz or "America/Chicago"))
+        dt = datetime(y, mo, d, h, mi, tzinfo=src).astimezone(ZoneInfo("America/Chicago"))
+        return listed, f"{(dt.hour - 1) % 12 + 1}:{dt.minute:02d} {'PM' if dt.hour >= 12 else 'AM'} CT"
+    except Exception:
+        return listed, None
+
+
+STREAM_HOSTS = [(r"espn", "ESPN+"), (r"flosports|flovolleyball|flo\.", "FloSports"), (r"nsicnetwork", "NSIC Network"), (r"hudl", "Hudl"), (r"youtube", "YouTube"),
+                (r"midco", "Midco Sports"), (r"bigsouth", "Big South Network"), (r"ovcdigital|ovc", "OVC Digital"), (r"glvc|gac", "GAC Network"), (r"stretchinternet|boxcast|vcloud|livestream", "School stream")]
+
+
+def upcoming_from_schedule_lines(lines, year, home_city, home_host, school_tz, today):
+    """Games with a date but no result yet: date, time (listed + Central), opponent, home/away, stream link."""
+    out = []
+    for ln in lines:
+        if re.search(r"\b[WL],?\s*\|?\s*\d\s*-\s*\d\b|\bFinal\b|Box Score", ln): continue
+        d = re.search(r"\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\.?[/ ]?\s*\|?\s*(\d{1,2})\b", ln)
+        if not d: continue
+        date = f"{year}-{MONTHS[d.group(1)]:02d}-{int(d.group(2)):02d}"
+        if date < today.isoformat(): continue
+        fake = [{"date": date, "opponent": "", "home_away": "", "result": "W 0-0", "box_url": None}]
+        probe = results_from_schedule_lines([ln + " | W, | 0-0"], year, home_city, home_host)   # reuse the opponent/home-away logic
+        if not probe: continue
+        opp, ha = probe[0]["opponent"], probe[0]["home_away"]
+        tm = re.search(r"\d{1,2}(?::\d{2})?\s*[AaPp]\.?\s*[Mm]\.?(?:\s*(?:ET|EST|EDT|CT|CST|CDT|MT|MST|MDT|PT|PST|PDT))?", ln)
+        listed, ct = to_central(tm.group(0) if tm else None, date, school_tz)
+        stream_name = stream_url = None
+        for h in re.findall(r"\[href (\S+)\]", ln):
+            for pat, name in STREAM_HOSTS:
+                if re.search(pat, h, re.I) and not re.search(r"facebook|twitter|instagram|x\.com", h, re.I):
+                    stream_name, stream_url = name, h; break
+            if stream_url: break
+        loc = re.search(r"\b([A-Z][A-Za-z.\s]+,\s*(?:[A-Z]{2}|[A-Z][a-z]{1,4}\.?))\b", re.sub(r"\[(href|img) [^\]]*\]", "", ln))
+        out.append({"date": date, "time": listed, "time_ct": ct, "opponent": opp, "home_away": ha, "location": loc.group(1).strip() if loc else None, "stream_name": stream_name, "stream_url": stream_url})
+    return out
+
+
+def attach_box_links(results, raw_html, base):
+    """Some layouts keep box-score links outside the game block. Collect every box-score href in page order and attach by opponent slug, else by order."""
+    hrefs = [urllib.request.urljoin(base, h) for h in re.findall(r"""href=["']([^"']*boxscore[^"']*)["']""", raw_html, re.I)]
+    seen, ordered = set(), []
+    for h in hrefs:
+        if h not in seen: seen.add(h); ordered.append(h)
+    used = set()
+    for r in results:
+        if r.get("box_url"): used.add(r["box_url"]); continue
+        slug = re.sub(r"[^a-z0-9]+", "-", (r.get("opponent") or "").lower()).strip("-")
+        pick = next((h for h in ordered if h not in used and slug and slug.split("-")[0] in h.lower()), None)
+        if pick: r["box_url"] = pick; used.add(pick)
+    for r in results:                                   # second pass: leftovers by order (oldest first)
+        if not r.get("box_url"):
+            pick = next((h for h in ordered if h not in used), None)
+            if pick: r["box_url"] = pick; used.add(pick)
+    return results
+
+
+HDR_MAP = {"sp": "sp", "mp": "mp", "ms": "ms", "k": "k", "e": "e", "ta": "ta", "a": "a", "ast": "a", "sa": "sa", "se": "se", "dig": "dig", "digs": "dig",
+           "re": "re", "bs": "bs", "ba": "ba", "be": "be", "bhe": "bhe", "pct": "pct", "k/s": "ks", "a/s": "as_", "sa/s": "sas", "dig/s": "digs", "tb": "tb", "b/s": "bps", "pts": "pts", "pts/s": "ptss", "blk": "tb", "blk/s": "bps", "srv": "srv", "att": "srv"}
+
+
+def stats_from_html_tables(text, name, jersey=None):
+    """Classic Sidearm stats pages render real tables. Map columns by header, align on the Player column, take HER first (season/overall)
+    offense row and defense row, merge. 'TA' in a defense table is reception attempts, not attack attempts. None if not found."""
+    last, first = name.split()[-1].lower(), name.split()[0].lower()
+    found, header, hi, in_conf = {}, None, None, False
+    def is_her(c):
+        c = re.sub(r"\s+", " ", c.lower())
+        return c.startswith(last + ",") or c == f"{first} {last}" or c.endswith(f"{last}, {first}") or f"{last}, {first}" in c
+    for ln in text.split("\n"):
+        plain = re.sub(r"\[(href|img) [^\]]*\]", "", ln)
+        if re.fullmatch(r"\s*conference\s*", plain, re.I) and header is not None: in_conf = True   # second block of tables = conference-only; skip it
+        if re.fullmatch(r"\s*overall\s*", plain, re.I): in_conf = False
+        cells = [c.strip() for c in plain.split("\t")]
+        if len(cells) < 6: continue
+        low = [re.sub(r"^(attack|set|serve|block|dig|defense|offense|recept)\s*/\s*", "", c.lower()) for c in cells]
+        if "player" in low and any(h in low for h in ("sp", "k", "dig", "ba")):
+            header, hi = low, low.index("player"); continue
+        if header is None or in_conf: continue
+        pi = next((i for i, c in enumerate(cells) if is_her(c)), None)
+        if pi is None: continue
+        if jersey and pi > 0 and cells[pi - 1].isdigit() and cells[pi - 1] != str(jersey): continue
+        off = pi - hi
+        is_offense = "k" in header and "ta" in header
+        for i, h in enumerate(header):
+            j = i + off
+            if not (0 <= j < len(cells)) or h not in HDR_MAP: continue
+            if h == "ta" and not is_offense: continue
+            key = HDR_MAP[h]
+            if key in ("sp", "mp", "ms", "k", "e", "ta", "a", "sa", "se", "dig", "re", "bs", "ba", "be", "bhe", "srv") and re.fullmatch(r"-?\d+(\.0+)?", cells[j] or ""):
+                found.setdefault(key, int(float(cells[j])))                                  # first (overall) table wins
+    if "sp" not in found or not any(k in found for k in ("k", "dig", "a")): return None
+    return {k: found.get(k) for k in STAT_KEYS}
+
+
+PRESTO_LABELS = {"matches": "mp", "sets": "sp", "kills": "k", "errors": "e", "total attacks": "ta", "assists": "a", "service total attempts": "srv",
+                 "service aces": "sa", "service errors": "se", "reception errors": "re", "digs": "dig", "block solo": "bs", "block assist": "ba",
+                 "block errors": "be", "ball handling errors": "bhe"}
+
+
+def stats_from_presto_profile(text):
+    """PrestoSports player page: 'STATISTICS CATEGORY | OVERALL | CONF' rows like 'Kills\t383\t102' (or 'Kills 383 102' as text). First number = overall."""
+    found = {}
+    for ln in text.split("\n"):
+        plain = re.sub(r"\[(href|img) [^\]]*\]", "", ln).strip()
+        m = re.match(r"^([A-Za-z][A-Za-z ]+?)\s*[\t ]+(-|\d+(?:\.\d+)?)\s*(?:[\t ]+(-|\d+(?:\.\d+)?))?\s*$", plain)
+        if not m: continue
+        label = m.group(1).strip().lower()
+        if label in PRESTO_LABELS and PRESTO_LABELS[label] not in found and m.group(2) != "-":
+            found[PRESTO_LABELS[label]] = int(float(m.group(2)))
+    if "sp" not in found: return None
+    return {k: found.get(k) for k in STAT_KEYS}
+
+
+def results_from_presto_profile(text, year):
+    """'RECENT GAMES' lines on a Presto profile: 'Oct 6 Elgin Community College W, 3-1' / 'Oct 3 vs. Delta W, 3-2' / 'Sep 23 at Oakton L, 3-1'."""
+    out = []
+    for ln in text.split("\n"):
+        m = re.match(r"^\s*(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\.?\s+(\d{1,2})\s+(vs\.?\s+|at\s+)?(.+?)\s+([WL]),?\s*(\d)-(\d)\s*$", re.sub(r"\[(href|img) [^\]]*\]", "", ln).strip())
+        if not m: continue
+        mon, day, prep, opp, wl, a, b = m.groups()
+        ha = "away" if (prep or "").startswith("at") else "neutral" if (prep or "").startswith("vs") else "home"
+        out.append({"date": f"{year}-{MONTHS[mon]:02d}-{int(day):02d}", "opponent": opp.strip(), "home_away": ha, "result": f"{wl} {a}-{b}", "box_url": None, "player_line": None})
     return out
 
 
@@ -250,23 +429,39 @@ class Blocks(HTMLParser):
     BLOCK = {"tr", "li", "p", "h1", "h2", "h3", "h4", "section", "article", "table", "thead", "tbody", "ul", "ol"}   # these end a line
     SEP = {"div", "br", "dt", "dd", "span"}                                                                         # these just separate parts within a line
     SKIP = {"script", "style", "noscript", "svg", "head", "nav", "footer", "iframe"}
+    CONTAINER = re.compile(r"schedule-game|sidearm-schedule-game|s-game|schedule__game|event-row|game-item|schedule-event", re.I)
     def __init__(self, base):
         super().__init__(convert_charrefs=True); self.out, self.cur, self.skip, self.base = [], [], 0, base
+        self.stack = []            # open tags; entries marked True start a game container
+        self.depth = 0             # >0 while inside a game container
     def handle_starttag(self, tag, attrs):
         a = dict(attrs)
         if tag in self.SKIP: self.skip += 1
+        is_container = tag in ("li", "div", "article", "tr") and self.CONTAINER.search(a.get("class", "") or "") and self.depth == 0
+        if is_container: self.flush(); self.depth = 1
+        elif self.depth: self.depth += 1 if tag in self.BLOCK or tag in self.SEP or tag in ("td", "th", "a", "span") else 0
+        self.stack.append((tag, is_container))
         if tag in ("td", "th"): self.cur.append("\t")
-        elif tag in self.SEP: self.cur.append(" | ")
-        if tag in self.BLOCK: self.flush()
+        elif tag in self.SEP or (self.depth and tag in self.BLOCK and not is_container): self.cur.append(" | ")
+        if tag in self.BLOCK and not self.depth: self.flush()
         if tag == "a" and a.get("href"): self.cur.append(f" [href {urllib.request.urljoin(self.base, a['href'])}] ")
         if tag == "img" and (a.get("data-src") or a.get("src")): self.cur.append(f" [img {urllib.request.urljoin(self.base, a.get('data-src') or a['src'])}] ")
     def handle_endtag(self, tag):
         if tag in self.SKIP: self.skip = max(0, self.skip - 1)
+        # pop to the matching open tag
+        is_container = False
+        for i in range(len(self.stack) - 1, -1, -1):
+            if self.stack[i][0] == tag:
+                is_container = self.stack[i][1]; del self.stack[i:]; break
+        if self.depth:
+            if is_container: self.depth = 0; self.flush(); return
+            if tag in self.BLOCK or tag in self.SEP or tag in ("td", "th", "a", "span"): self.depth = max(1, self.depth - 1)
+            return
         if tag in self.BLOCK: self.flush()
     def handle_data(self, d):
         if not self.skip:
             self.cur.append(d)
-            if self.handle_data_len() > 1200: self.flush()      # pages without li/tr structure still get line breaks
+            if self.handle_data_len() > (6000 if self.depth else 1200): self.flush()      # pages without li/tr structure still get line breaks
     def handle_data_len(self): return sum(len(x) for x in self.cur)
     def flush(self):
         line = re.sub(r"[\s\xa0]+", " ", "".join(self.cur).replace("\t", "\x00")).replace("\x00", "\t")
@@ -304,22 +499,29 @@ def keep_lines(text, patterns, context=0, max_chars=24000):
 
 
 def find_pdf(raw_html, base):
-    """The season cumulative stats sheet, if the page links one. Prefers links that look like it; ignores media guides etc."""
-    links = [urllib.request.urljoin(base, m) for m in re.findall(r"""href=["']([^"']+\.pdf[^"']*)["']""", raw_html, re.I)]
-    for pat in (r"cume", r"stats?/\d{4}", r"season", r"overall"):
+    """The season cumulative stats sheet, if the page links one. Prefers direct S3 'cume' links, then anything that looks like it."""
+    direct = re.search(r"""(https?://[^"'\s]*(?:amazonaws\.com|sidearm)[^"'\s]*cume\.pdf[^"'\s]*)""", raw_html, re.I)
+    if direct: return direct.group(1)
+    links = [urllib.request.urljoin(base, m) for m in re.findall(r"""(?:href|src)=["']([^"']+(?:\.pdf|/pdf/?)(?:[?#][^"']*)?)["']""", raw_html, re.I)]
+    for pat in (r"cume\.pdf", r"stats?/\d{4}/pdf", r"stats/.*(?:season|overall|cume)"):
         for u in links:
             if re.search(pat, u, re.I): return u
     return None
 
 
-def fetch_pdf(url, max_bytes=3_000_000):
+def fetch_pdf(url, max_bytes=3_000_000, hops=1):
     b = http_get(url, binary=True)
     if b[:2] == b"\x1f\x8b":
         import gzip; b = gzip.decompress(b)
     b = b.lstrip()
-    if not b.startswith(b"%PDF") or len(b) > max_bytes:
-        raise ValueError(f"not a usable PDF (starts {b[:12]!r}, {len(b)} bytes)")
-    return b
+    if b.startswith(b"%PDF") and len(b) <= max_bytes: return b
+    if hops and b[:200].lower().lstrip().startswith((b"<!doctype", b"<html")):
+        html = b.decode("utf-8", "replace")
+        real = (re.search(r"""(https?://[^"'\s]+(?:cume|overall|season)[^"'\s]*\.pdf[^"'\s]*)""", html, re.I)
+                or re.search(r"""(https?://[^"'\s]*amazonaws\.com/[^"'\s]+\.pdf[^"'\s]*)""", html, re.I)
+                or re.search(r"""(?:src|href)=["']([^"']+\.pdf[^"']*)["']""", html, re.I))
+        if real: return fetch_pdf(urllib.request.urljoin(url, real.group(1)), max_bytes, hops - 1)
+    raise ValueError(f"not a usable PDF (starts {b[:12]!r}, {len(b)} bytes)")
 
 
 def record_from(text):
@@ -335,17 +537,30 @@ def gather_daily(p, today):
     surname = p["name"].split()[-1]
     # schedule page: game blocks with box score links
     if p.get("schedule_candidates"):
-        sched_text, _, used = first_working(p["schedule_candidates"], None, notes)
+        sched_text, sched_raw, used = first_working(p["schedule_candidates"], None, notes)
         if sched_text is None: raise RuntimeError("no schedule source answered")
         notes.append(f"schedule from {used.split('/')[2]}")
     else:
-        sched_text, _ = page_text(p["schedule_url"])
+        sched_text, sched_raw = page_text(p["schedule_url"])
     rec = record_from(sched_text)
     if rec["overall"]: notes.append(f"record from page: {rec['overall']}")
-    game_lines = [ln for ln in sched_text.split("\n") if re.search(r"\b(Aug|Sep|Oct|Nov|Dec)\b\.?/?\s*\d{1,2}|\d{1,2}/\d{1,2}(/\d{2,4})?", ln)
-                  and re.search(r"\b(vs\.?|at|Final|[WL],?\s*\d-\d|\d\s*-\s*\d|PM|AM|TBA)\b", ln, re.I)]
+    game_lines = [ln for ln in sched_text.split("\n") if re.search(r"\b(Aug|Sep|Oct|Nov|Dec)\b\.?[/ ]?\s*\|?\s*\d{1,2}|\d{1,2}/\d{1,2}(/\d{2,4})?", ln)
+                  and re.search(r"\b(vs\.?|at|Final|[WL],?\s*\|?\s*\d-\d|\d\s*-\s*\d|PM|AM|TBA)\b", ln, re.I)]
     parts.append("=== SCHEDULE / RESULTS PAGE (each line is one game; [href ...] are that game's links) ===\n" + "\n".join(game_lines)[:30000])
-    page_results = results_from_schedule_lines(game_lines, today.year, p.get("city"))
+    page_results = results_from_schedule_lines(game_lines, today.year, p.get("city"), urllib.parse.urlparse(p.get("schedule_url") or p.get("site") or "").netloc)
+    if not page_results and "Event:" in sched_raw and "<article" in sched_raw:
+        page_results, _up, synth = events_from_sidearm_next(sched_raw, p.get("schedule_url") or p.get("site") or "")
+        if synth: game_lines = synth; parts[0] = "=== SCHEDULE / RESULTS PAGE (each line is one game; [href ...] are that game's links) ===\n" + "\n".join(synth)[:30000]
+        if page_results: notes.append("results from event articles (newer Sidearm layout)")
+    seen_keys, dedup = set(), []
+    for r in page_results:                                   # some layouts render each game twice (list + table views)
+        k = (r["date"], opp_key(r["opponent"])[:8], r["result"])
+        if k not in seen_keys: seen_keys.add(k); dedup.append(r)
+    page_results = dedup
+    attach_box_links(sorted(page_results, key=lambda r: r["date"]), sched_raw, p.get("schedule_url") or p.get("site") or "")
+    with_box = sum(1 for r in page_results if r.get("box_url"))
+    if page_results and with_box / len(page_results) >= 0.8:      # a real game on these sites has a box score; the rest are exhibitions
+        page_results = [r for r in page_results if r.get("box_url")]
     if page_results: notes.append(f"{len(page_results)} results parsed from the schedule page")
     else:
         sample = [ln[:160] for ln in game_lines[:3]] or [ln[:160] for ln in sched_text.split("\n") if re.search(r"\b(Sep|Oct)\b", ln)][:3]
@@ -366,6 +581,8 @@ def gather_daily(p, today):
             parsed = stats_from_cume(txt, p["name"], p.get("jersey")) if txt else None
             pdf_results = results_from_cume(txt) if txt else []
             if pdf_results: notes.append(f"{len(pdf_results)} results on the sheet")
+            m_rec = re.search(r"Overall\s*Record:?\s*(\d{1,2}-\d{1,2})", txt or "", re.I)
+            if m_rec and not rec.get("overall"): rec["overall"] = m_rec.group(1); notes.append(f"record from sheet: {rec['overall']}")
             if parsed:
                 parsed["mp"] = mp_from_html_rows(stats_text.split("\n"), parsed)
                 notes.append(f"stats parsed from PDF: sp={parsed['sp']} k={parsed['k']} a={parsed['a']} dig={parsed['dig']}")
@@ -375,6 +592,22 @@ def gather_daily(p, today):
                 docs.append(("Season cumulative stats PDF", pdf_bytes)); notes.append("PDF row not parsed — PDF attached for reading" if txt else "PDF text extraction failed — PDF attached for reading")
         except Exception as e:
             notes.append(f"pdf skipped ({str(e)[:50]})")
+    html_stats = stats_from_html_tables(stats_text, p["name"], p.get("jersey")) if stats_text else None
+    if p.get("profile_url"):
+        try:
+            prof_text, _ = page_text(p["profile_url"])
+            prof = stats_from_presto_profile(prof_text)
+            if prof:
+                html_stats = prof; notes.append(f"stats parsed from player profile: sp={prof['sp']} k={prof['k']} dig={prof['dig']}")
+                page_results = page_results or results_from_presto_profile(prof_text, today.year)
+        except Exception as e:
+            notes.append(f"profile fetch failed ({str(e)[:50]})")
+    if html_stats and not parsed:
+        parsed = html_stats; notes.append(f"stats parsed from HTML table: sp={parsed['sp']} k={parsed['k']} a={parsed['a']} dig={parsed['dig']}")
+    elif html_stats and parsed:
+        diffs = [k for k in ("sp", "k", "a", "dig", "ba") if html_stats.get(k) is not None and parsed.get(k) is not None and html_stats[k] != parsed[k]]
+        notes.append("HTML table agrees with PDF" if not diffs else f"HTML table disagrees with PDF on {diffs} — PDF kept")
+        if parsed.get("mp") is None and html_stats.get("mp") is not None: parsed["mp"] = html_stats["mp"]
     if parsed:
         parts.append(f"=== HER SEASON STAT LINE (authoritative, already extracted from the official stats sheet) ===\n{json.dumps(parsed)}")
     else:
@@ -389,7 +622,13 @@ def gather_daily(p, today):
                          keep_lines(bx, [r"Player|\bSP\b", surname, p["school_short"].split()[0]], 1, 6000))
         except Exception as e:
             notes.append(f"box {m['date']} failed: {str(e)[:60]}")
-    return "\n\n".join(parts), docs, notes, rec, parsed, pdf_results + [x for x in page_results if x["date"] not in {y["date"] for y in pdf_results}]
+    # sheet results are authoritative for scores; page results supply box-score links and anything the sheet lacks
+    for y in pdf_results:
+        for x in page_results:
+            if x["date"] == y["date"] and opp_key(x["opponent"])[:5] == opp_key(y["opponent"])[:5] and x.get("box_url") and not y.get("box_url"):
+                y["box_url"] = x["box_url"]
+    combined = pdf_results + [x for x in page_results if not any(x["date"] == y["date"] and opp_key(x["opponent"])[:5] == opp_key(y["opponent"])[:5] for y in pdf_results)]
+    return "\n\n".join(parts), docs, notes, rec, parsed, combined
 
 
 # ---------------------------------------------------------------- research calls
@@ -487,7 +726,15 @@ def research_weekly(p, today):
         prompt = f"""Today is {today.isoformat()}. Team: {p['school']} volleyball ({p['conference']}). Its site blocks automated reading; use web_search (2 searches) for the remaining 2026 schedule and the conference standings. Times in Central.
 Return ONLY: {shape}"""
         return call_claude(prompt, [{**SEARCH, "max_uses": 2}], max_tokens=4000, model=STRONG_MODEL)
-    trimmed = keep_lines(sched_text, [r"\b(Sep|Oct|Nov|Dec)\b|\d{1,2}/\d{1,2}", r"\[href", r"ESPN|Flo|Network|Stream|Watch|Video|Live"], 0, 22000)
+    glines = [ln for ln in sched_text.split("\n") if re.search(r"\b(Aug|Sep|Oct|Nov|Dec)\b\.?[/ ]?\s*\|?\s*\d{1,2}", ln)]
+    host = urllib.parse.urlparse(p.get("schedule_url") or "").netloc
+    code_upcoming = upcoming_from_schedule_lines(glines, today.year, p.get("city"), host, p.get("tz"), today)
+    if "Event:" in raw and "<article" in raw:
+        _r, _u, synth = events_from_sidearm_next(raw, p.get("schedule_url") or "")
+        for u in _u:
+            u["time"], u["time_ct"] = to_central(u.get("time"), u["date"], p.get("tz")); u.setdefault("location", None)
+        code_upcoming = code_upcoming or _u; glines = synth or glines
+    trimmed = "\n".join(glines)[:22000]
     ig = re.search(r"instagram\.com/([A-Za-z0-9_.]+)", raw); xx = re.search(r"(?:twitter|x)\.com/([A-Za-z0-9_]+)", raw)
     prompt = f"""Today is {today.isoformat()}. Team: {p['school']} {p.get('team_name', '')} volleyball ({p['division']}, {p['conference']}); the school is in the {p['tz']} time zone.
 Below is the schedule page as text (one game per line; [href ...] are that game's links, including streaming/TV links).
@@ -497,6 +744,12 @@ Below is the schedule page as text (one game per line; [href ...] are that game'
 Return every match from {today.isoformat()} through the end of the season (conference tournament too if listed). time = as listed; time_ct = converted to US Central. stream_name/stream_url = the streaming/TV label and link in that game's block, else null.
 Then use web_search ONCE for "{p['conference']} volleyball standings 2026" and report the team's place as "3rd of 11 OVC" with the standings page URL (null if not found).
 Return ONLY: {shape}"""
+    if code_upcoming:                       # schedule from code; one small call just for standings
+        sprompt = f"""Use web_search ONCE for "{p['conference']} volleyball standings 2026" and report {p['school']}'s place as "3rd of 11 OVC" (null if not found) with the standings page URL.
+Return ONLY: {{"standing": null, "standings_url": null}}"""
+        try: st = call_claude(sprompt, [{**SEARCH, "max_uses": 1}], max_tokens=400, model=STRONG_MODEL)
+        except Exception as e: log(f"    standings lookup failed: {str(e)[:60]}"); st = {}
+        return {"schedule": code_upcoming, "standing": st.get("standing"), "standings_url": st.get("standings_url"), "socials": {"instagram": ig.group(1) if ig else None, "x": xx.group(1) if xx else None}}
     out = call_claude(prompt, [{**SEARCH, "max_uses": 1}], max_tokens=5000, model=STRONG_MODEL)
     out["socials"] = {"instagram": ig.group(1) if ig else None, "x": xx.group(1) if xx else None}
     return out
@@ -609,10 +862,15 @@ def clean_matches(lst):
 
 
 # ---------------------------------------------------------------- derived data
+def opp_key(o):
+    """'UT-Martin' == 'UT Martin' == 'ut martin'."""
+    return re.sub(r"[^a-z0-9]", "", (o or "").lower())
+
+
 def merge_matches(old, new):
     seen = {}
     for m in (old or []) + (new or []):
-        k = (m.get("date"), (m.get("opponent") or "").lower())
+        k = (m.get("date"), opp_key(m.get("opponent")))
         seen[k] = {**seen.get(k, {}), **{a: b for a, b in m.items() if b is not None}}
     return sorted(seen.values(), key=lambda m: m.get("date") or "", reverse=True)
 
@@ -710,8 +968,8 @@ def process_player(c, cfg, prev, prev_players, today, now, flags):
         p["recent_matches"] = merge_matches(old.get("recent_matches"), clean_matches(d.get("results")))
         if d.get("blurb") and not (isinstance(d.get("stats"), dict) and not any(v is not None for v in new_stats.values()) and old.get("blurb")):
             p["blurb"] = as_text(d["blurb"])
-        played = {(m.get("date"), (m.get("opponent") or "").lower()) for m in p["recent_matches"] if m.get("result")}
-        p["upcoming"] = [m for m in p["upcoming"] if m.get("date") and m["date"] >= today.isoformat() and (m["date"], (m.get("opponent") or "").lower()) not in played]
+        played = {(m.get("date"), opp_key(m.get("opponent"))) for m in p["recent_matches"] if m.get("result")}
+        p["upcoming"] = [m for m in p["upcoming"] if m.get("date") and m["date"] >= today.isoformat() and (m["date"], opp_key(m.get("opponent"))) not in played]
         has_firsts = any(m.get("player_id") == p["id"] and "First college" in m.get("text", "") for m in prev.get("milestones", []))
         seeding = (first_run or reseed or not has_firsts) and bool(p["stats"])
         if seeding: prev_stats = {k: 0 for k in STAT_KEYS}; reseeded = True
