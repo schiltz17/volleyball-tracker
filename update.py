@@ -171,13 +171,12 @@ def results_from_cume(text):
 def apply_pdf_results(results, pdf_results):
     """Overwrite the model's W/L and score with the sheet's (matched by date, + opponent's first word when a date has two matches), and add any sheet result the model missed."""
     results = [r for r in (results if isinstance(results, list) else []) if isinstance(r, dict)]
-    first = lambda o: re.sub(r"[^a-z0-9]", "", ((o or "").lower().split() or [""])[0])
     for x in pdf_results:
         same_day = [r for r in results if r.get("date") == x["date"]]
         pdf_same_day = [y for y in pdf_results if y["date"] == x["date"]]
-        matched = any(first(r.get("opponent")) == first(x["opponent"]) for r in same_day)
+        matched = any(same_opp(r.get("opponent"), x["opponent"]) for r in same_day)
         for r in same_day:
-            if first(r.get("opponent")) == first(x["opponent"]) and not r.get("box_url") and x.get("box_url"): r["box_url"] = x["box_url"]
+            if same_opp(r.get("opponent"), x["opponent"]) and not r.get("box_url") and x.get("box_url"): r["box_url"] = x["box_url"]
         if not matched and len(same_day) < len(pdf_same_day):
             results.append({"date": x["date"], "opponent": x["opponent"], "home_away": x["home_away"], "result": x["result"], "box_url": x.get("box_url"), "player_line": None})
     for r in results or []:
@@ -423,9 +422,16 @@ UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like 
 
 def http_get(url, timeout=30, binary=False):
     req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": "*/*", "Accept-Language": "en-US,en;q=0.9"})
-    with urllib.request.urlopen(req, timeout=timeout) as r:
-        data = r.read()
-        return data if binary else data.decode(r.headers.get_content_charset() or "utf-8", "replace")
+    for attempt in (1, 2):
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as r:
+                data = r.read()
+                return data if binary else data.decode(r.headers.get_content_charset() or "utf-8", "replace")
+        except urllib.error.HTTPError:
+            raise                                                # a real refusal (403/404/405) is final
+        except Exception:
+            if attempt == 2: raise                               # dropped connection / timeout: one retry after a pause
+            time.sleep(4)
 
 
 class Blocks(HTMLParser):
@@ -517,7 +523,9 @@ def first_working(cands, marker=None, notes=None):
                 if attempt == "direct": text, raw = page_text(u)
                 elif attempt == "reader": text, raw = via_reader(u)
                 else:
-                    raw = browser_get(u); b = Blocks(u); b.feed(raw); text = b.text()
+                    raw = browser_get(u)
+                    if re.search(r"Human Verification|captcha|Access Denied|Just a moment", raw[:5000], re.I): raise RuntimeError("site presented a CAPTCHA / bot challenge")
+                    b = Blocks(u); b.feed(raw); text = b.text()
                     if DRY_RUN:
                         os.makedirs(os.path.join(HERE, "dry-run-pages"), exist_ok=True)
                         fn = re.sub(r"[^a-z0-9]+", "_", u.lower())[:120] + ".html"
@@ -696,11 +704,11 @@ def gather_daily(p, today):
     # sheet results are authoritative for scores; page results supply box-score links and anything the sheet lacks
     for y in pdf_results:
         for x in page_results:
-            if x["date"] == y["date"] and opp_key(x["opponent"])[:5] == opp_key(y["opponent"])[:5] and x.get("box_url") and not y.get("box_url"):
+            if x["date"] == y["date"] and same_opp(x["opponent"], y["opponent"]) and x.get("box_url") and not y.get("box_url"):
                 y["box_url"] = x["box_url"]
     if authoritative == "sheet": combined = pdf_results
     elif authoritative == "page": combined = page_results
-    else: combined = pdf_results + [x for x in page_results if not any(x["date"] == y["date"] and opp_key(x["opponent"])[:5] == opp_key(y["opponent"])[:5] for y in pdf_results)]
+    else: combined = pdf_results + [x for x in page_results if not any(x["date"] == y["date"] and same_opp(x["opponent"], y["opponent"]) for y in pdf_results)]
     for x in combined: x["_authoritative"] = bool(authoritative)
     return "\n\n".join(parts), docs, notes, rec, parsed, combined
 
@@ -783,8 +791,7 @@ Below is text pulled from her school's schedule/results page, her stats (PDF att
     if pdf_results: out["results"] = apply_pdf_results(out.get("results"), pdf_results)   # the sheet's scores beat the model's; missed games get added
     if pdf_results and all(x.get("_authoritative") for x in pdf_results):
         out["results_authoritative"] = True
-        keep = {(y["date"], opp_key(y["opponent"])[:5]) for y in pdf_results}
-        out["results"] = [x for x in out["results"] if (x.get("date"), opp_key(x.get("opponent"))[:5]) in keep] or out["results"]
+        out["results"] = [x for x in out["results"] if any(x.get("date") == y["date"] and same_opp(x.get("opponent"), y["opponent"]) for y in pdf_results)] or out["results"]
     for x in out.get("results") or []: x.pop("_authoritative", None)
     for m in out.get("results") or []:
         if isinstance(m, dict) and m.get("result"): m["result"] = fix_result(m["result"])
@@ -946,6 +953,12 @@ def opp_key(o):
     return re.sub(r"[^a-z0-9]", "", (o or "").lower())
 
 
+def same_opp(a, b):
+    """'Michigan St.' ~ 'Michigan State' (one is a prefix of the other); 'Minnesota Crookston' !~ 'Minnesota Duluth'."""
+    ka, kb = opp_key(a), opp_key(b)
+    return bool(ka and kb) and (ka == kb or ka.startswith(kb) or kb.startswith(ka))
+
+
 def merge_matches(old, new):
     seen = {}
     for m in (old or []) + (new or []):
@@ -1046,9 +1059,8 @@ def process_player(c, cfg, prev, prev_players, today, now, flags):
             elif old.get("stats"): log(f"  stats came back empty — keeping last good line for {p['name']}")
         new_results = clean_matches(d.get("results"))
         if d.get("results_authoritative"):
-            carry = {(m.get("date"), opp_key(m.get("opponent"))[:5]): m for m in old.get("recent_matches", [])}
             for m in new_results:
-                o = carry.get((m.get("date"), opp_key(m.get("opponent"))[:5]))
+                o = next((c_ for c_ in old.get("recent_matches", []) if c_.get("date") == m.get("date") and same_opp(c_.get("opponent"), m.get("opponent"))), None)
                 if o:
                     if not m.get("player_line") and o.get("player_line"): m["player_line"] = o["player_line"]
                     if not m.get("box_url") and o.get("box_url"): m["box_url"] = o["box_url"]
