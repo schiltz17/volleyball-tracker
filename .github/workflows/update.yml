@@ -2,7 +2,7 @@ name: Update tracker
 
 on:
   schedule:
-    - cron: "0 11 * * 1,4,6"   # Mon, Thu, Sat · 6:00 AM Chicago (5:00 AM after Nov 1)
+    - cron: "0 11 * * 1"   # Monday only · 6:00 AM Chicago (5:00 AM after Nov 1)
   workflow_dispatch:        # adds a "Run workflow" button for manual runs
     inputs:
       dry_run:
