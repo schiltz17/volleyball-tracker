@@ -6,7 +6,7 @@ Runs every morning on GitHub Actions. Reads players.json + the previous data.jso
 asks Claude (web fetch + web search) for what changed, writes data.json for the app.
 
 Cadence
-  Mon, Thu, Sat stats, team record, results (with box scores and her line)
+  Monday only   everything — stats, results + box scores, schedules, standings, news, the weekend recap AND the week-ahead preview
   Mon + Thu     the written piece: Monday recap / Thursday preview
   Mon only      full-season schedules (times in Central), standings, program socials, news + coach items
   as needed     profile facts (photo, jersey, class, height, hometown)
@@ -685,7 +685,7 @@ def gather_daily(p, today):
         parts.append("=== STATS PAGE (tab-separated rows; names on this table can be wrong when two players share a number — match by jersey number AND name; the PDF, if attached, is authoritative) ===\n" +
                      keep_lines(stats_text, [r"Player|\bSP\b|Kills|Assists", surname, rf"^\s*{re.escape(str(p.get('jersey') or ''))}\t"], 0, 12000))
     # box scores for matches still missing her line (newest first, max 2)
-    need = [m for m in (p.get("recent_matches") or []) if m.get("result") and not m.get("player_line") and m.get("box_url")][:2]
+    need = [m for m in (p.get("recent_matches") or []) if m.get("result") and not m.get("player_line") and m.get("box_url")][:4]
     for m in need:
         try:
             bx, _ = page_text(m["box_url"])
@@ -885,7 +885,7 @@ def write_piece(kind, players, today, milestones, reunions):
         compact.append({k: p.get(k) for k in ("name", "school_short", "division", "position", "position_note", "team_record", "stats", "blurb", "stale")}
                        | {"featured": bool(p.get("featured")) and played_this_week}
                        | {"results_last_7": [m for m in p.get("recent_matches", []) if (m.get("date") or "") >= wk_ago],
-                          "next_7": [m for m in p.get("upcoming", []) if today.isoformat() <= (m.get("date") or "") <= wk_ahead]})
+                          "next_7": [m for m in p.get("upcoming", []) if today.isoformat() <= (m.get("date") or "") <= (today + timedelta(days=10)).isoformat()]})
     if kind == "recap":
         ask = ("Write the MONDAY WEEKEND RECAP. Paragraph 1: the weekend in two or three sentences — who stood out, any milestone, any big team result. "
                "Then ONE short paragraph for EACH girl who had a match this week, in this form: her first name, the results, her line, one human note "
@@ -894,7 +894,7 @@ def write_piece(kind, players, today, milestones, reunions):
                "The girl marked featured:true gets the first per-girl paragraph and 2-3 sentences ONLY IF she played this week; if she did not play, one plain sentence and no more. "
                "The spotlight is earned: it goes to whoever had the best actual line this week, and never to a girl who did not play.")
     else:
-        ask = ("Write the THURSDAY WEEKEND PREVIEW. Paragraph 1: the weekend ahead in two or three sentences — the biggest matches, conference openers, anything at stake. "
+        ask = ("Write the WEEK-AHEAD PREVIEW (through next Sunday). Paragraph 1: the week ahead in two or three sentences — the biggest matches, conference openers, anything at stake. "
                "Then ONE short paragraph (1-2 sentences) for EACH girl with a match this weekend: first name, opponent(s), day and Central time, stream, and why it matters "
                "(e.g. 'Kylie — Arkansas Tech at Southern Nazarene, Fri 6 PM CT on FloSports; a win keeps the Suns alone atop the GAC.'). "
                "The girl marked featured:true gets the first per-girl paragraph and 2-3 sentences if she has a match this weekend; otherwise she is not singled out.")
@@ -1053,10 +1053,16 @@ def process_player(c, cfg, prev, prev_players, today, now, flags):
         if d.get("_notes"): log("    " + "; ".join(d["_notes"])); p["_notes"] = d["_notes"]
         prev_stats = old.get("stats")
         if isinstance(d.get("team_record"), dict): p["team_record"] = {**(p.get("team_record") or {}), **{k: as_text(v) for k, v in d["team_record"].items() if v}}
-        if isinstance(d.get("stats"), dict):
+        new_stats = {k: None for k in STAT_KEYS}
+        if d.get("stats_source") == "sheet-parsed" and isinstance(d.get("stats"), dict):      # only code-parsed lines are ever written; the model never sets a number
             new_stats = {k: (int(float(d["stats"][k])) if str(d["stats"].get(k, "")).replace(".", "").isdigit() else None) for k in STAT_KEYS}
-            if any(v is not None for v in new_stats.values()): p["stats"] = new_stats; p["stats_source"] = d.get("stats_source")
-            elif old.get("stats"): log(f"  stats came back empty — keeping last good line for {p['name']}")
+        if any(v is not None for v in new_stats.values()): p["stats"] = new_stats; p["stats_source"] = "sheet-parsed"
+        elif old.get("stats") and old.get("stats_source") == "sheet-parsed":
+            log(f"  no code-parsed stat line this run — keeping last good line for {p['name']}"); p["stats_source"] = "sheet-parsed"
+        else:                                                                       # old model-written lines are not trusted
+            p["stats"] = None; p["stats_source"] = "unknown"
+            if old.get("stats_source") != "sheet-parsed" and not (d.get("blurb") and p.get("stats_source") == "sheet-parsed"):
+                p["blurb"] = f"{p['name'].split()[0]}'s stat line couldn't be read from her school's site this week."
         new_results = clean_matches(d.get("results"))
         if d.get("results_authoritative"):
             for m in new_results:
@@ -1067,7 +1073,7 @@ def process_player(c, cfg, prev, prev_players, today, now, flags):
             p["recent_matches"] = sorted(new_results, key=lambda m: m.get("date") or "", reverse=True)
         else:
             p["recent_matches"] = merge_matches(old.get("recent_matches"), new_results)
-        if d.get("blurb") and not (isinstance(d.get("stats"), dict) and not any(v is not None for v in new_stats.values()) and old.get("blurb")):
+        if d.get("blurb") and (p.get("stats_source") == "sheet-parsed" or not old.get("blurb")):   # a blurb written without a code-parsed line never replaces a good one
             p["blurb"] = as_text(d["blurb"])
         played = {(m.get("date"), opp_key(m.get("opponent"))) for m in p["recent_matches"] if m.get("result")}
         p["upcoming"] = [m for m in p["upcoming"] if m.get("date") and m["date"] >= today.isoformat() and (m["date"], opp_key(m.get("opponent"))) not in played]
@@ -1153,11 +1159,11 @@ def main():
     forced = os.environ.get("TRACKER_FULL") == "1" or DRY_RUN
     flags = {"first_run": first_run,
              "reseed": not any(m.get("v") == 2 for m in prev.get("milestones", [])),
-             "schedules_day": forced or first_run or today.weekday() == 0,                    # schedules/standings: Monday (plus any girl missing hers)
-             "news_day": forced or first_run or no_news_yet or today.weekday() == 0,         # news: Monday, or whenever Buzz has none yet
+             "schedules_day": True,            # one run a week: every run does everything                    # schedules/standings: Monday (plus any girl missing hers)
+             "news_day": True,         # news: Monday, or whenever Buzz has none yet
              "no_news_yet": no_news_yet}
     summary_age = (today - datetime.fromisoformat(prev["run"]["date"]).date()).days if prev.get("run", {}).get("date") and prev.get("summary") else 99
-    writing_day = forced or first_run or no_news_yet or today.weekday() in (0, 3) or summary_age > 4       # recap Monday, preview Thursday, or the note is stale
+    writing_day = True                                                                      # one run a week: write the recap AND the preview
     piece_kind = "recap" if today.weekday() in (0, 1, 5, 6) else "preview"
     log(f"Run {today} · {flags} · writing={writing_day} · budget={TOKEN_BUDGET:,} tokens · workers={WORKERS} · model={MODEL}")
 
@@ -1189,15 +1195,17 @@ def main():
     milestones = sorted(milestones, key=lambda m: m["date"], reverse=True)[:80]
     reunions = compute_reunions(players)
     if writing_day and not DRY_RUN:
-        try:
-            log(f"Writing the {piece_kind}")
-            week_miles = [m for m in milestones if m["date"] >= (today - timedelta(days=7)).isoformat()]
-            piece = write_piece(piece_kind, players, today, week_miles, [r for r in reunions if (r["date"] or "") >= today.isoformat()])
-            post = {"date": today.isoformat(), "kind": "recap", "piece": piece_kind, "title": piece["title"], "body": piece["body"], "spotlight": piece.get("spotlight")}
-            buzz = [b for b in buzz if not (b.get("kind") == "recap" and b.get("date") == today.isoformat())] + [post]
-            summary = {"headline": piece["title"], "body": piece["body"], "spotlight": piece.get("spotlight"), "piece": piece_kind}
-        except Exception as e:
-            failures += 1; log(f"  writing FAILED: {e}")
+        week_miles = [m for m in milestones if m["date"] >= (today - timedelta(days=7)).isoformat()]
+        buzz = [b for b in buzz if not (b.get("kind") == "recap" and b.get("date") == today.isoformat())]
+        for kind in ("recap", "preview"):                                   # weekend that was, week ahead — both, every Monday
+            try:
+                log(f"Writing the {kind}")
+                piece = write_piece(kind, players, today, week_miles, [r for r in reunions if (r["date"] or "") >= today.isoformat()])
+                post = {"date": today.isoformat(), "kind": "recap", "piece": kind, "title": piece["title"], "body": piece["body"], "spotlight": piece.get("spotlight")}
+                buzz.append(post)
+                if kind == "recap": summary = {"headline": piece["title"], "body": piece["body"], "spotlight": piece.get("spotlight"), "piece": kind}
+            except Exception as e:
+                failures += 1; log(f"  writing the {kind} FAILED: {e}")
     cutoff = (today - timedelta(days=75)).isoformat()
     buzz = sorted([b for b in buzz if (b.get("date") or "") >= cutoff], key=lambda b: b["date"], reverse=True)
     save(assemble(cfg, prev, players_by_id, milestones, reunions, buzz, summary, now, today, failures, "complete"))

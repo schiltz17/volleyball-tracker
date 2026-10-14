@@ -226,22 +226,21 @@ const slug=s=>(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,
 function showGate(step,err){
   const g=$('#gate');g.classList.add('on');
   if(step==='code'){$('#gateBox').innerHTML=`<h2>Top Flight 18 Elite</h2><p>Enter the code from your invite text.</p><input id="gc" placeholder="Code" autocapitalize="characters" autocomplete="off"><div class="err">${err||''}</div><button onclick="checkCode()">Continue</button>`;setTimeout(()=>$('#gc')?.focus(),50);}
-  else{$('#gateBox').innerHTML=`<h2>Who are you?</h2><p>Pick your player and tell us who you are (e.g. “Bre's mom”). This stays on your phone and helps Joel see who's using the app.</p><div class="picks">${playing().map(p=>`<div class="pick ${S.my===p.id?'on':''}" onclick="S.my='${p.id}';showGate('who')">${av(p,'xs')}${esc(first(p.name))}</div>`).join('')}</div><input id="gw" placeholder="Your name (e.g. Bre's mom)" value="${esc(S.who||'')}"><div class="err">${err||''}</div><button onclick="finishGate()">Let's go</button>`;}
+  else{$('#gateBox').innerHTML=`<h2>Who's your player?</h2><p>She goes at the top of your Home screen. You can change this anytime with the gear icon.</p><div class="picks">${playing().map(p=>`<div class="pick ${S.my===p.id?'on':''}" onclick="S.my='${p.id}';showGate('who')">${av(p,'xs')}${esc(first(p.name))}</div>`).join('')}</div><div class="err">${err||''}</div><button onclick="finishGate()">Let's go</button>`;}
 }
 async function checkCode(){const v=($('#gc').value||'').trim().toUpperCase();const hx=await sha(v);
   if(hx===GATE_HASH||(!hx&&v==='FLIGHT18')){S.gate=true;save();track('/gate/ok','Code accepted');showGate('who')}else{track('/gate/fail','Bad code');showGate('code',"That code didn't work. Check the text from Joel.")}}
-function finishGate(){const w=($('#gw').value||'').trim();if(!S.my){showGate('who','Pick your player first.');return}if(w.length<2){showGate('who','Add your name so we know who you are.');return}
-  S.who=w;S.chosen=true;save();$('#gate').classList.remove('on');home();track('/open/'+S.my+'/'+slug(S.who),'Open · '+(byId[S.my]?.name||'')+' · '+S.who)}
+function finishGate(){if(!S.my){showGate('who','Pick your player first.');return}
+  S.chosen=true;save();$('#gate').classList.remove('on');home();track('/open/'+S.my,'Open · '+(byId[S.my]?.name||''))}
 const save=()=>LS.set(S);
 const playing=()=>P.filter(p=>p.status==='playing');
 const tracked=()=>playing().filter(p=>S.track.includes(p.id));
 function openSettings(firstTime){
   const row=(p,input)=>`<label class="opt">${av(p,'sm')}<span class="n">${esc(p.name)}<small>${esc(p.school_short)}</small></span>${input}</label>`;
   $('#sheetIn').innerHTML=`<div class="grab"></div><h3>${firstTime?"Welcome — who's your player?":"My player"}</h3><p>${firstTime?"Pick your daughter and she'll be at the top of your Home screen. You can change this anytime with the gear icon.":"She goes at the top of your Home screen."}</p>`
-  +playing().map(p=>row(p,`<input type="radio" name="my" value="${p.id}" ${S.my===p.id?'checked':''} onchange="S.my=this.value;S.chosen=true;save();home();track('/open/'+S.my+'/'+slug(S.who),'Open · '+(byId[S.my]?.name||'')+' · '+S.who)">`)).join('')
+  +playing().map(p=>row(p,`<input type="radio" name="my" value="${p.id}" ${S.my===p.id?'checked':''} onchange="S.my=this.value;S.chosen=true;save();home();track('/open/'+S.my,'Open · '+(byId[S.my]?.name||''))">`)).join('')
   +`<h3 style="margin-top:20px">Track</h3><p>Unchecked girls stay on Stats and Team but leave your Home and Games.</p>`
   +playing().map(p=>row(p,`<input type="checkbox" value="${p.id}" ${S.track.includes(p.id)?'checked':''} onchange="S.track=this.checked?[...S.track,'${p.id}']:S.track.filter(x=>x!=='${p.id}');save();home();games();team()">`)).join('')
-  +`<h3 style="margin-top:20px">You</h3><p>How you show up in the usage report.</p><input id="whoEdit" value="${esc(S.who||'')}" style="width:100%;box-sizing:border-box;font-size:16px;padding:10px 12px;border:2px solid #E4E7EE;border-radius:10px" onchange="S.who=this.value.trim();save()">`
   +`<button class="done" onclick="closeSettings()">Done</button><p class="fine">Saved on this phone only. No accounts.</p>`;
   $('#sheet').classList.add('on');
 }
@@ -426,10 +425,9 @@ function boot(d){LAST_LOADED=Date.now();
   if(saved.track&&Array.isArray(saved.track))pl.forEach(id=>{if(!saved.track.includes(id)&&!(saved.known||[]).includes(id))S.track.push(id)});
   S.known=pl.slice();save();
   home();games();buzz();stats();team();
-  S.gate=!!saved.gate;S.who=saved.who||'';
-  if(!S.gate){track('/open/gate','Needs code');showGate('code');return}
-  if(!S.chosen||!S.who){showGate('who');return}
-  track('/open/'+S.my+'/'+slug(S.who),'Open · '+(byId[S.my]?.name||'')+' · '+S.who);
+  S.gate=true;S.who='';
+  if(!S.chosen){track('/open/first-visit','First visit');showGate('who');return}
+  track('/open/'+S.my,'Open · '+(byId[S.my]?.name||''));
 }
 function track(path,title){try{const f=()=>window.goatcounter&&window.goatcounter.count&&window.goatcounter.count({path,title,event:false});window.goatcounter?.count?f():setTimeout(f,1500)}catch(e){}}
 fetch('data.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error(r.status);return r.json()}).then(boot).catch(e=>{
