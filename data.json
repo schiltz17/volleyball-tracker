@@ -3,8 +3,8 @@
  "club": "Top Flight Volleyball Club, Elgin IL",
  "club_season": "2025-26",
  "college_season": "2026",
- "updated_at": "2026-10-26T12:03-05:00",
- "updated_label": "Monday 12:03 PM CT",
+ "updated_at": "2026-11-02T14:34-06:00",
+ "updated_label": "Monday 2:34 PM CT",
  "summary": {
   "headline": "A Week of Sweeps and Steady Progress",
   "body": [
@@ -50,6 +50,32 @@
    "college_season": "2026",
    "recent_matches": [
     {
+     "date": "2026-10-30",
+     "time": null,
+     "time_ct": null,
+     "opponent": "Eastern Illinois",
+     "home_away": "home",
+     "location": null,
+     "result": "L 2-3",
+     "box_url": "https://msueagles.com/sports/womens-volleyball/stats/2026/eastern-illinois/boxscore/6809",
+     "player_line": null,
+     "stream_name": null,
+     "stream_url": null
+    },
+    {
+     "date": "2026-10-29",
+     "time": null,
+     "time_ct": null,
+     "opponent": "Eastern Illinois",
+     "home_away": "home",
+     "location": null,
+     "result": "W 3-0",
+     "box_url": "https://msueagles.com/sports/womens-volleyball/stats/2026/eastern-illinois/boxscore/6808",
+     "player_line": null,
+     "stream_name": null,
+     "stream_url": null
+    },
+    {
      "date": "2026-10-24",
      "time": null,
      "time_ct": null,
@@ -71,6 +97,32 @@
      "location": null,
      "result": "W 3-0",
      "box_url": "https://msueagles.com/sports/womens-volleyball/stats/2026/tennessee-state/boxscore/6824",
+     "player_line": null,
+     "stream_name": null,
+     "stream_url": null
+    },
+    {
+     "date": "2026-10-17",
+     "time": null,
+     "time_ct": null,
+     "opponent": "SOUTHEAST MO. ST",
+     "home_away": "home",
+     "location": null,
+     "result": "L 0-3",
+     "box_url": null,
+     "player_line": null,
+     "stream_name": null,
+     "stream_url": null
+    },
+    {
+     "date": "2026-10-16",
+     "time": null,
+     "time_ct": null,
+     "opponent": "SOUTHEAST MO. ST",
+     "home_away": "home",
+     "location": null,
+     "result": "L 0-3",
+     "box_url": null,
      "player_line": null,
      "stream_name": null,
      "stream_url": null
@@ -286,32 +338,6 @@
    ],
    "upcoming": [
     {
-     "date": "2026-10-29",
-     "time": "5:00 PM",
-     "time_ct": "4:00 PM CT",
-     "opponent": "Eastern Illinois",
-     "home_away": "home",
-     "location": "Morehead, KY",
-     "result": null,
-     "box_url": null,
-     "player_line": null,
-     "stream_name": "ESPN+",
-     "stream_url": "https://www.espn.com/watch/player/_/id/1bd3f424-ede9-4435-8ab0-021239b84784"
-    },
-    {
-     "date": "2026-10-30",
-     "time": "12:00 PM",
-     "time_ct": "11:00 AM CT",
-     "opponent": "Eastern Illinois",
-     "home_away": "home",
-     "location": "Morehead, KY",
-     "result": null,
-     "box_url": null,
-     "player_line": null,
-     "stream_name": "ESPN+",
-     "stream_url": "https://www.espn.com/watch/player/_/id/1ff9a23a-aa96-4dfb-a352-bcb89a323019"
-    },
-    {
      "date": "2026-11-06",
      "time": "7:00 PM",
      "time_ct": "6:00 PM CT",
@@ -367,15 +393,15 @@
    "season_stats": [
     {
      "label": "Kills",
-     "value": 23
+     "value": 24
     },
     {
      "label": "Kills/set",
-     "value": "0.68"
+     "value": "0.69"
     },
     {
      "label": "Hitting %",
-     "value": ".102"
+     "value": ".112"
     },
     {
      "label": "Blocks",
@@ -383,11 +409,11 @@
     }
    ],
    "stats": {
-    "mp": 14,
-    "sp": 34,
-    "k": 23,
+    "mp": 15,
+    "sp": 35,
+    "k": 24,
     "e": 14,
-    "ta": 88,
+    "ta": 89,
     "a": 0,
     "bhe": 0,
     "sa": 0,
@@ -400,8 +426,8 @@
     "be": 4
    },
    "team_record": {
-    "overall": "9-11",
-    "conference": "5-5",
+    "overall": "10-12",
+    "conference": "6-6",
     "standing": "3rd of 9 OVC",
     "standings_url": "https://ovcsports.com/standings.aspx?path=wvball"
    },
@@ -416,22 +442,22 @@
    "class_year": "Fr.",
    "height": "6-2",
    "bio_url": "https://msueagles.com/sports/womens-volleyball/roster/anna-schiltz/9037",
-   "blurb": "Anna's season line so far includes 23 kills, 11 digs, and 17 total blocks across 34 sets, a rotational role for her on the right side as a freshman. The Eagles are off this week after closing out last week with a sweep of Tennessee State, following a pair of losses to Southeast Missouri. Anna and the team are back in action against Eastern Illinois on Oct 29 and 30.",
+   "blurb": "The Eagles were off this week, so Anna didn't see the court either, but on the season she's rotational at right side with 24 kills, 11 digs and 15 block assists across 35 sets. Over her last four matches, Morehead State won three straight — sweeping Tennessee State twice and opening with a win over Eastern Illinois — before dropping a five-set decision to the Panthers on Oct. 30. She and the Eagles are back in action Nov. 6-7 at SIUE.",
    "_highs": {
     "block": 2,
     "dig": 1,
-    "_last": "2026-10-24"
+    "_last": "2026-10-30"
    },
-   "fetched_at": "2026-10-26T12:03-05:00",
-   "matches_played": 14,
-   "sets_played": 34,
+   "fetched_at": "2026-11-02T14:34-06:00",
+   "matches_played": 15,
+   "sets_played": 35,
    "position_note": "Listed MB on the roster; has started at right side every match so far (per family).",
    "stats_source": "sheet-parsed",
    "_notes": [
-    "record from page: 9-11",
-    "20 results parsed from the schedule page",
-    "20 results on the sheet",
-    "stats parsed from PDF: sp=34 k=23 a=0 dig=11",
+    "record from page: 10-12",
+    "22 results parsed from the schedule page",
+    "22 results on the sheet",
+    "stats parsed from PDF: sp=35 k=24 a=0 dig=11",
     "HTML table agrees with PDF",
     "results reconcile with record via sheet"
    ],
@@ -462,6 +488,32 @@
    "college_season": "2026",
    "recent_matches": [
     {
+     "date": "2026-10-31",
+     "time": null,
+     "time_ct": null,
+     "opponent": "Belmont",
+     "home_away": "away",
+     "location": null,
+     "result": "L 2-3",
+     "box_url": "https://uicflames.com/sports/womens-volleyball/stats/2026/belmont/boxscore/21506",
+     "player_line": null,
+     "stream_name": null,
+     "stream_url": null
+    },
+    {
+     "date": "2026-10-30",
+     "time": null,
+     "time_ct": null,
+     "opponent": "Murray State",
+     "home_away": "away",
+     "location": null,
+     "result": "L 0-3",
+     "box_url": "https://uicflames.com/sports/womens-volleyball/stats/2026/murray-state/boxscore/21505",
+     "player_line": null,
+     "stream_name": null,
+     "stream_url": null
+    },
+    {
      "date": "2026-10-23",
      "time": null,
      "time_ct": null,
@@ -483,6 +535,19 @@
      "location": null,
      "result": "W 3-0",
      "box_url": "https://uicflames.com/sports/womens-volleyball/stats/2026/valparaiso/boxscore/21503",
+     "player_line": null,
+     "stream_name": null,
+     "stream_url": null
+    },
+    {
+     "date": "2026-10-17",
+     "time": null,
+     "time_ct": null,
+     "opponent": "UNI",
+     "home_away": "away",
+     "location": null,
+     "result": "L 0-3",
+     "box_url": null,
      "player_line": null,
      "stream_name": null,
      "stream_url": null
@@ -737,32 +802,6 @@
    ],
    "upcoming": [
     {
-     "date": "2026-10-30",
-     "time": "6:00 PM",
-     "time_ct": "6:00 PM CT",
-     "opponent": "Murray State",
-     "home_away": "away",
-     "location": "Murray, Ky",
-     "result": null,
-     "box_url": null,
-     "player_line": null,
-     "stream_name": "ESPN+",
-     "stream_url": "https://www.espn.com/watch/player/_/id/4ca9726f-5a24-4315-8fee-cc5e666971e3"
-    },
-    {
-     "date": "2026-10-31",
-     "time": "2:00 PM",
-     "time_ct": "2:00 PM CT",
-     "opponent": "Belmont",
-     "home_away": "away",
-     "location": "Nashville, Tenn",
-     "result": null,
-     "box_url": null,
-     "player_line": null,
-     "stream_name": "ESPN+",
-     "stream_url": "https://www.espn.com/watch/player/_/id/ae4c2868-f826-4d6f-82c4-7153ef4b765d"
-    },
-    {
      "date": "2026-11-06",
      "time": "6:00 PM",
      "time_ct": "6:00 PM CT",
@@ -851,9 +890,9 @@
     "be": 1
    },
    "team_record": {
-    "overall": "10-12",
-    "conference": "6-4",
-    "standing": "6th of 11 MVC",
+    "overall": "10-14",
+    "conference": "6-6",
+    "standing": "6th of 11 (6-4)",
     "standings_url": "https://mvc-sports.com/standings.aspx?standings=81"
    },
    "photo_url": "https://uicflames.com/images/2026/8/25/DSC01669.jpg",
@@ -867,20 +906,20 @@
    "class_year": "Freshman",
    "height": "5-11",
    "bio_url": "https://uicflames.com/sports/womens-volleyball/roster/elizabeth-king/11821",
-   "blurb": "UIC didn't take the court this week, so there's nothing new to report from Elizabeth King's side. On the season she's played a rotational role for the Flames, putting up 39 kills and 16 block assists across 33 sets. The team has been rolling lately, picking up wins over Valparaiso and Indiana State after a loss at Northern Iowa and a win at Drake. Up next for UIC is a road trip to Murray State on October 30.",
+   "blurb": "Elizabeth didn't see the court this past week as the Flames dropped both road matches, falling 0-3 at Murray State and 2-3 at Belmont. In a rotational role this season, she's tallied 39 kills and 16 blocks across her 33 sets of action. UIC travels to Illinois State on Nov. 6 and Bradley on Nov. 7 looking to bounce back, with Elizabeth ready to step in when her number is called.",
    "_highs": {
     "kill": 3,
     "block": 5,
-    "_last": "2026-10-23"
+    "_last": "2026-10-31"
    },
    "matches_played": 17,
    "sets_played": 33,
-   "fetched_at": "2026-10-26T12:03-05:00",
+   "fetched_at": "2026-11-02T14:34-06:00",
    "stats_source": "sheet-parsed",
    "_notes": [
-    "record from page: 10-12",
-    "22 results parsed from the schedule page",
-    "22 results on the sheet",
+    "record from page: 10-14",
+    "24 results parsed from the schedule page",
+    "24 results on the sheet",
     "stats parsed from PDF: sp=33 k=39 a=0 dig=9",
     "HTML table agrees with PDF",
     "results reconcile with record via sheet"
@@ -911,6 +950,32 @@
    "college_season": "2026",
    "recent_matches": [
     {
+     "date": "2026-10-31",
+     "time": null,
+     "time_ct": null,
+     "opponent": "USC Upstate",
+     "home_away": "away",
+     "location": null,
+     "result": "L 2-3",
+     "box_url": "https://gwusports.com/boxscore.aspx?id=9195",
+     "player_line": null,
+     "stream_name": null,
+     "stream_url": null
+    },
+    {
+     "date": "2026-10-30",
+     "time": null,
+     "time_ct": null,
+     "opponent": "UNC Asheville",
+     "home_away": "away",
+     "location": null,
+     "result": "L 0-3",
+     "box_url": "https://gwusports.com/boxscore.aspx?id=9197",
+     "player_line": null,
+     "stream_name": null,
+     "stream_url": null
+    },
+    {
      "date": "2026-10-24",
      "time": null,
      "time_ct": null,
@@ -940,7 +1005,7 @@
      "date": "2026-10-20",
      "time": null,
      "time_ct": null,
-     "opponent": "NC Central",
+     "opponent": "N.C. CENTRAL",
      "home_away": "home",
      "location": null,
      "result": "W 3-1",
@@ -953,7 +1018,7 @@
      "date": "2026-10-17",
      "time": null,
      "time_ct": null,
-     "opponent": "UNC Asheville",
+     "opponent": "UNC ASHEVILLE",
      "home_away": "home",
      "location": null,
      "result": "W 3-2",
@@ -1225,32 +1290,6 @@
    ],
    "upcoming": [
     {
-     "date": "2026-10-30",
-     "time": "6:00 PM",
-     "time_ct": "5:00 PM CT",
-     "opponent": "UNC Asheville",
-     "home_away": "away",
-     "location": null,
-     "result": null,
-     "box_url": null,
-     "player_line": null,
-     "stream_name": null,
-     "stream_url": null
-    },
-    {
-     "date": "2026-10-31",
-     "time": "5:30 PM",
-     "time_ct": "4:30 PM CT",
-     "opponent": "USC Upstate",
-     "home_away": "away",
-     "location": null,
-     "result": null,
-     "box_url": null,
-     "player_line": null,
-     "stream_name": null,
-     "stream_url": null
-    },
-    {
      "date": "2026-11-06",
      "time": "6:00 PM",
      "time_ct": "5:00 PM CT",
@@ -1269,6 +1308,32 @@
      "time_ct": "5:00 PM CT",
      "opponent": "High Point",
      "home_away": "home",
+     "location": null,
+     "result": null,
+     "box_url": null,
+     "player_line": null,
+     "stream_name": null,
+     "stream_url": null
+    },
+    {
+     "date": "2026-11-10",
+     "time": "6:00 PM",
+     "time_ct": "5:00 PM CT",
+     "opponent": "Elon",
+     "home_away": "away",
+     "location": null,
+     "result": null,
+     "box_url": null,
+     "player_line": null,
+     "stream_name": null,
+     "stream_url": null
+    },
+    {
+     "date": "2026-11-13",
+     "time": "6:00 PM",
+     "time_ct": "5:00 PM CT",
+     "opponent": "Winthrop",
+     "home_away": "away",
      "location": null,
      "result": null,
      "box_url": null,
@@ -1313,7 +1378,7 @@
     "be": 2
    },
    "team_record": {
-    "overall": "15-9",
+    "overall": "15-11",
     "conference": "0-0",
     "standing": "4th of 8 Big South",
     "standings_url": "https://bigsouthsports.com/standings.aspx?path=wvball"
@@ -1329,18 +1394,18 @@
    "class_year": "Fr",
    "height": "6-1",
    "bio_url": "https://gwusports.com/sports/womens-volleyball/roster/gracyn-sanders/11699",
-   "blurb": "Gracyn has seen limited minutes this season, appearing in 10 sets with 11 kills, 3 block assists, and 2 digs so far. Gardner-Webb has been busy lately, picking up wins over UNC Asheville, NC Central, and Presbyterian with one tougher loss at Charleston Southern mixed in. The Bulldogs are off this week before heading to UNC Asheville on Oct. 30, and we'll be watching for more chances for Gracyn to get on the floor.",
+   "blurb": "Gracyn is seeing limited minutes this season, but she's made the most of them with 11 kills, 3 block assists, and a dig over her 10 sets on the floor. The team had a tough stretch on the road, dropping matches at UNC Asheville and USC Upstate after splitting a pair against Charleston Southern and Presbyterian. They're back in action at home against Radford on Nov 6 and High Point on Nov 7, with Gracyn ready to contribute whenever her number is called.",
    "_highs": {
-    "_last": "2026-10-24"
+    "_last": "2026-10-31"
    },
-   "fetched_at": "2026-10-26T12:03-05:00",
+   "fetched_at": "2026-11-02T14:34-06:00",
    "matches_played": null,
    "sets_played": 10,
    "_notes": [
     "results from event articles (newer Sidearm layout)",
     "4 results parsed from the schedule page",
-    "24 results on the sheet",
-    "record from sheet: 15-9",
+    "26 results on the sheet",
+    "record from sheet: 15-11",
     "stats parsed from PDF: sp=10 k=11 a=1 dig=1",
     "results reconcile with record via sheet"
    ],
@@ -1370,6 +1435,32 @@
    "tz": "America/New_York",
    "college_season": "2026",
    "recent_matches": [
+    {
+     "date": "2026-11-01",
+     "time": null,
+     "time_ct": null,
+     "opponent": "Daemen University",
+     "home_away": "home",
+     "location": null,
+     "result": "L 1-3",
+     "box_url": "https://robertsredhawks.com/sports/womens-volleyball/stats/2026/daemen-university/boxscore/5803",
+     "player_line": null,
+     "stream_name": null,
+     "stream_url": null
+    },
+    {
+     "date": "2026-10-28",
+     "time": null,
+     "time_ct": null,
+     "opponent": "Ursuline College",
+     "home_away": "home",
+     "location": null,
+     "result": "L 0-3",
+     "box_url": "https://robertsredhawks.com/sports/womens-volleyball/stats/2026/ursuline-college/boxscore/5801",
+     "player_line": null,
+     "stream_name": null,
+     "stream_url": null
+    },
     {
      "date": "2026-10-25",
      "time": null,
@@ -1646,32 +1737,6 @@
    ],
    "upcoming": [
     {
-     "date": "2026-10-28",
-     "time": "5:00 PM",
-     "time_ct": "4:00 PM CT",
-     "opponent": "Ursuline College",
-     "home_away": "home",
-     "location": "Rochester, NY",
-     "result": null,
-     "box_url": null,
-     "player_line": null,
-     "stream_name": "FloSports",
-     "stream_url": "https://flosports.link/4cdyOZr"
-    },
-    {
-     "date": "2026-11-01",
-     "time": "12:00 PM",
-     "time_ct": "11:00 AM CT",
-     "opponent": "Daemen University",
-     "home_away": "home",
-     "location": "Rochester, NY",
-     "result": null,
-     "box_url": null,
-     "player_line": null,
-     "stream_name": "FloSports",
-     "stream_url": "https://flosports.link/4cdyOZr"
-    },
-    {
      "date": "2026-11-04",
      "time": "6:00 PM",
      "time_ct": "5:00 PM CT",
@@ -1714,41 +1779,41 @@
    "season_stats": [
     {
      "label": "Assists",
-     "value": 120
+     "value": 152
     },
     {
      "label": "Assists/set",
-     "value": "2.73"
+     "value": "2.98"
     },
     {
      "label": "Digs",
-     "value": 45
+     "value": 60
     },
     {
      "label": "Aces",
-     "value": 11
+     "value": 13
     }
    ],
    "stats": {
-    "mp": 17,
-    "sp": 44,
+    "mp": 19,
+    "sp": 51,
     "k": 5,
-    "e": 5,
-    "ta": 19,
-    "a": 120,
+    "e": 6,
+    "ta": 20,
+    "a": 152,
     "bhe": 1,
-    "sa": 11,
+    "sa": 13,
     "se": 15,
     "srv": null,
-    "dig": 45,
+    "dig": 60,
     "re": 0,
     "bs": 0,
     "ba": 0,
     "be": 2
    },
    "team_record": {
-    "overall": "3-18",
-    "conference": "1-7",
+    "overall": "3-20",
+    "conference": "1-8",
     "standing": "7th of 7 ECC (women's)",
     "standings_url": "https://eccsports.org/standings.aspx?path=wvball"
    },
@@ -1766,19 +1831,19 @@
    "_highs": {
     "assist": 7,
     "dig": 5,
-    "_last": "2026-10-25"
+    "_last": "2026-11-01"
    },
-   "matches_played": 17,
-   "sets_played": 44,
-   "blurb": "The Redhawks were off this week, but Breanna has been a regular part of the lineup this season, setting the offense in 44 of the team's 76 sets and piling up 120 assists to go with 45 digs. Roberts Wesleyan's October closed with a thrilling five-set win over Queens College sandwiched around road losses to Molloy, Mercy and St. Thomas Aquinas. Breanna and the Redhawks are back at it soon with home matches against Ursuline and Daemen coming up.",
-   "fetched_at": "2026-10-26T12:03-05:00",
+   "matches_played": 19,
+   "sets_played": 51,
+   "blurb": "Breanna and the team were both off this week, so there's no new action to report. Through the season she's been a regular presence running the Redhawks' offense, piling up assists and digs along with a steady number of sets played. The team has dropped its last four matches, most recently falling to Daemen in four sets on November 1. Breanna and the Redhawks are back at it November 4 at D'Youville.",
+   "fetched_at": "2026-11-02T14:34-06:00",
    "stats_source": "sheet-parsed",
    "_notes": [
-    "record from page: 3-18",
-    "21 results parsed from the schedule page",
+    "record from page: 3-20",
+    "23 results parsed from the schedule page",
     "6 results on the sheet",
     "stats parsed from PDF: sp=12 k=2 a=48 dig=14",
-    "PDF looks partial (6 games vs 21 on record) — HTML table kept",
+    "PDF looks partial (6 games vs 23 on record) — HTML table kept",
     "results reconcile with record via page"
    ]
   },
@@ -1806,6 +1871,32 @@
    "tz": "America/Chicago",
    "college_season": "2026",
    "recent_matches": [
+    {
+     "date": "2026-10-31",
+     "time": null,
+     "time_ct": null,
+     "opponent": "Arkansas-Monticello",
+     "home_away": "home",
+     "location": null,
+     "result": "W 3-0",
+     "box_url": "https://arkansastechsports.com/sports/womens-volleyball/stats/2026/arkansas-monticello/boxscore/7566",
+     "player_line": null,
+     "stream_name": null,
+     "stream_url": null
+    },
+    {
+     "date": "2026-10-27",
+     "time": null,
+     "time_ct": null,
+     "opponent": "Southern Arkansas",
+     "home_away": "away",
+     "location": null,
+     "result": "W 3-1",
+     "box_url": "https://arkansastechsports.com/sports/womens-volleyball/stats/2026/southern-arkansas/boxscore/7565",
+     "player_line": null,
+     "stream_name": null,
+     "stream_url": null
+    },
     {
      "date": "2026-10-23",
      "time": null,
@@ -2121,32 +2212,6 @@
    ],
    "upcoming": [
     {
-     "date": "2026-10-27",
-     "time": "6:00 PM",
-     "time_ct": "6:00 PM CT",
-     "opponent": "Southern Arkansas",
-     "home_away": "away",
-     "location": "Magnolia, Ark",
-     "result": null,
-     "box_url": null,
-     "player_line": null,
-     "stream_name": "GAC Network",
-     "stream_url": "https://gacsportsnetwork.com/mulriderathletics/"
-    },
-    {
-     "date": "2026-10-31",
-     "time": "4:00 PM",
-     "time_ct": "4:00 PM CT",
-     "opponent": "Arkansas-Monticello",
-     "home_away": "home",
-     "location": null,
-     "result": null,
-     "box_url": null,
-     "player_line": null,
-     "stream_name": "GAC Network",
-     "stream_url": "https://gacsportsnetwork.com/arkansastech/"
-    },
-    {
      "date": "2026-11-03",
      "time": "6:00 PM",
      "time_ct": "6:00 PM CT",
@@ -2176,42 +2241,42 @@
    "season_stats": [
     {
      "label": "Assists",
-     "value": 249
+     "value": 286
     },
     {
      "label": "Assists/set",
-     "value": "4.37"
+     "value": "4.47"
     },
     {
      "label": "Digs",
-     "value": 63
+     "value": 74
     },
     {
      "label": "Aces",
-     "value": 21
+     "value": 22
     }
    ],
    "stats": {
-    "mp": 19,
-    "sp": 57,
+    "mp": 21,
+    "sp": 64,
     "k": 2,
     "e": 2,
-    "ta": 15,
-    "a": 249,
+    "ta": 16,
+    "a": 286,
     "bhe": 0,
-    "sa": 21,
-    "se": 18,
+    "sa": 22,
+    "se": 21,
     "srv": null,
-    "dig": 63,
+    "dig": 74,
     "re": 2,
     "bs": 0,
     "ba": 0,
     "be": 0
    },
    "team_record": {
-    "overall": "14-10",
-    "conference": "8-4",
-    "standing": "6th of 12 GAC",
+    "overall": "16-10",
+    "conference": "10-4",
+    "standing": "5th of 11 GAC",
     "standings_url": "https://greatamericanconference.com/standings.aspx?path=wvball"
    },
    "photo_url": "https://arkansastechsports.com/images/2026/7/16/_2_Lambert__Kylie.jpg",
@@ -2225,21 +2290,21 @@
    "class_year": "Fr.",
    "height": "5-8",
    "bio_url": "https://arkansastechsports.com/sports/womens-volleyball/roster/kylie-lambert/5939",
-   "matches_played": 19,
-   "sets_played": 57,
-   "blurb": "Kylie has settled into a regular role running the offense this season, totaling 249 assists, 63 digs, and 21 service aces across her 57 sets played. The Golden Suns won two of their last three matches, beating Southeastern Oklahoma and Henderson State while falling to East Central. Up next, the team heads to Southern Arkansas on October 27.",
+   "matches_played": 21,
+   "sets_played": 64,
+   "blurb": "Kylie has settled into a regular role running the Golden Suns' offense this season, picking up 286 assists over her 64 sets played. The team didn't play this week, but they closed out last week strong, sweeping Arkansas-Monticello and winning at Southern Arkansas and Henderson State. Up next, Kylie and the Golden Suns host Ouachita Baptist on Nov. 3 before heading to Harding on Nov. 5.",
    "_highs": {
     "assist": 8,
     "dig": 3,
-    "_last": "2026-10-23"
+    "_last": "2026-10-31"
    },
-   "fetched_at": "2026-10-26T12:03-05:00",
+   "fetched_at": "2026-11-02T14:34-06:00",
    "stats_source": "sheet-parsed",
    "_notes": [
-    "record from page: 14-10",
-    "24 results parsed from the schedule page",
-    "22 results on the sheet",
-    "stats parsed from PDF: sp=57 k=2 a=249 dig=63",
+    "record from page: 16-10",
+    "26 results parsed from the schedule page",
+    "24 results on the sheet",
+    "stats parsed from PDF: sp=64 k=2 a=286 dig=74",
     "HTML table agrees with PDF",
     "results reconcile with record via page"
    ]
@@ -2268,6 +2333,45 @@
    "tz": "America/Chicago",
    "college_season": "2026",
    "recent_matches": [
+    {
+     "date": "2026-10-31",
+     "time": null,
+     "time_ct": null,
+     "opponent": "University of Sioux Falls",
+     "home_away": "away",
+     "location": null,
+     "result": "L 0-3",
+     "box_url": "https://winonastatewarriors.com/sports/womens-volleyball/stats/2026/university-of-sioux-falls/boxscore/7540",
+     "player_line": null,
+     "stream_name": null,
+     "stream_url": null
+    },
+    {
+     "date": "2026-10-30",
+     "time": null,
+     "time_ct": null,
+     "opponent": "Southwest Minnesota State University",
+     "home_away": "away",
+     "location": null,
+     "result": "L 0-3",
+     "box_url": "https://winonastatewarriors.com/sports/womens-volleyball/stats/2026/southwest-minnesota-state-university/boxscore/7539",
+     "player_line": null,
+     "stream_name": null,
+     "stream_url": null
+    },
+    {
+     "date": "2026-10-27",
+     "time": null,
+     "time_ct": null,
+     "opponent": "St. Cloud State University",
+     "home_away": "away",
+     "location": null,
+     "result": "L 0-3",
+     "box_url": "https://winonastatewarriors.com/sports/womens-volleyball/stats/2026/st-cloud-state-university/boxscore/7538",
+     "player_line": null,
+     "stream_name": null,
+     "stream_url": null
+    },
     {
      "date": "2026-10-24",
      "time": null,
@@ -2544,45 +2648,6 @@
    ],
    "upcoming": [
     {
-     "date": "2026-10-27",
-     "time": "6:00 PM",
-     "time_ct": "6:00 PM CT",
-     "opponent": "St. Cloud State University",
-     "home_away": "away",
-     "location": "St. Cloud, Minn",
-     "result": null,
-     "box_url": null,
-     "player_line": null,
-     "stream_name": "Midco Sports",
-     "stream_url": "https://www.midcosportsplus.com/?school=st-cloud-state-university"
-    },
-    {
-     "date": "2026-10-30",
-     "time": "6:00 PM",
-     "time_ct": "6:00 PM CT",
-     "opponent": "Southwest Minnesota State University",
-     "home_away": "away",
-     "location": "Marshall, Minn",
-     "result": null,
-     "box_url": null,
-     "player_line": null,
-     "stream_name": "Midco Sports",
-     "stream_url": "https://www.midcosportsplus.com/?school=southwest-minnesota-st-university"
-    },
-    {
-     "date": "2026-10-31",
-     "time": "2:00 PM",
-     "time_ct": "2:00 PM CT",
-     "opponent": "University of Sioux Falls",
-     "home_away": "away",
-     "location": null,
-     "result": null,
-     "box_url": null,
-     "player_line": null,
-     "stream_name": "Midco Sports",
-     "stream_url": "https://www.midcosportsplus.com/?school=university-of-sioux-falls"
-    },
-    {
      "date": "2026-11-06",
      "time": "6:00 PM",
      "time_ct": "6:00 PM CT",
@@ -2645,8 +2710,8 @@
     "be": 0
    },
    "team_record": {
-    "overall": "5-16",
-    "conference": "4-11",
+    "overall": "5-19",
+    "conference": "4-14",
     "standing": "13th of 16 NSIC",
     "standings_url": "https://northernsun.org/standings.aspx?path=wvball"
    },
@@ -2661,17 +2726,17 @@
    "class_year": "Freshman",
    "height": "5-11",
    "bio_url": "https://winonastatewarriors.com/sports/womens-volleyball/roster/layla-merlin/15975",
-   "blurb": "Layla hasn't yet appeared in a match this season, so she's been putting in the work in practice with her Winona State teammates. The Warriors wrapped up their road trip with wins over Minot State and Mary, then came home and dropped matches to Jamestown and Northern State. Next up, the team travels to St. Cloud State on October 27, and we'll be watching for Layla's first chance to get on the court.",
+   "blurb": "Layla hasn't appeared in a match yet this season. The Warriors dropped their last few outings, falling on the road at Sioux Falls, Southwest Minnesota State, and St. Cloud State, plus home losses to Northern State and Jamestown. They're back at it Nov. 6 against Augustana for Senior Night and Nov. 7 against Wayne State, and we'll keep watching for Layla's first chance on the court.",
    "_highs": {
-    "_last": "2026-10-24"
+    "_last": "2026-10-31"
    },
-   "fetched_at": "2026-10-26T12:03-05:00",
+   "fetched_at": "2026-11-02T14:34-06:00",
    "matches_played": null,
    "sets_played": 0,
    "_notes": [
-    "record from page: 5-16",
-    "21 results parsed from the schedule page",
-    "20 results on the sheet",
+    "record from page: 5-19",
+    "24 results parsed from the schedule page",
+    "23 results on the sheet",
     "not on the stats sheet — zeros",
     "results reconcile with record via page"
    ],
@@ -2702,6 +2767,19 @@
    "college_season": "2026",
    "recent_matches": [
     {
+     "date": "2026-10-31",
+     "time": null,
+     "time_ct": null,
+     "opponent": "Lee University (Tenn.)",
+     "home_away": "home",
+     "location": null,
+     "result": "L 0-3",
+     "box_url": "https://tnutrojans.com/sports/womens-volleyball/stats/2026/lee-university-tenn-/boxscore/11143",
+     "player_line": null,
+     "stream_name": null,
+     "stream_url": null
+    },
+    {
      "date": "2026-10-23",
      "time": null,
      "time_ct": null,
@@ -2715,10 +2793,23 @@
      "stream_url": null
     },
     {
+     "date": "2026-10-17",
+     "time": null,
+     "time_ct": null,
+     "opponent": "AUM",
+     "home_away": "home",
+     "location": null,
+     "result": "W 3-0",
+     "box_url": null,
+     "player_line": null,
+     "stream_name": null,
+     "stream_url": null
+    },
+    {
      "date": "2026-10-16",
      "time": null,
      "time_ct": null,
-     "opponent": "Valdosta State (Ga.)",
+     "opponent": "VALDOSTA ST",
      "home_away": "home",
      "location": null,
      "result": "L 1-3",
@@ -2990,32 +3081,6 @@
    ],
    "upcoming": [
     {
-     "date": "2026-10-27",
-     "time": "6:00 PM",
-     "time_ct": "6:00 PM CT",
-     "opponent": "University of Montevallo",
-     "home_away": "away",
-     "location": "Montevallo, AL",
-     "result": null,
-     "box_url": null,
-     "player_line": null,
-     "stream_name": "FloSports",
-     "stream_url": "https://flosports.link/4pUF2mO"
-    },
-    {
-     "date": "2026-10-31",
-     "time": "2:00 PM",
-     "time_ct": "2:00 PM CT",
-     "opponent": "Lee University",
-     "home_away": "home",
-     "location": "Nashville, TN",
-     "result": null,
-     "box_url": null,
-     "player_line": null,
-     "stream_name": "FloSports",
-     "stream_url": "https://flosports.link/4yRHfU3"
-    },
-    {
      "date": "2026-11-06",
      "time": "6:00 PM",
      "time_ct": "6:00 PM CT",
@@ -3113,10 +3178,10 @@
     "be": 3
    },
    "team_record": {
-    "overall": "13-11",
+    "overall": "13-13",
     "standing": "9th of 10 GSC",
     "standings_url": "https://gscsports.org/standings.aspx?path=wvball",
-    "conference": "10-4"
+    "conference": "10-6"
    },
    "photo_url": "https://tnutrojans.com/images/2026/9/4/VB_Mary_Francl_HS_2026_tsaliboy_387.png",
    "socials": {
@@ -3129,18 +3194,18 @@
    "class_year": "Freshman",
    "height": "6-0",
    "bio_url": "https://tnutrojans.com/sports/womens-volleyball/roster/mary-francl/7073",
-   "blurb": "Trevecca didn't play this week, so there's no fresh action to share for Mary. On the season she's appeared in 5 matches in a rotational role, logging 16 sets with 4 block assists and a dig. The Trojans are back in action Tuesday, October 27, on the road at Montevallo.",
+   "blurb": "Mary has settled into a rotational role as a freshman, appearing in 5 matches and 16 sets so far with 4 block assists and a dig on the season. The Trojans split their last four matches, sweeping Christian Brothers and Union before dropping decisions to Montevallo and Lee. Trevecca wraps up its home schedule with matches against Mississippi Christian on November 6 and West Alabama on November 7.",
    "_highs": {
-    "_last": "2026-10-23"
+    "_last": "2026-10-31"
    },
-   "fetched_at": "2026-10-26T12:03-05:00",
+   "fetched_at": "2026-11-02T14:34-06:00",
    "matches_played": 5,
    "sets_played": 16,
    "stats_source": "sheet-parsed",
    "_notes": [
-    "record from page: 13-11",
-    "24 results parsed from the schedule page",
-    "24 results on the sheet",
+    "record from page: 13-13",
+    "26 results parsed from the schedule page",
+    "26 results on the sheet",
     "stats parsed from PDF: sp=16 k=0 a=0 dig=1",
     "HTML table agrees with PDF",
     "results reconcile with record via sheet"
@@ -3171,6 +3236,32 @@
    "college_season": "2026",
    "recent_matches": [
     {
+     "date": "2026-10-30",
+     "time": null,
+     "time_ct": null,
+     "opponent": "Augustana",
+     "home_away": "away",
+     "location": null,
+     "result": "L 1-3",
+     "box_url": "https://msumavericks.com/sports/womens-volleyball/stats/2026/augustana/boxscore/20025",
+     "player_line": null,
+     "stream_name": null,
+     "stream_url": null
+    },
+    {
+     "date": "2026-10-27",
+     "time": null,
+     "time_ct": null,
+     "opponent": "Concordia-St. Paul",
+     "home_away": "home",
+     "location": null,
+     "result": "L 0-3",
+     "box_url": "https://msumavericks.com/sports/womens-volleyball/stats/2026/concordia-st-paul/boxscore/20024",
+     "player_line": null,
+     "stream_name": null,
+     "stream_url": null
+    },
+    {
      "date": "2026-10-23",
      "time": null,
      "time_ct": null,
@@ -3187,7 +3278,7 @@
      "date": "2026-10-17",
      "time": null,
      "time_ct": null,
-     "opponent": "Northern State",
+     "opponent": "Northern St",
      "home_away": "away",
      "location": null,
      "result": "L 0-3",
@@ -3459,45 +3550,6 @@
    ],
    "upcoming": [
     {
-     "date": "2026-10-27",
-     "time": "6:00 PM CT",
-     "time_ct": "6:00 PM CT",
-     "opponent": "#7  Concordia-St. Paul",
-     "home_away": "home",
-     "location": "Mankato, Minn",
-     "result": null,
-     "box_url": null,
-     "player_line": null,
-     "stream_name": "Midco Sports",
-     "stream_url": "https://www.midcosportsplus.com/?school=minnesota-state-university-mankato"
-    },
-    {
-     "date": "2026-10-30",
-     "time": "5:00 PM CT",
-     "time_ct": "5:00 PM CT",
-     "opponent": "Augustana",
-     "home_away": "away",
-     "location": null,
-     "result": null,
-     "box_url": null,
-     "player_line": null,
-     "stream_name": "Midco Sports",
-     "stream_url": "https://www.midcosportsplus.com/?school=augustana-university"
-    },
-    {
-     "date": "2026-10-31",
-     "time": "10:00 AM CT",
-     "time_ct": "10:00 AM CT",
-     "opponent": "#2  Wayne State",
-     "home_away": "away",
-     "location": "Wayne, Neb",
-     "result": null,
-     "box_url": null,
-     "player_line": null,
-     "stream_name": "Midco Sports",
-     "stream_url": "https://www.midcosportsplus.com/?school=wayne-state-college"
-    },
-    {
      "date": "2026-11-06",
      "time": "6:00 PM CT",
      "time_ct": "6:00 PM CT",
@@ -3586,8 +3638,8 @@
     "be": 0
    },
    "team_record": {
-    "overall": "10-13",
-    "conference": "8-7",
+    "overall": "10-16",
+    "conference": "8-10",
     "standing": "9th of 16",
     "standings_url": "https://northernsun.org/standings.aspx?path=wvball"
    },
@@ -3604,16 +3656,16 @@
    "bio_url": "https://msumavericks.com/sports/womens-volleyball/roster/peyton-strout/14321",
    "matches_played": 2,
    "sets_played": 2,
-   "blurb": "Peyton continues to see limited minutes for the Mavericks, with two sets played so far this season and no kills recorded yet. The team had a busy stretch, sweeping both Minot State and University of Mary at home while splitting a road trip with a win at Jamestown and a loss at Northern State. Minnesota State is back in action October 27 at home against Concordia-St. Paul, and Peyton will look for more opportunities on the court then.",
+   "blurb": "Peyton has seen limited minutes this season, appearing in 2 sets with 3 attack attempts for the Mavericks. The team closed out October with wins over Minot State and University of Mary before falling to Concordia-St. Paul, Augustana, and Wayne State. Up next, Peyton and the Mavericks host Southwest Minnesota State on November 6.",
    "_highs": {
-    "_last": "2026-10-23"
+    "_last": "2026-10-30"
    },
-   "fetched_at": "2026-10-26T12:03-05:00",
+   "fetched_at": "2026-11-02T14:34-06:00",
    "stats_source": "sheet-parsed",
    "_notes": [
-    "record from page: 10-13",
-    "23 results parsed from the schedule page",
-    "23 results on the sheet",
+    "record from page: 10-16",
+    "26 results parsed from the schedule page",
+    "26 results on the sheet",
     "stats parsed from PDF: sp=2 k=0 a=0 dig=0",
     "HTML table agrees with PDF",
     "results reconcile with record via sheet"
@@ -3631,7 +3683,7 @@
    "division": "NJCAA",
    "conference": "Illinois Skyway Collegiate Conference",
    "city": "Crystal Lake, IL",
-   "hometown_hs": "",
+   "hometown_hs": "Huntley, IL / Huntley High School",
    "site": "https://www.mccscots.com/sports/wvball",
    "roster_url": "https://www.mccscots.com/sports/wvball/2026-27/roster",
    "schedule_url": "https://www.mccscots.com/sports/wvball/2026-27/schedule",
@@ -3680,60 +3732,7 @@
      "home_away": "neutral"
     }
    ],
-   "upcoming": [
-    {
-     "date": "2026-10-26",
-     "time": null,
-     "time_ct": null,
-     "opponent": "Heartland Community College",
-     "home_away": "away",
-     "location": "Parkland Community College",
-     "result": null,
-     "box_url": null,
-     "player_line": null,
-     "stream_name": null,
-     "stream_url": null
-    },
-    {
-     "date": "2026-10-26",
-     "time": null,
-     "time_ct": null,
-     "opponent": "Lincoln Land Community College",
-     "home_away": "away",
-     "location": "Parkland College",
-     "result": null,
-     "box_url": null,
-     "player_line": null,
-     "stream_name": null,
-     "stream_url": null
-    },
-    {
-     "date": "2026-10-30",
-     "time": null,
-     "time_ct": null,
-     "opponent": "UW-Whitewater at Rock County",
-     "home_away": null,
-     "location": null,
-     "result": null,
-     "box_url": null,
-     "player_line": null,
-     "stream_name": null,
-     "stream_url": null
-    },
-    {
-     "date": "2026-10-31",
-     "time": "12:00 PM CT",
-     "time_ct": "12:00 PM CT",
-     "opponent": "TBD",
-     "home_away": null,
-     "location": null,
-     "result": null,
-     "box_url": null,
-     "player_line": null,
-     "stream_name": null,
-     "stream_url": null
-    }
-   ],
+   "upcoming": [],
    "season_stats": [],
    "stats": null,
    "team_record": {},
@@ -3751,7 +3750,7 @@
    "sets_played": null,
    "model": "claude-sonnet-5",
    "class_year": "Freshman",
-   "fetched_at": "2026-10-26T12:03-05:00",
+   "fetched_at": "2026-11-02T14:34-06:00",
    "profile_tried": true,
    "bio_url": "https://www.mccscots.com/sports/wvball/2025-26/roster",
    "stats_source": "unknown",
@@ -3776,7 +3775,8 @@
     "www.mccscots.com: no 'Callahan'",
     "www.region4sports.com: no 'Callahan'",
     "www.mccscots.com (browser): site presented a CAPTCHA / bot challenge",
-    "no stats source had her name"
+    "no stats source had her name",
+    "profile via reader"
    ],
    "profile_url": "https://www.mccscots.com/sports/wvball/2026-27/players/catherinecallahanyokg",
    "jersey": "15"
@@ -3829,7 +3829,7 @@
    "_highs": {
     "_last": "2026-09-03"
    },
-   "fetched_at": "2026-10-26T12:03-05:00",
+   "fetched_at": "2026-11-02T14:34-06:00",
    "profile_tried": true,
    "class_year": "Freshman",
    "stats_source": "unknown",
@@ -3854,7 +3854,8 @@
     "www.mccscots.com: no 'Mitchell'",
     "www.region4sports.com: no 'Mitchell'",
     "www.mccscots.com (browser): site presented a CAPTCHA / bot challenge",
-    "no stats source had her name"
+    "no stats source had her name",
+    "profile via reader"
    ],
    "profile_url": "https://www.mccscots.com/sports/wvball/2026-27/players/madisonmitchellaeqz",
    "jersey": "2"
@@ -3871,7 +3872,7 @@
    "division": "NJCAA",
    "conference": "Illinois Skyway Collegiate Conference",
    "city": "Elgin, IL",
-   "hometown_hs": "Hampshire, IL / Hampshire High School",
+   "hometown_hs": "",
    "site": "https://elginspartans.com/sports/wvball",
    "roster_url": "https://elginspartans.com/sports/wvball/2026-27/roster",
    "schedule_url": "https://elginspartans.com/sports/wvball/2026-27/schedule",
@@ -3892,7 +3893,21 @@
      "player_line": "31 digs"
     }
    ],
-   "upcoming": [],
+   "upcoming": [
+    {
+     "date": "2026-11-04",
+     "time": "7:00 PM ET",
+     "time_ct": "6:00 PM CT",
+     "opponent": "Madison College",
+     "home_away": "away",
+     "location": "Madison College, 1701 Wright St, Madison, WI 53704",
+     "result": null,
+     "box_url": null,
+     "player_line": null,
+     "stream_name": null,
+     "stream_url": null
+    }
+   ],
    "season_stats": [],
    "stats": null,
    "team_record": {
@@ -3913,10 +3928,10 @@
     "dig": 31,
     "_last": "2026-09-17"
    },
-   "fetched_at": "2026-10-26T12:03-05:00",
+   "fetched_at": "2026-11-02T14:34-06:00",
    "profile_tried": true,
-   "jersey": 2,
-   "position": "Libero",
+   "jersey": "2",
+   "position": "Libero/Defensive Specialist",
    "class_year": "Freshman",
    "_notes": [
     "elginspartans.com (direct): HTTP Error 405: Not Allowed",
@@ -3932,7 +3947,8 @@
     "www.region4sports.com: no 'Wurtz'",
     "elginspartans.com (browser): site presented a CAPTCHA / bot challenge",
     "www.region4sports.com: no 'Wurtz'",
-    "no stats source had her name"
+    "no stats source had her name",
+    "profile via reader"
    ],
    "stats_source": "unknown",
    "schedule_candidates": [
@@ -3988,6 +4004,12 @@
   }
  ],
  "milestones": [
+  {
+   "date": "2026-11-01",
+   "player_id": "hard",
+   "text": "50 college digs",
+   "v": 2
+  },
   {
    "date": "2026-10-16",
    "player_id": "francl",
@@ -4299,11 +4321,42 @@
    "a": "merlin",
    "b": "strout",
    "label": "Minnesota State hosts Winona State",
-   "stream_name": "Midco Sports",
-   "stream_url": "https://www.midcosportsplus.com/?school=southwest-minnesota-st-university"
+   "stream_name": null,
+   "stream_url": null
   }
  ],
  "buzz": [
+  {
+   "date": "2026-11-02",
+   "kind": "recap",
+   "piece": "preview",
+   "title": "Big Week Ahead: Senior Night, Milestones And Conference Battles",
+   "body": [
+    "This week brings a full slate of conference action, with Morehead State and Arkansas Tech both looking to build on recent winning streaks and Winona State honoring its seniors on home court Friday. Several teams are fighting to climb the standings in the season's final stretch, while others celebrate personal milestones along the way.",
+    "Anna — Morehead State at SIUE, Fri 6 PM CT and Sat 2 PM CT on ESPN+. The Eagles enter on the heels of a three-match winning streak before a tough five-set loss to Eastern Illinois, and a good showing at SIUE would keep them solidly in the OVC's top three. Anna continues to anchor the right side with steady kills and blocks each week.",
+    "Elizabeth — UIC at Illinois State Fri 6 PM CT and at Bradley Sat 3 PM CT, both on ESPN+. The Flames look to snap a two-match skid and get back on track in the MVC.",
+    "Gracyn — Gardner-Webb hosts Radford Fri 5 PM CT and High Point Sat 5 PM CT. After a rough road trip, the Runnin' Bulldogs hope home court gives them a lift.",
+    "Breanna — Roberts Wesleyan at D'Youville Wed 5 PM CT, then home vs. Mercy Sat 11 AM CT and St. Thomas Aquinas Sun 11 AM CT, all on FloSports. She just picked up her 50th career dig, a nice personal milestone as the Redhawks keep battling through a difficult season.",
+    "Kylie — Arkansas Tech hosts Ouachita Baptist Tue 6 PM CT on GAC Network, then travels to Harding Thu 6 PM CT. The Golden Suns ride a three-match win streak and sit in good position in the GAC.",
+    "Layla — Winona State hosts Augustana for Senior Night Fri 6 PM CT and Wayne State Sat 4 PM CT, both on Midco Sports. It's a special night for the Warriors' seniors as they close out the home schedule.",
+    "Mary — Trevecca hosts Mississippi Christian Fri 6 PM CT and West Alabama Sat 1 PM CT, both on FloSports, closing out the home slate. The Trojans look to bounce back after dropping their last outing.",
+    "Peyton — Minnesota State hosts Southwest Minnesota State Fri 6 PM CT and Sioux Falls Sat 3 PM CT, both on Midco Sports, as the Mavericks look for home wins down the stretch.",
+    "Peyton — Elgin CC travels to Madison College Wed 6 PM CT as the Spartans continue conference play."
+   ],
+   "spotlight": {
+    "name": "Breanna Hard",
+    "note": "She reached 50 career digs this week, a nice personal milestone amid a tough season for the Redhawks."
+   }
+  },
+  {
+   "date": "2026-10-29",
+   "kind": "news",
+   "title": "Volleyball Earns Sweep over Eastern Illinois in Series Opener",
+   "source": "Morehead State University Athletics",
+   "url": "https://msueagles.com/news/2026/10/29/volleyball-earns-sweep-over-eastern-illinois-in-series-opener.aspx",
+   "note": "The teams traded points as Morehead State closed out the match with a kill by Freshman Anna Schiltz.",
+   "player_id": "schiltz"
+  },
   {
    "date": "2026-10-26",
    "kind": "news",
@@ -4398,6 +4451,15 @@
     "name": "Mary Francl",
     "note": "Mary picked up her first career college dig this week, a sweet milestone to celebrate."
    }
+  },
+  {
+   "date": "2026-10-18",
+   "kind": "news",
+   "title": "College athletes from Kane County record results in 8 sports for the week ending Oct. 18, 2026",
+   "source": "Kane County Reporter",
+   "url": "https://kanecountyreporter.com/college-athletes-from-kane-county-record-results-in-8-sports-for-the-week-ending-oct-18-2026",
+   "note": "Performance listed: 1 service error vs. Queens College, Oct. 17 (W 3-2).",
+   "player_id": "hard"
   },
   {
    "date": "2026-10-17",
@@ -4745,6 +4807,15 @@
    "player_id": "lambert"
   },
   {
+   "date": "2026-09-02",
+   "kind": "news",
+   "title": "Volleyball Earns Two-Straight Sweeps",
+   "source": "Elgin Community College Athletics",
+   "url": "https://elginspartans.com/sports/wvball/2026-27/boxscores/20260902_jjex.xml",
+   "note": "2 · Peyton Wurtz · 3 SP · 2 A · 4 SA · 1 SE · 2 RE · 6 DIGS · 4.0 PTS in Elgin's 3-0 sweep at Kennedy-King College",
+   "player_id": "wurtz"
+  },
+  {
    "date": "2026-08-25",
    "kind": "news",
    "title": "Panthers start season 0-4",
@@ -4773,12 +4844,12 @@
   }
  ],
  "run": {
-  "date": "2026-10-26",
-  "failures": 0,
+  "date": "2026-11-02",
+  "failures": 1,
   "model": "claude-sonnet-5",
   "note": "complete",
-  "input_tokens": 680932,
-  "output_tokens": 41848,
-  "calls": 39
+  "input_tokens": 728682,
+  "output_tokens": 52197,
+  "calls": 44
  }
 }
